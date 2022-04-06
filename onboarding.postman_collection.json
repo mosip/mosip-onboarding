@@ -1,0 +1,1646 @@
+{
+	"info": {
+		"_postman_id": "fe5ada00-e755-4b49-851e-dffff416025a",
+		"name": "onboarding",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "create_keycloak_user",
+			"item": [
+				{
+					"name": "login-to-keycloak-as-admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"//var data = JSON.stringify(jsonData);\r",
+									"console.log(jsonData.access_token);\r",
+									"pm.environment.set(\"keycloak-token\", jsonData.access_token);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "admin-cli",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "{{keycloak-admin-username}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{keycloak-admin-password}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{keycloak-url}}/auth/realms/master/protocol/openid-connect/token",
+							"host": [
+								"{{keycloak-url}}"
+							],
+							"path": [
+								"auth",
+								"realms",
+								"master",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{keycloak-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{partner-kc-username}}\",\r\n    \"firstName\": \"{{partner-kc-user-firstname}}\",\r\n    \"lastName\": \"{{partner-kc-user-lastname}}\",\r\n    \"email\": \"{{partner-kc-user-email}}\",\r\n    \"enabled\": true,\r\n    \"credentials\": [\r\n        {\r\n            \"temporary\": false,\r\n            \"type\": \"password\",\r\n            \"value\": \"{{partner-kc-userpassword}}\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{keycloak-url}}/auth/admin/realms/mosip/users",
+							"host": [
+								"{{keycloak-url}}"
+							],
+							"path": [
+								"auth",
+								"admin",
+								"realms",
+								"mosip",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-user-details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"const responsedata = jsonData.find(u => u.username === pm.environment.get('partner-kc-username'))\r",
+									"console.log(responsedata);\r",
+									"var userid = responsedata.id;\r",
+									"console.log(userid);\r",
+									"pm.environment.set(\"partner-kc-userid\",userid);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{keycloak-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{keycloak-url}}/auth/admin/realms/mosip/users?username={{partner-kc-username}}",
+							"host": [
+								"{{keycloak-url}}"
+							],
+							"path": [
+								"auth",
+								"admin",
+								"realms",
+								"mosip",
+								"users"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{partner-kc-username}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-role-id-for-all-roles",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"requestarr = [];\r",
+									"var roles = pm.environment.get('partner-kc-user-role');\r",
+									"\r",
+									"pm.test(\"getting multiple roles values\", function () {\r",
+									"  let arr = roles.split(','),\r",
+									"    jsonData = JSON.parse(responseBody);\r",
+									"  arr.forEach((x) => {\r",
+									"      const responsedata = jsonData.find(rid => rid.name === x)\r",
+									"      requestarr.push({id:responsedata.id, name:responsedata.name});\r",
+									"  });\r",
+									"});\r",
+									" pm.environment.set(\"role-body\", JSON.stringify(requestarr));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{keycloak-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{keycloak-url}}/auth/admin/realms/mosip/roles",
+							"host": [
+								"{{keycloak-url}}"
+							],
+							"path": [
+								"auth",
+								"admin",
+								"realms",
+								"mosip",
+								"roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "assign-role-to-user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{keycloak-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n  {{role-body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{keycloak-url}}/auth/admin/realms/mosip/users/{{partner-kc-userid}}/role-mappings/realm",
+							"host": [
+								"{{keycloak-url}}"
+							],
+							"path": [
+								"auth",
+								"admin",
+								"realms",
+								"mosip",
+								"users",
+								"{{partner-kc-userid}}",
+								"role-mappings",
+								"realm"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "create/publish_policy_group_and_policy",
+			"item": [
+				{
+					"name": "authenticate-as-policy-manager",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"\",\n  \"version\": \"LTS\",\n  \"requesttime\":\"{{request-time}}\",\n  \"metadata\": {},\n  \"request\": {\n    \"userName\":\"{{partner-manager-username}}\",\n    \"password\":\"{{partner-manager-password}}\",\n    \"appId\":\"{{application-id}}\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/authmanager/authenticate/useridPwd",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"authmanager",
+								"authenticate",
+								"useridPwd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-policy-group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('set policy id',function(){\r",
+									"    const {response} =pm.response.json();\r",
+									"    pm.environment.set('policy-group-id',response.id);\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"desc\":\"PolicyGroup\",\r\n    \"name\":\"{{policy-group-name}}\"\r\n  },\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"version\": \"LTS\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/policymanager/policies/group/new",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"policymanager",
+								"policies",
+								"group",
+								"new"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-policy",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const policydata = pm.iterationData.toObject();\r",
+									"console.log(JSON.stringify(policydata));\r",
+									"pm.environment.set('policy-data', JSON.stringify(policydata));\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('set policy id',function(){\r",
+									"    const {response} =pm.response.json();\r",
+									"    pm.environment.set('policy-id',response.id);\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{policy-data}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/policymanager/policies",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"policymanager",
+								"policies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "publish-policy-and-policy-group",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/v1/policymanager/policies/{{policy-id}}/group/{{policy-group-id}}/publish",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"policymanager",
+								"policies",
+								"{{policy-id}}",
+								"group",
+								"{{policy-group-id}}",
+								"publish"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "partner_self_registration",
+			"item": [
+				{
+					"name": "authenticate-as-partner",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"userName\": \"{{partner-kc-username}}\",\r\n    \"password\": \"{{partner-kc-userpassword}}\",\r\n    \"appId\": \"{{application-id}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/authmanager/authenticate/useridPwd",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"authmanager",
+								"authenticate",
+								"useridPwd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "partner-self-registration",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"address\": \"{{partner-address}}\",\r\n    \"contactNumber\": \"{{partner-contact}}\",\r\n    \"emailId\": \"{{partner-kc-user-email}}\",\r\n    \"organizationName\": \"{{partner-organization-name}}\",\r\n    \"partnerId\": \"{{partner-kc-username}}\",\r\n    \"partnerType\": \"{{partner-type}}\",\r\n    \"policyGroup\": \"{{policy-group-name}}\"\r\n  },\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"version\": \"LTS\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "cert_download",
+			"item": [
+				{
+					"name": "authenticate-to-download-certs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set('request-time',  (new Date()).toISOString())"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"appId\": \"ida\",\r\n    \"clientId\": \"{{cert-manager-username}}\",\r\n    \"secretKey\": \"{{cert-manager-password}}\"\r\n  },\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"version\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/authmanager/authenticate/clientidsecretkey",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"authmanager",
+								"authenticate",
+								"clientidsecretkey"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "download-ida-certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = JSON.stringify(jsonData.response.certificate);\r",
+									"const unquoted = data.replace(/\"/g, \"\");\r",
+									"if (pm.environment.get('cert-reference-id') == pm.environment.get('partner-kc-username')){\r",
+									"  pm.environment.set(\"leaf-certificate\", unquoted);    \r",
+									"}\r",
+									"else{\r",
+									"  pm.environment.set(\"ca-certificate\", unquoted);\r",
+									"}\r",
+									"console.log(unquoted);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/idauthentication/v1/internal/getCertificate?applicationId={{cert-application-id}}&referenceId={{cert-reference-id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"idauthentication",
+								"v1",
+								"internal",
+								"getCertificate"
+							],
+							"query": [
+								{
+									"key": "applicationId",
+									"value": "{{cert-application-id}}"
+								},
+								{
+									"key": "referenceId",
+									"value": "{{cert-reference-id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "download-resident-certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = JSON.stringify(jsonData.response.certificate);\r",
+									"const unquoted = data.replace(/\"/g, \"\");\r",
+									"pm.environment.set(\"ca-certificate\",unquoted);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/v1/keymanager/getCertificate?applicationId={{cert-application-id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"keymanager",
+								"getCertificate"
+							],
+							"query": [
+								{
+									"key": "applicationId",
+									"value": "{{cert-application-id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "download-mpartner-default-resident-certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = JSON.stringify(jsonData.response.certificate);\r",
+									"const unquoted = data.replace(/\"/g, \"\");\r",
+									"pm.environment.set(\"leaf-certificate\",unquoted);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/v1/keymanager/getCertificate?applicationId={{cert-application-id}}&referenceId={{cert-reference-id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"keymanager",
+								"getCertificate"
+							],
+							"query": [
+								{
+									"key": "applicationId",
+									"value": "{{cert-application-id}}"
+								},
+								{
+									"key": "referenceId",
+									"value": "{{cert-reference-id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "cert_upload",
+			"item": [
+				{
+					"name": "authenticate-to-upload-certs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"userName\": \"{{partner-manager-username}}\",\r\n    \"password\": \"{{partner-manager-password}}\",\r\n    \"appId\": \"{{application-id}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/authmanager/authenticate/useridPwd",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"authmanager",
+								"authenticate",
+								"useridPwd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload-ca-certificate",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"certificateData\": \"{{ca-certificate}}\",\r\n    \"partnerDomain\": \"{{partner-domain}}\"\r\n  },\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"version\": \"string\"\r\n  }\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners/certificate/ca/upload",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners",
+								"certificate",
+								"ca",
+								"upload"
+							]
+						},
+						"description": "Here It is assumed that the Partner will provide MOSIP with the three certificates, namely ca certificate, intermediate certificate, and partner certificate ."
+					},
+					"response": []
+				},
+				{
+					"name": "upload-intermediate-ca-certificate",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"certificateData\": \"{{intermediate-cert}}\",\r\n    \"partnerDomain\": \"{{partner-domain}}\"\r\n  },\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"version\": \"string\"\r\n  }\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners/certificate/ca/upload",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners",
+								"certificate",
+								"ca",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload-leaf-certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = JSON.stringify(jsonData.response.signedCertificateData);\r",
+									"const unquoted = data.replace(/\"/g, \"\");\r",
+									"pm.environment.set(\"signed-leaf-certificate\",unquoted);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"certificateData\": \"{{leaf-certificate}}\",\r\n    \"partnerDomain\": \"{{partner-domain}}\",\r\n    \"partnerId\": \"{{partner-kc-username}}\"\r\n  },\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"version\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners/certificate/upload",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners",
+								"certificate",
+								"upload"
+							]
+						},
+						"description": "The partner cert will be signed back and shared with the response as well ."
+					},
+					"response": []
+				},
+				{
+					"name": "upload-signed-leaf-certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"applicationId\": \"{{cert-application-id}}\",\r\n    \"certificateData\": \"{{signed-leaf-certificate}}\",\r\n    \"referenceId\": \"{{cert-reference-id}}\"\r\n  },\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"version\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/idauthentication/v1/internal/uploadCertificate",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"idauthentication",
+								"v1",
+								"internal",
+								"uploadCertificate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload-signed-leaf-certifcate-to-keymanager",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"applicationId\": \"{{cert-application-id}}\",\r\n    \"certificateData\":{{signed-leaf-certificate}},\r\n    \"referenceId\": \"{{cert-reference-id}}\"\r\n  },\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"version\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/keymanager/uploadCertificate",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"keymanager",
+								"uploadCertificate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload-other-domain-certificate-to-keymanager",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"applicationId\": \"{{cert-application-id}}\",\r\n    \"referenceId\": \"{{cert-reference-id}}\",\r\n    \"certificateData\": {{leaf-certificate}}\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/keymanager/uploadOtherDomainCertificate",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"keymanager",
+								"uploadOtherDomainCertificate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "partner_request_for_mapping_partner_to_policy",
+			"item": [
+				{
+					"name": "authenticate-as-partner_to_request_policy_mapping",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"userName\": \"{{partner-kc-username}}\",\r\n    \"password\": \"{{partner-kc-userpassword}}\",\r\n    \"appId\": \"{{application-id}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/authmanager/authenticate/useridPwd",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"authmanager",
+								"authenticate",
+								"useridPwd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "partner_request_mapping_to_policyname",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('adding apikeyrequestID',function(){\r",
+									"    const {response} =pm.response.json();\r",
+									"    pm.environment.set('partner-mapping-key',response.mappingkey);\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"policyName\": \"{{policy-name}}\",\r\n    \"useCaseDescription\": \"mapping partner to policy name\"\r\n  },\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"version\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}/policy/map",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners",
+								"{{partner-kc-username}}",
+								"policy",
+								"map"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "partner_manager_approval_activity",
+			"item": [
+				{
+					"name": "authenticate-as-partner-manager",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"\",\n  \"version\": \"LTS\",\n  \"requesttime\":\"{{request-time}}\",\n  \"metadata\": {},\n  \"request\": {\n    \"userName\":\"{{partner-manager-username}}\",\n    \"password\":\"{{partner-manager-password}}\",\n    \"appId\":\"{{application-id}}\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/authmanager/authenticate/useridPwd",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"authmanager",
+								"authenticate",
+								"useridPwd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "adding-bioextractors-for-partner",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"id\": \"string\",\r\n\t\"metadata\": {},\r\n\t\"request\": {\r\n\t\t\"extractors\": [{\r\n\t\t\t\t\"attributeName\": \"photo\",\r\n\t\t\t\t\"biometric\": \"face\",\r\n\t\t\t\t\"extractor\": {\r\n\t\t\t\t\t\"provider\": \"t5-face-lowres\",\r\n\t\t\t\t\t\"version\": \"1.1\"\r\n\t\t\t\t}\r\n\t\t\t},\r\n\t\t\t{\r\n\t\t\t\t\"attributeName\": \"face\",\r\n\t\t\t\t\"biometric\": \"face\",\r\n\t\t\t\t\"extractor\": {\r\n\t\t\t\t\t\"provider\": \"dlib\",\r\n\t\t\t\t\t\"version\": \"3.2\"\r\n\t\t\t\t}\r\n\t\t\t}\r\n\t\t]\r\n\t},\r\n\t\"requesttime\": \"{{request-time}}\",\r\n\t\"version\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}/bioextractors/{{policy-id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners",
+								"{{partner-kc-username}}",
+								"bioextractors",
+								"{{policy-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "approve-partner-mapping-to-policy",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"status\": \"Approved\"\r\n  },\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"version\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners/policy/{{partner-mapping-key}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners",
+								"policy",
+								"{{partner-mapping-key}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "mapping-partner-to-policy-credential-type",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}/credentialtype/{{credential-type}}/policies/{{policy-name}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners",
+								"{{partner-kc-username}}",
+								"credentialtype",
+								"{{credential-type}}",
+								"policies",
+								"{{policy-name}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-the-MISP-license-key-for-partner",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('created',function(){\r",
+									"    const {response} =pm.response.json();\r",
+									"    pm.environment.set('misp-license-key',response.licenseKey);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"providerId\": \"{{partner-kc-username}}\"\r\n  },\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"version\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/misps",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"misps"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "request_for_partner_api_key",
+			"item": [
+				{
+					"name": "authenticate-as-partner-for-api-key",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"userName\": \"{{partner-kc-username}}\",\r\n    \"password\": \"{{partner-kc-userpassword}}\",\r\n    \"appId\": \"{{application-id}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/authmanager/authenticate/useridPwd",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"authmanager",
+								"authenticate",
+								"useridPwd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "request-for-partner-apikey",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('getting apikey',function(){\r",
+									"    const {response} =pm.response.json();\r",
+									"    pm.environment.set('partner-api-key',response.apiKey);\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"policyName\": \"{{policy-name}}\",\r\n    \"label\": \"{{partner-kc-userid}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}/generate/apikey",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners",
+								"{{partner-kc-username}}",
+								"generate",
+								"apikey"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
