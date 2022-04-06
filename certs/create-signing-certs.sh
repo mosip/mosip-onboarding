@@ -43,17 +43,17 @@ else
   mkdir -p $cert_path
   ## certificate authority
   echo "==================== Creating CA certificate"
-  openssl genrsa -out $cert_path/$partner_name-RootCA.key 4096
-  openssl req -x509 -new -key $cert_path/$partner_name-RootCA.key -sha256 -days 1825 -out $cert_path/$partner_name-RootCA.pem -config $path/certs/root-openssl.cnf
+  openssl genrsa -out $cert_path/RootCA.key 4096
+  openssl req -x509 -new -key $cert_path/RootCA.key -sha256 -days 1825 -out $cert_path/RootCA.pem -config $path/certs/root-openssl.cnf
 
 
 ##Partner certificate
   echo "==================== Creating partner certificate"
-  openssl genrsa -out $cert_path/$partner_name-Client.key 4096
-  openssl req -new -key $cert_path/$partner_name-Client.key -out $cert_path/$partner_name-Client.csr -config $path/certs/client-openssl.cnf
-  openssl x509 -req -days 1825 -extensions v3_req -extfile $path/certs/client-openssl.cnf -in $cert_path/$partner_name-Client.csr -CA $cert_path/$partner_name-RootCA.pem -CAkey $cert_path/$partner_name-RootCA.key -CAcreateserial -out $cert_path/$partner_name-Client.pem
+  openssl genrsa -out $cert_path/Client.key 4096
+  openssl req -new -key $cert_path/Client.key -out $cert_path/Client.csr -config $path/certs/client-openssl.cnf
+  openssl x509 -req -days 1825 -extensions v3_req -extfile $path/certs/client-openssl.cnf -in $cert_path/Client.csr -CA $cert_path/RootCA.pem -CAkey $cert_path/RootCA.key -CAcreateserial -out $cert_path/Client.pem
 
-  openssl pkcs12 -export -in $cert_path/$partner_name-Client.pem -inkey $cert_path/$partner_name-Client.key -out $cert_path/$partner_name-keystore.p12 -name $partner_name -password pass:$keystore_passowrd
+  openssl pkcs12 -export -in $cert_path/Client.pem -inkey $cert_path/Client.key -out $cert_path/keystore.p12 -name $partner_name -password pass:$keystore_passowrd
 
   echo "Cert generation complete"$'\n'
 
