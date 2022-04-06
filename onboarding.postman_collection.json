@@ -686,14 +686,12 @@
 									"var jsonData = JSON.parse(responseBody);\r",
 									"var data = JSON.stringify(jsonData.response.certificate);\r",
 									"const unquoted = data.replace(/\"/g, \"\");\r",
-									"if (pm.environment.get('cert-reference-id') == pm.environment.get('partner-kc-username')){\r",
+									"if (pm.environment.get('cert-reference-id') == pm.environment.get('partner-kc-username')|| 'maprtner-default-auth'||'CRED_SERVICE'){\r",
 									"  pm.environment.set(\"leaf-certificate\", unquoted);    \r",
 									"}\r",
 									"else{\r",
 									"  pm.environment.set(\"ca-certificate\", unquoted);\r",
-									"}\r",
-									"console.log(unquoted);\r",
-									""
+									"}"
 								],
 								"type": "text/javascript"
 							}
@@ -737,7 +735,7 @@
 					"response": []
 				},
 				{
-					"name": "download-resident-certificate",
+					"name": "download-ca-certificate-from-keymanager",
 					"event": [
 						{
 							"listen": "test",
@@ -786,7 +784,7 @@
 					"response": []
 				},
 				{
-					"name": "download-mpartner-default-resident-certificate",
+					"name": "download-leaf-certificate-from-keymanager",
 					"event": [
 						{
 							"listen": "test",
