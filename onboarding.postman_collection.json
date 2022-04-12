@@ -687,7 +687,7 @@
 									"var data = JSON.stringify(jsonData.response.certificate);\r",
 									"const unquoted = data.replace(/\"/g, \"\");\r",
 									"var certId = pm.environment.get('cert-reference-id');\r",
-                                    "if (certId == pm.environment.get('partner-kc-username') || certId == 'maprtner-default-auth' || certId == 'CRED_SERVICE') {\r",
+                                    "if (certId == pm.environment.get('partner-kc-username') || certId == 'mpartner-default-auth' || certId == 'CRED_SERVICE') {\r",
 									"  pm.environment.set(\"leaf-certificate\", unquoted);\r",
 									"}\r",
 									"else{\r",
