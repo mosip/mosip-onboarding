@@ -1097,7 +1097,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"applicationId\": \"{{cert-application-id}}\",\r\n    \"certificateData\":{{signed-leaf-certificate}},\r\n    \"referenceId\": \"{{cert-reference-id}}\"\r\n  },\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"version\": \"string\"\r\n}",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"applicationId\": \"{{cert-application-id}}\",\r\n    \"certificateData\": \"{{signed-leaf-certificate}}\",\r\n    \"referenceId\": \"{{cert-reference-id}}\"\r\n  },\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"version\": \"string\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1146,6 +1146,54 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"applicationId\": \"{{cert-application-id}}\",\r\n    \"referenceId\": \"{{cert-reference-id}}\",\r\n    \"certificateData\": {{leaf-certificate}}\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/keymanager/uploadOtherDomainCertificate",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"keymanager",
+								"uploadOtherDomainCertificate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload-ida-cred-cert-to-keymanager",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"applicationId\": \"{{cert-application-id}}\",\r\n    \"referenceId\": \"PUBLIC_KEY\",\r\n    \"certificateData\": \"{{leaf-certificate}}\"\r\n  }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
