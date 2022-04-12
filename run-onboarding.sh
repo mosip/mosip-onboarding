@@ -2,7 +2,7 @@
 
 PROP_FILE=./onboarding.properties
 function prop {
-    grep "${1}" ${PROP_FILE}|cut -d'=' -f2
+    grep "${1}=" ${PROP_FILE}|cut -d'=' -f2
 }
 
 mkdir -p $(prop 'report_dir') $(prop 'tmp_dir')
