@@ -9,9 +9,10 @@ DATE=`date -u +%FT%T.%3NZ`
 ENV_URL=
 KEYCLOAK_URL=
 KEYCLOAK_ADMIN_USERNAME=admin
-KEYCLOAK_ADMIN_PASSWORD=
 CERT_MANAGER=mosip-ida-client
-CERT_MANAGER_PASSWORD=
+# Export these on command line
+#KEYCLOAK_ADMIN_PASSWORD=
+#CERT_MANAGER_PASSWORD=
 
 #--env-var cert-manager-username=mosip-partnermanager-client \
 #--env-var cert-manager-password= \
