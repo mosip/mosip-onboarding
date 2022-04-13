@@ -1,20 +1,15 @@
 #!/bin/sh
 # Script to upload all default certificates for a sandbox setup. The following are uploaded:
 # Export these on command line
-# KEYCLOAK_ADMIN_PASSWORD=
 # CERT_MANAGER_PASSWORD=
 # Usage: ./default.sh
 # See HTML reports under ./reports folder
 
-mydir=`pwd`
+MYDIR=`pwd`
 DATE=`date -u +%FT%T.%3NZ`
 URL=https://api-internal.soil.mosip.net
-ENV_URL=
-KEYCLOAK_URL=
-KEYCLOAK_ADMIN_USERNAME=admin
 CERT_MANAGER=mosip-deployment-client
 # Export these on command line
-#KEYCLOAK_ADMIN_PASSWORD=
 #CERT_MANAGER_PASSWORD=
 
 upload_ida_root_cert() {
@@ -109,7 +104,7 @@ upload_resident_cert() {
 }
 upload_print_cert() {
     echo "Uploading mpartner-default-print cert"
-    root_cert_path="$mydir/certs/print/root-ca-inline.pem"
+    root_cert_path="$MYDIR/certs/print/root-ca-inline.pem"
     partner_cert_path="$mydir/certs/print/client-inline.pem"
     root_ca_cert=`awk '{ print $0 }' $root_cert_path`
     partner_cert=`awk '{ print $0 }' $partner_cert_path`
@@ -131,8 +126,8 @@ upload_print_cert() {
 
 upload_abis_cert () {
     echo "Uploading mpartner-default-abis cert"
-    root_cert_path="$mydir/certs/abis/root-ca-inline.pem"
-    partner_cert_path="$mydir/certs/abis/client-inline.pem"
+    root_cert_path="$MYDIR/certs/abis/root-ca-inline.pem"
+    partner_cert_path="$MYDIR/certs/abis/client-inline.pem"
     root_ca_cert=`awk '{ print $0 }' $root_cert_path`
     partner_cert=`awk '{ print $0 }' $partner_cert_path`
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json \
@@ -151,6 +146,7 @@ upload_abis_cert () {
     -r htmlextra --reporter-htmlextra-export ./reports/abis.html --reporter-htmlextra-showEnvironmentData 
 }
 
+echo Uploading
 upload_ida_root_cert
 upload_ida_cert
 upload_ida_partner_cert

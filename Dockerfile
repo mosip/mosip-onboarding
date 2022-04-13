@@ -1,10 +1,8 @@
 from node:latest
-RUN apt-get update
-RUN apt-get install -y nginx
 RUN npm install -g npm
 RUN npm install -g newman
 RUN npm install -g newman newman-reporter-htmlextra
-
+RUN npm install -g http-server 
 
 ARG container_user=mosip
 ARG container_user_group=mosip
