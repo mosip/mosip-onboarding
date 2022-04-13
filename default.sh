@@ -122,8 +122,31 @@ upload_print() {
     -r htmlextra --reporter-htmlextra-export ./reports/print.html --reporter-htmlextra-showEnvironmentData 
 }
 
-upload_resident
-upload_print
+upload_abis() {
+    echo "Uploading mpartner-default-abis cert"
+    root_cert_path="$mydir/certs/abis/root-ca-inline.pem"
+    partner_cert_path="$mydir/certs/abis/client-inline.pem"
+    root_ca_cert=`awk '{ print $0 }' $root_cert_path`
+    partner_cert=`awk '{ print $0 }' $partner_cert_path`
+    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json \
+    --env-var url=$URL \
+    --env-var request-time=$DATE \
+    --env-var cert-manager-username=$CERT_MANAGER \
+    --env-var cert-manager-password=$CERT_MANAGER_PASSWORD \
+    --env-var partner-kc-username=mpartner-default-abis \
+    --env-var application-id=ida \
+    --env-var partner-domain=AUTH \
+    --env-var ca-certificate="$root_ca_cert" \
+    --env-var leaf-certificate="$partner_cert" \
+    --folder authenticate-as-cert-manager \
+    --folder upload-ca-certificate \
+    --folder upload-leaf-certificate \
+    -r htmlextra --reporter-htmlextra-export ./reports/abis.html --reporter-htmlextra-showEnvironmentData 
+}
+
+#upload_resident
+#upload_print
+upload_abis
 
 #
 #echo "uploading mpartner default abis cert" $'\n'
