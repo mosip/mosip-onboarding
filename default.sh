@@ -105,7 +105,7 @@ upload_resident_cert() {
 upload_print_cert() {
     echo "Uploading mpartner-default-print cert"
     root_cert_path="$MYDIR/certs/print/root-ca-inline.pem"
-    partner_cert_path="$mydir/certs/print/client-inline.pem"
+    partner_cert_path="$MYDIR/certs/print/client-inline.pem"
     root_ca_cert=`awk '{ print $0 }' $root_cert_path`
     partner_cert=`awk '{ print $0 }' $partner_cert_path`
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json \

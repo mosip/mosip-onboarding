@@ -4,7 +4,10 @@
 This repository contains Postman collection to onboard partners on to MOSIP. 
 
 * `run-onboard.sh`:  On board any partner.
-* `defult.sh`: On board default partners that are required to run a sandbox.  
+* `default.sh`: On board default partners that are required to run a sandbox.  
+
+## Docker
+Docker to run `default.sh` is created to facilitate easy onboarding during installion. Refer `docker-build.sh` and `docker-run.sh`.  The scripts assume a Keycloak client `mosip-deployment-client` with necessary roles. Use this docker while isntall MOSIP on Kubernetes. The docker runs an HTTP server to view the reports.
 
 ## License
 This project is licensed under the terms of [Mozilla Public License 2.0](LICENSE).

@@ -21,6 +21,7 @@ RUN chown -R ${container_user}:${container_user} /home/${container_user}
 USER ${container_user_uid}:${container_user_gid}
 
 WORKDIR  /home/${container_user}
+COPY --chown=${container_user}:${container_user} certs/ ./certs/
 COPY onboarding.postman_collection.json .
 COPY default.sh .
 COPY onboarding.postman_environment.json .
