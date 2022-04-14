@@ -146,7 +146,6 @@ upload_abis_cert () {
     -r htmlextra --reporter-htmlextra-export ./reports/abis.html --reporter-htmlextra-showEnvironmentData 
 }
 
-echo Uploading
 upload_ida_root_cert
 upload_ida_cert
 upload_ida_partner_cert
