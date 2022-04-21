@@ -3,7 +3,7 @@
 # This is reference script.
 
 path=$1
-PROP_FILE=./onboarding.properties
+PROP_FILE=$path/onboarding.properties
 
 function prop {
     grep "${1}" ${PROP_FILE}|cut -d'=' -f2
