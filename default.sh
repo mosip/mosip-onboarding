@@ -7,9 +7,9 @@
 
 MYDIR=`pwd`
 DATE=`date -u +%FT%T.%3NZ`
-URL=https://api-internal.soil.mosip.net
 CERT_MANAGER=mosip-deployment-client
 # Export these on command line
+#URL=https://api-internal.sandbox.xyz.net
 #CERT_MANAGER_PASSWORD=
 
 upload_ida_root_cert() {
