@@ -6,7 +6,7 @@ path=$1
 PROP_FILE=$path/onboarding.properties
 
 function prop {
-    grep "${1}" ${PROP_FILE}|cut -d'=' -f2
+    grep "${1}=" ${PROP_FILE}|cut -d'=' -f2
 }
 
 partner_name=$(prop 'partner-kc-username')
