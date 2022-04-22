@@ -106,7 +106,7 @@ function create_partner() {
 
     echo "uploading root cert" $'\n'
     jq '.values |= map(if .key=="cert-application-id" then (.value="ROOT") else . end)' onboarding.postman_environment.json > $(prop 'tmp_dir')/tmp.json && mv $(prop 'tmp_dir')/tmp.json onboarding.postman_environment.json
-    jq '.values |= map(if .key=="cert-reference-id" then (.value="NULL") else . end)' onboarding.postman_environment.json > $(prop 'tmp_dir')/tmp.json && mv $(prop 'tmp_dir')/tmp.json onboarding.postman_environment.json
+    jq '.values |= map(if .key=="cert-reference-id" then (.value="") else . end)' onboarding.postman_environment.json > $(prop 'tmp_dir')/tmp.json && mv $(prop 'tmp_dir')/tmp.json onboarding.postman_environment.json
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --export-environment $env_temp_file/onboarding.postman_environment.json \
     --folder authenticate-to-download-certs \
     --folder download-ida-certificate \
@@ -132,7 +132,7 @@ function create_partner() {
     --folder authenticate-to-download-certs \
     --folder download-ida-certificate \
     --folder upload-leaf-certificate \
-    --folder upload-signed-leaf-certifcate-to-keymanager \
+    --folder upload-signed-leaf-certificate \
     -r htmlextra --reporter-htmlextra-export $(prop 'report_dir')/mpartner-default-auth.html
     rm $env_temp_file/*
 
