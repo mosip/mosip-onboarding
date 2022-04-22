@@ -1,6 +1,7 @@
 #!/bin/sh
 # Script to upload all default certificates for a sandbox setup. The following are uploaded:
-# Export these on command line
+# Export these environment variables on command line
+# URL=
 # CERT_MANAGER_PASSWORD=
 # Usage: ./default.sh
 # See HTML reports under ./reports folder
@@ -8,9 +9,8 @@
 MYDIR=`pwd`
 DATE=`date -u +%FT%T.%3NZ`
 CERT_MANAGER=mosip-deployment-client
-# Export these on command line
-#URL=https://api-internal.sandbox.xyz.net
-#CERT_MANAGER_PASSWORD=
+#URL=<export this env variable on command line>
+#CERT_MANAGER_PASSWORD=<export this env variable on command line>
 
 upload_ida_root_cert() {
     echo "Uploading ida root cert" 
