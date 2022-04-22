@@ -2,7 +2,7 @@
 
 PROP_FILE=./onboarding.properties
 function prop {
-    grep "${1}" ${PROP_FILE}|cut -d'=' -f2
+    grep "${1}=" ${PROP_FILE}|cut -d'=' -f2
 }
 
 mkdir -p $(prop 'report_dir') $(prop 'tmp_dir')
@@ -39,8 +39,8 @@ function update_props() {
     cert_manager_username=$(prop 'cert-manager-username')
     cert_manager_password=$(prop 'cert-manager-password')
 
-    root_cert_path="$mydir/certs/$partner_kc_username/RootCA.pem"
-    client_cert_path="$mydir/certs/$partner_kc_username/Client.pem"
+    root_cert_path="$mydir/certs/$partner_kc_username/root-ca.pem"
+    client_cert_path="$mydir/certs/$partner_kc_username/client.pem"
 
 #
     echo "Copying properties to env variables."$'\n'
@@ -106,7 +106,7 @@ function create_partner() {
 
     echo "uploading root cert" $'\n'
     jq '.values |= map(if .key=="cert-application-id" then (.value="ROOT") else . end)' onboarding.postman_environment.json > $(prop 'tmp_dir')/tmp.json && mv $(prop 'tmp_dir')/tmp.json onboarding.postman_environment.json
-    jq '.values |= map(if .key=="cert-reference-id" then (.value="NULL") else . end)' onboarding.postman_environment.json > $(prop 'tmp_dir')/tmp.json && mv $(prop 'tmp_dir')/tmp.json onboarding.postman_environment.json
+    jq '.values |= map(if .key=="cert-reference-id" then (.value="") else . end)' onboarding.postman_environment.json > $(prop 'tmp_dir')/tmp.json && mv $(prop 'tmp_dir')/tmp.json onboarding.postman_environment.json
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --export-environment $env_temp_file/onboarding.postman_environment.json \
     --folder authenticate-to-download-certs \
     --folder download-ida-certificate \
@@ -132,7 +132,7 @@ function create_partner() {
     --folder authenticate-to-download-certs \
     --folder download-ida-certificate \
     --folder upload-leaf-certificate \
-    --folder upload-signed-leaf-certifcate-to-keymanager \
+    --folder upload-signed-leaf-certificate \
     -r htmlextra --reporter-htmlextra-export $(prop 'report_dir')/mpartner-default-auth.html
     rm $env_temp_file/*
 
@@ -166,13 +166,13 @@ function create_partner() {
     rm $env_temp_file/*
 
     echo "uploading mpartner default print cert" $'\n'
-    root_cert_path="$mydir/certs/print/RootCA.pem"
-    client_cert_path="$mydir/certs/print/Client.pem"
+    root_cert_path="$mydir/certs/print/root-ca.pem"
+    client_cert_path="$mydir/certs/print/client.pem"
     RootCACert=$(awk 'NF {sub(/\r/, ""); printf "%s\\r\\n",$0;}' $root_cert_path)
     PartnerCert=$(awk 'NF {sub(/\r/, ""); printf "%s\\r\\n",$0;}' $client_cert_path)
     jq '.values |= map(if .key=="partner-kc-username" then (.value="mpartner-default-print") else . end)' onboarding.postman_environment.json > $(prop 'tmp_dir')/tmp.json && mv $(prop 'tmp_dir')/tmp.json onboarding.postman_environment.json
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --export-environment $env_temp_file/onboarding.postman_environment.json \
-    --folder authenticate-to-upload-certs \
+    --folder authenticate-to-download-certs \
     --env-var ca-certificate="$RootCACert" \
     --env-var leaf-certificate="$PartnerCert" \
     --folder upload-ca-certificate \
@@ -181,13 +181,13 @@ function create_partner() {
     rm $env_temp_file/*
 
     echo "uploading mpartner default abis cert" $'\n'
-    root_cert_path="$mydir/certs/abis/RootCA.pem"
-    client_cert_path="$mydir/certs/abis/Client.pem"
+    root_cert_path="$mydir/certs/abis/root-ca.pem"
+    client_cert_path="$mydir/certs/abis/client.pem"
     RootCACert=$(awk 'NF {sub(/\r/, ""); printf "%s\\r\\n",$0;}' $root_cert_path)
     PartnerCert=$(awk 'NF {sub(/\r/, ""); printf "%s\\r\\n",$0;}' $client_cert_path)
     jq '.values |= map(if .key=="partner-kc-username" then (.value="mpartner-default-abis") else . end)' onboarding.postman_environment.json > $(prop 'tmp_dir')/tmp.json && mv $(prop 'tmp_dir')/tmp.json onboarding.postman_environment.json
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --export-environment $env_temp_file/onboarding.postman_environment.json \
-    --folder authenticate-to-upload-certs \
+    --folder authenticate-to-download-certs \
     --env-var ca-certificate="$RootCACert" \
     --env-var leaf-certificate="$PartnerCert" \
     --folder upload-ca-certificate \
