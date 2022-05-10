@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "fe5ada00-e755-4b49-851e-dffff416025a",
+		"_postman_id": "a4ad28b4-583f-484c-a483-a9a6c488aa0e",
 		"name": "onboarding",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -321,7 +321,10 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									""
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = jsonData.response.token;\r",
+									"//console.log(data);\r",
+									"pm.environment.set(\"authtoken\",data);"
 								],
 								"type": "text/javascript"
 							}
@@ -339,10 +342,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"id\": \"\",\n  \"version\": \"LTS\",\n  \"requesttime\":\"{{request-time}}\",\n  \"metadata\": {},\n  \"request\": {\n    \"userName\":\"{{partner-manager-username}}\",\n    \"password\":\"{{partner-manager-password}}\",\n    \"appId\":\"{{application-id}}\"\n  }\n}"
+							"raw": "{\n  \"id\": \"\",\n  \"version\": \"LTS\",\n  \"requesttime\":\"{{request-time}}\",\n  \"metadata\": {},\n  \"request\": {\n    \"userName\":\"{{partner-manager-username}}\",\n    \"password\":\"{{partner-manager-password}}\",\n    \"appId\":\"{{application-id}}\",\n    \"clientId\": \"{{module-clientid}}\",\n    \"clientSecret\": \"{{module-secretkey}}\"\n  }\n}"
 						},
 						"url": {
-							"raw": "{{url}}/v1/authmanager/authenticate/useridPwd",
+							"raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
 							"host": [
 								"{{url}}"
 							],
@@ -350,6 +353,7 @@
 								"v1",
 								"authmanager",
 								"authenticate",
+								"internal",
 								"useridPwd"
 							]
 						}
@@ -383,6 +387,26 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -440,6 +464,26 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -479,6 +523,26 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"url": {
@@ -511,7 +575,10 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									""
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = jsonData.response.token;\r",
+									"//console.log(data);\r",
+									"pm.environment.set(\"authtoken\",data);"
 								],
 								"type": "text/javascript"
 							}
@@ -531,7 +598,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"userName\": \"{{partner-kc-username}}\",\r\n    \"password\": \"{{partner-kc-userpassword}}\",\r\n    \"appId\": \"{{application-id}}\"\r\n  }\r\n}",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"userName\": \"{{partner-kc-username}}\",\r\n    \"password\": \"{{partner-kc-userpassword}}\",\r\n    \"appId\": \"{{application-id}}\",\r\n    \"clientId\": \"{{module-clientid}}\",\r\n    \"clientSecret\": \"{{module-secretkey}}\"\r\n  }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -539,7 +606,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/v1/authmanager/authenticate/useridPwd",
+							"raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
 							"host": [
 								"{{url}}"
 							],
@@ -547,6 +614,7 @@
 								"v1",
 								"authmanager",
 								"authenticate",
+								"internal",
 								"useridPwd"
 							]
 						}
@@ -577,6 +645,26 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -736,7 +824,7 @@
 									"var data = JSON.stringify(jsonData.response.certificate);\r",
 									"const unquoted = data.replace(/\"/g, \"\");\r",
 									"var certId = pm.environment.get('cert-reference-id');\r",
-                                    "if (certId == pm.environment.get('partner-kc-username') || certId == 'mpartner-default-auth' || certId == 'CRED_SERVICE') {\r",
+									"if (certId == pm.environment.get('partner-kc-username') || certId == 'mpartner-default-auth' || certId == 'CRED_SERVICE') {\r",
 									"  pm.environment.set(\"leaf-certificate\", unquoted);\r",
 									"}\r",
 									"else{\r",
@@ -898,7 +986,10 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									""
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = jsonData.response.token;\r",
+									"//console.log(data);\r",
+									"pm.environment.set(\"authtoken\",data);"
 								],
 								"type": "text/javascript"
 							}
@@ -918,7 +1009,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"userName\": \"{{partner-manager-username}}\",\r\n    \"password\": \"{{partner-manager-password}}\",\r\n    \"appId\": \"{{application-id}}\"\r\n  }\r\n}",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"userName\": \"{{partner-manager-username}}\",\r\n    \"password\": \"{{partner-manager-password}}\",\r\n    \"appId\": \"{{application-id}}\",\r\n    \"clientId\": \"{{module-clientid}}\",\r\n    \"clientSecret\": \"{{module-secretkey}}\"\r\n  }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -926,7 +1017,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/v1/authmanager/authenticate/useridPwd",
+							"raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
 							"host": [
 								"{{url}}"
 							],
@@ -934,6 +1025,7 @@
 								"v1",
 								"authmanager",
 								"authenticate",
+								"internal",
 								"useridPwd"
 							]
 						}
@@ -954,6 +1046,26 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -997,6 +1109,26 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -1051,6 +1183,26 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -1142,6 +1294,26 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -1190,6 +1362,26 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -1275,7 +1467,10 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									""
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = jsonData.response.token;\r",
+									"//console.log(data);\r",
+									"pm.environment.set(\"authtoken\",data);"
 								],
 								"type": "text/javascript"
 							}
@@ -1295,7 +1490,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"userName\": \"{{partner-kc-username}}\",\r\n    \"password\": \"{{partner-kc-userpassword}}\",\r\n    \"appId\": \"{{application-id}}\"\r\n  }\r\n}",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"userName\": \"{{partner-kc-username}}\",\r\n    \"password\": \"{{partner-kc-userpassword}}\",\r\n    \"appId\": \"{{application-id}}\",\r\n    \"clientId\": \"{{module-clientid}}\",\r\n    \"clientSecret\": \"{{module-secretkey}}\"\r\n  }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1303,7 +1498,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/v1/authmanager/authenticate/useridPwd",
+							"raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
 							"host": [
 								"{{url}}"
 							],
@@ -1311,6 +1506,7 @@
 								"v1",
 								"authmanager",
 								"authenticate",
+								"internal",
 								"useridPwd"
 							]
 						}
@@ -1344,6 +1540,26 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -1393,7 +1609,10 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									""
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = jsonData.response.token;\r",
+									"//console.log(data);\r",
+									"pm.environment.set(\"authtoken\",data);"
 								],
 								"type": "text/javascript"
 							}
@@ -1411,10 +1630,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"id\": \"\",\n  \"version\": \"LTS\",\n  \"requesttime\":\"{{request-time}}\",\n  \"metadata\": {},\n  \"request\": {\n    \"userName\":\"{{partner-manager-username}}\",\n    \"password\":\"{{partner-manager-password}}\",\n    \"appId\":\"{{application-id}}\"\n  }\n}"
+							"raw": "{\n  \"id\": \"\",\n  \"version\": \"LTS\",\n  \"requesttime\":\"{{request-time}}\",\n  \"metadata\": {},\n  \"request\": {\n    \"userName\":\"{{partner-manager-username}}\",\n    \"password\":\"{{partner-manager-password}}\",\n    \"appId\":\"{{application-id}}\",\n    \"clientId\": \"{{module-clientid}}\",\n    \"clientSecret\": \"{{module-secretkey}}\"\n  }\n}"
 						},
 						"url": {
-							"raw": "{{url}}/v1/authmanager/authenticate/useridPwd",
+							"raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
 							"host": [
 								"{{url}}"
 							],
@@ -1422,6 +1641,7 @@
 								"v1",
 								"authmanager",
 								"authenticate",
+								"internal",
 								"useridPwd"
 							]
 						}
@@ -1442,6 +1662,26 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -1493,6 +1733,26 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -1534,6 +1794,26 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"url": {
@@ -1581,6 +1861,26 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -1618,7 +1918,10 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									""
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = jsonData.response.token;\r",
+									"//console.log(data);\r",
+									"pm.environment.set(\"authtoken\",data);"
 								],
 								"type": "text/javascript"
 							}
@@ -1638,7 +1941,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"userName\": \"{{partner-kc-username}}\",\r\n    \"password\": \"{{partner-kc-userpassword}}\",\r\n    \"appId\": \"{{application-id}}\"\r\n  }\r\n}",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{request-time}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"userName\": \"{{partner-kc-username}}\",\r\n    \"password\": \"{{partner-kc-userpassword}}\",\r\n    \"appId\": \"{{application-id}}\",\r\n    \"clientId\": \"{{module-clientid}}\",\r\n    \"clientSecret\": \"{{module-secretkey}}\"\r\n  }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1646,7 +1949,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/v1/authmanager/authenticate/useridPwd",
+							"raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
 							"host": [
 								"{{url}}"
 							],
@@ -1654,6 +1957,7 @@
 								"v1",
 								"authmanager",
 								"authenticate",
+								"internal",
 								"useridPwd"
 							]
 						}
@@ -1688,6 +1992,26 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PATCH",
 						"header": [],
 						"body": {
