@@ -60,7 +60,7 @@ upload_ida_partner_cert () {
     --folder authenticate-as-cert-manager \
     --folder download-ida-certificate \
     --folder upload-leaf-certificate \
-    --folder upload-other-domain-certificate-to-keymanager \
+    --folder upload-signed-leaf-certificate \
     -r htmlextra --reporter-htmlextra-export ./reports/ida-partner.html --reporter-htmlextra-showEnvironmentData 
 }
     
