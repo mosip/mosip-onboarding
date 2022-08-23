@@ -171,12 +171,12 @@ upload_mpartner_default_mobile_cert() {
     -r htmlextra --reporter-htmlextra-export ./reports/mpartner-default-mobile.html --reporter-htmlextra-showEnvironmentData
 }
 
-# upload_ida_root_cert
-# upload_ida_cert
-# upload_ida_partner_cert
-# upload_ida_cred_cert
-# upload_resident_cert
-# upload_print_cert
-# upload_abis_cert
+upload_ida_root_cert
+upload_ida_cert
+upload_ida_partner_cert
+upload_ida_cred_cert
+upload_resident_cert
+upload_print_cert
+upload_abis_cert
 upload_mpartner_default_mobile_cert
 
