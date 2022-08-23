@@ -1,8 +1,8 @@
 #!/bin/sh
 # Script to upload all default certificates for a sandbox setup. The following are uploaded:
 # Export these environment variables on command line
- URL=www.abcdgoogle.com
- CERT_MANAGER_PASSWORD=BMFHvivMYKt1sBC2
+#URL=
+#CERT_MANAGER_PASSWORD=
 # Usage: ./default.sh
 # See HTML reports under ./reports folder
 
