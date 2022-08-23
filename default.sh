@@ -146,6 +146,28 @@ upload_abis_cert () {
     -r htmlextra --reporter-htmlextra-export ./reports/abis.html --reporter-htmlextra-showEnvironmentData 
 }
 
+upload_mpartner_default_mobile_cert() {
+    echo "Uploading mpartner-default-mobile cert"
+    root_cert_path="$MYDIR/certs/mpartner-default-mobile/root-ca-inline.pem"
+    partner_cert_path="$MYDIR/certs/mpartner-default-mobile/client-inline.pem"
+    root_ca_cert=`awk '{ print $0 }' $root_cert_path`
+    partner_cert=`awk '{ print $0 }' $partner_cert_path`
+    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json \
+    --env-var url=$URL \
+    --env-var request-time=$DATE \
+    --env-var cert-manager-username=$CERT_MANAGER \
+    --env-var cert-manager-password=$CERT_MANAGER_PASSWORD \
+    --env-var partner-kc-username=mpartner-default-mobile \
+    --env-var application-id=ida \
+    --env-var partner-domain=AUTH \
+    --env-var ca-certificate="$root_ca_cert" \
+    --env-var leaf-certificate="$partner_cert" \
+    --folder authenticate-as-cert-manager \
+    --folder upload-ca-certificate \
+    --folder upload-leaf-certificate \
+    -r htmlextra --reporter-htmlextra-export ./reports/mpartner-default-mobile.html --reporter-htmlextra-showEnvironmentData
+}
+
 upload_ida_root_cert
 upload_ida_cert
 upload_ida_partner_cert
@@ -153,4 +175,5 @@ upload_ida_cred_cert
 upload_resident_cert
 upload_print_cert
 upload_abis_cert
+upload_mpartner_default_mobile_cert
 
