@@ -1,8 +1,8 @@
 #!/bin/sh
 # Script to upload all default certificates for a sandbox setup. The following are uploaded:
 # Export these environment variables on command line
-# URL=
-# CERT_MANAGER_PASSWORD=
+ URL=www.abcdgoogle.com
+ CERT_MANAGER_PASSWORD=BMFHvivMYKt1sBC2
 # Usage: ./default.sh
 # See HTML reports under ./reports folder
 
@@ -160,20 +160,23 @@ upload_mpartner_default_mobile_cert() {
     --env-var partner-kc-username=mpartner-default-mobile \
     --env-var application-id=ida \
     --env-var partner-domain=AUTH \
+    --env-var policy-name=mpolicy-default-mobile \
+    --env-var credential-type=vercred \
     --env-var ca-certificate="$root_ca_cert" \
     --env-var leaf-certificate="$partner_cert" \
     --folder authenticate-as-cert-manager \
     --folder upload-ca-certificate \
     --folder upload-leaf-certificate \
+    --folder mapping-partner-to-policy-credential-type \
     -r htmlextra --reporter-htmlextra-export ./reports/mpartner-default-mobile.html --reporter-htmlextra-showEnvironmentData
 }
 
-upload_ida_root_cert
-upload_ida_cert
-upload_ida_partner_cert
-upload_ida_cred_cert
-upload_resident_cert
-upload_print_cert
-upload_abis_cert
+# upload_ida_root_cert
+# upload_ida_cert
+# upload_ida_partner_cert
+# upload_ida_cred_cert
+# upload_resident_cert
+# upload_print_cert
+# upload_abis_cert
 upload_mpartner_default_mobile_cert
 
