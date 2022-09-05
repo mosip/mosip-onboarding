@@ -170,28 +170,6 @@ upload_mpartner_default_mobile_cert() {
     --folder mapping-partner-to-policy-credential-type \
     -r htmlextra --reporter-htmlextra-export ./reports/mpartner-default-mobile.html --reporter-htmlextra-showEnvironmentData
 }
-upload_mpartner-default-digitalcard_cert() {
-    echo "Uploading mpartner-default-digitalcard cert"
-    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json \
-    --env-var url=$URL \
-    --env-var request-time=$DATE \
-    --env-var cert-application-id=DIGITAL_CARD \
-    --env-var cert-reference-id=mpartner-default-digitalcard \
-    --env-var cert-manager-username=$CERT_MANAGER \
-    --env-var cert-manager-password=$CERT_MANAGER_PASSWORD \
-    --env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USER \
-    --env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
-    --env-var partner-kc-username=mpartner-default-digitalcard \
-    --env-var partner-domain=AUTH \
-    --folder authenticate-as-cert-manager \
-    --folder download-ca-certificate-from-keymanager \
-    --folder download-leaf-certificate-from-keymanager \
-    --folder upload-ca-certificate \
-    --folder upload-leaf-certificate \
-    --folder upload-signed-leaf-certifcate-to-keymanager \
-    -r htmlextra --reporter-htmlextra-export ./reports/digitalcard.html --reporter-htmlextra-showEnvironmentData
-}
-
 
  upload_ida_root_cert
  upload_ida_cert
@@ -201,5 +179,3 @@ upload_mpartner-default-digitalcard_cert() {
  upload_print_cert
  upload_abis_cert
  upload_mpartner_default_mobile_cert
- upload_mpartner-default-digitalcard_cert
-
