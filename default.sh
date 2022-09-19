@@ -170,7 +170,7 @@ upload_mpartner_default_mobile_cert() {
     --folder mapping-partner-to-policy-credential-type \
     -r htmlextra --reporter-htmlextra-export ./reports/mpartner-default-mobile.html --reporter-htmlextra-showEnvironmentData
 }
-upload_mpartner-default-digitalcard_cert() {
+upload_mpartner_default_digitalcard_cert() {
     echo "Uploading mpartner-default-digitalcard cert"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json \
     --env-var url=$URL \
@@ -201,5 +201,5 @@ upload_mpartner-default-digitalcard_cert() {
  upload_print_cert
  upload_abis_cert
  upload_mpartner_default_mobile_cert
- upload_mpartner-default-digitalcard_cert
+ upload_mpartner_default_digitalcard_cert
 
