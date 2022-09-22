@@ -1,21 +1,16 @@
 #!/bin/sh
 # Script to upload all default certificates for a sandbox setup. The following are uploaded:
 # Export these environment variables on command line
-read -p $"Do you agree to install newman and its libraries(required)? Please read docs in case of any issue. Press (y/n):  "$'\n' agree
-if [[ ("$agree" = "Y") || ("$agree" = "y") ]]; then
-   npm install -g newman -y
-   npm install -g newman-reporter-htmlextra -y
-else
-   echo "Skipping installation."$'\n'
-fi
-##URL={{base-url of the environment}}
-##CERT_MANAGER_PASSWORD={{secretkey of mosip-deployment-client}}
+#URL={{base_url of the environment}}
+#CERT_MANAGER_PASSWORD={{secretkey of mosip-deployment-client}}
 # Usage: ./default.sh
 # See HTML reports under ./reports folder
 
 MYDIR=`pwd`
 DATE=`date -u +%FT%T.%3NZ`
 CERT_MANAGER=mosip-deployment-client
+#URL=<export this env variable on command line>
+#CERT_MANAGER_PASSWORD=<export this env variable on command line>
 
 upload_ida_root_cert() {
     echo "Uploading ida root cert"
