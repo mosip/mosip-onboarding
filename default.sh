@@ -25,7 +25,7 @@ upload_ida_root_cert() {
     --folder authenticate-as-cert-manager \
     --folder download-ida-certificate \
     --folder upload-ca-certificate \
-	-r cli,htmlextra --reporter-htmlextra-export ./reports/ida-root.html
+	  -r cli,htmlextra --reporter-htmlextra-export ./reports/ida-root.html
 
 }
 
