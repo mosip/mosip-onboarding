@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "a4ad28b4-583f-484c-a483-a9a6c488aa0e",
+		"_postman_id": "d4679e7c-49f2-4efd-9d95-72ed734c4c96",
 		"name": "onboarding",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12620596"
 	},
 	"item": [
 		{
@@ -722,7 +723,9 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									""
+									"pm.test(\"Auth Successfull\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Clientid and Token combination had been validated successfully\");\r",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -771,7 +774,9 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									""
+									"pm.test(\"Auth Successfull\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Clientid and Token combination had been validated successfully\");\r",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -829,7 +834,11 @@
 									"}\r",
 									"else{\r",
 									"  pm.environment.set(\"ca-certificate\", unquoted);\r",
-									"}"
+									"}\r",
+									"\r",
+									"pm.test(\"Certificate download Successfull\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"BEGIN CERTIFICATE\");\r",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -883,6 +892,11 @@
 									"var data = JSON.stringify(jsonData.response.certificate);\r",
 									"const unquoted = data.replace(/\"/g, \"\");\r",
 									"pm.environment.set(\"ca-certificate\",unquoted);\r",
+									"\r",
+									"pm.test(\"Certificate download Successfull\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"BEGIN CERTIFICATE\");\r",
+									"});\r",
+									"\r",
 									""
 								],
 								"type": "text/javascript"
@@ -932,6 +946,10 @@
 									"var data = JSON.stringify(jsonData.response.certificate);\r",
 									"const unquoted = data.replace(/\"/g, \"\");\r",
 									"pm.environment.set(\"leaf-certificate\",unquoted);\r",
+									"\r",
+									"pm.test(\"Certificate download Successfull\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"BEGIN CERTIFICATE\");\r",
+									"});\r",
 									""
 								],
 								"type": "text/javascript"
@@ -1039,6 +1057,20 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upload Successfull or Certificate is already present in DB \", function ()\r",
+									" {\r",
+									"    responseText = pm.response.text();\r",
+									"     pm.expect(responseText).to.include.oneOf([\"Certificate already exists in store\", \"Upload Success.\"])\r",
+									" })\r",
 									""
 								],
 								"type": "text/javascript"
@@ -1167,7 +1199,11 @@
 									"var jsonData = JSON.parse(responseBody);\r",
 									"var data = JSON.stringify(jsonData.response.signedCertificateData);\r",
 									"const unquoted = data.replace(/\"/g, \"\");\r",
-									"pm.environment.set(\"signed-leaf-certificate\",unquoted);"
+									"pm.environment.set(\"signed-leaf-certificate\",unquoted);\r",
+									"\r",
+									"pm.test(\"Certificate Upload Successfull\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"BEGIN CERTIFICATE\");\r",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -1291,6 +1327,20 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Uploading mosip-signed cert back to KeyManager \", function ()\r",
+									" {\r",
+									"    responseText = pm.response.text();\r",
+									"     pm.expect(responseText).to.include(\"Upload Success\")\r",
+									" })\r",
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -1346,6 +1396,11 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"pm.test(\"Uploading mosip-signed cert back to KeyManager \", function ()\r",
+									" {\r",
+									"    responseText = pm.response.text();\r",
+									"     pm.expect(responseText).to.include(\"Upload Success\")\r",
+									" })\r",
 									""
 								],
 								"type": "text/javascript"
@@ -1414,6 +1469,11 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"pm.test(\"Uploading mosip-signed cert back to KeyManager \", function ()\r",
+									" {\r",
+									"    responseText = pm.response.text();\r",
+									"     pm.expect(responseText).to.include(\"Upload Success\")\r",
+									" })\r",
 									""
 								],
 								"type": "text/javascript"
@@ -1787,6 +1847,20 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Uploading mosip-signed cert back to KeyManager \", function ()\r",
+									" {\r",
+									"    responseText = pm.response.text();\r",
+									"     pm.expect(responseText).to.include(\"Partner, policy and credentialType mapping done successfully\")\r",
+									" })\r",
 									""
 								],
 								"type": "text/javascript"
