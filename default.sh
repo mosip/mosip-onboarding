@@ -13,8 +13,8 @@ CERT_MANAGER=mosip-deployment-client
 #CERT_MANAGER_PASSWORD=<export this env variable on command line>
 
 upload_ida_root_cert() {
-    echo "Uploading ida root cert" 
-    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json \
+    echo "Uploading ida root cert"
+    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url=$URL \
     --env-var cert-application-id=ROOT \
     --env-var cert-reference-id=  \
@@ -25,12 +25,13 @@ upload_ida_root_cert() {
     --folder authenticate-as-cert-manager \
     --folder download-ida-certificate \
     --folder upload-ca-certificate \
-    -r htmlextra --reporter-htmlextra-export ./reports/ida-root.html
+	  -r cli,htmlextra --reporter-htmlextra-export ./reports/ida-root.html
+
 }
 
 upload_ida_cert() {
     echo "Uploading ida cert"
-    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json \
+    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url=$URL \
     --env-var cert-application-id=IDA \
     --env-var cert-reference-id=  \
@@ -41,12 +42,12 @@ upload_ida_cert() {
     --folder authenticate-as-cert-manager \
     --folder download-ida-certificate \
     --folder upload-ca-certificate \
-    -r htmlextra --reporter-htmlextra-export ./reports/ida-ca.html
+    -r cli,htmlextra --reporter-htmlextra-export ./reports/ida-ca.html
 }
-    
+
 upload_ida_partner_cert () {
     echo "Uploading mpartner-default-auth cert"
-    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json \
+    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url=$URL \
     --env-var request-time=$DATE \
     --env-var cert-application-id=IDA \
@@ -61,12 +62,12 @@ upload_ida_partner_cert () {
     --folder download-ida-certificate \
     --folder upload-leaf-certificate \
     --folder upload-signed-leaf-certificate \
-    -r htmlextra --reporter-htmlextra-export ./reports/ida-partner.html --reporter-htmlextra-showEnvironmentData 
+    -r cli,htmlextra --reporter-htmlextra-export ./reports/ida-partner.html --reporter-htmlextra-showEnvironmentData
 }
-    
+
 upload_ida_cred_cert () {
     echo "Uploading ida cred cert to keymanager for zero knowledge encryption"
-    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json \
+    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url=$URL \
     --env-var request-time=$DATE \
     --env-var cert-application-id=IDA \
@@ -78,12 +79,12 @@ upload_ida_cred_cert () {
     --folder authenticate-as-cert-manager \
     --folder download-ida-certificate \
     --folder upload-ida-cred-cert-to-keymanager \
-    -r htmlextra --reporter-htmlextra-export ./reports/ida-cred.html --reporter-htmlextra-showEnvironmentData 
-} 
+    -r cli,htmlextra --reporter-htmlextra-export ./reports/ida-cred.html --reporter-htmlextra-showEnvironmentData
+}
 
 upload_resident_cert() {
     echo "Uploading mpartner-default-resident cert"
-    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json \
+    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url=$URL \
     --env-var request-time=$DATE \
     --env-var cert-application-id=RESIDENT \
@@ -100,7 +101,7 @@ upload_resident_cert() {
     --folder upload-ca-certificate \
     --folder upload-leaf-certificate \
     --folder upload-signed-leaf-certifcate-to-keymanager \
-    -r htmlextra --reporter-htmlextra-export ./reports/resident.html --reporter-htmlextra-showEnvironmentData 
+    -r cli,htmlextra --reporter-htmlextra-export ./reports/resident.html --reporter-htmlextra-showEnvironmentData
 }
 upload_print_cert() {
     echo "Uploading mpartner-default-print cert"
@@ -108,7 +109,7 @@ upload_print_cert() {
     partner_cert_path="$MYDIR/certs/print/client-inline.pem"
     root_ca_cert=`awk '{ print $0 }' $root_cert_path`
     partner_cert=`awk '{ print $0 }' $partner_cert_path`
-    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json \
+    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url=$URL \
     --env-var request-time=$DATE \
     --env-var cert-manager-username=$CERT_MANAGER \
@@ -121,7 +122,7 @@ upload_print_cert() {
     --folder authenticate-as-cert-manager \
     --folder upload-ca-certificate \
     --folder upload-leaf-certificate \
-    -r htmlextra --reporter-htmlextra-export ./reports/print.html --reporter-htmlextra-showEnvironmentData 
+    -r cli,htmlextra --reporter-htmlextra-export ./reports/print.html --reporter-htmlextra-showEnvironmentData
 }
 
 upload_abis_cert () {
@@ -130,7 +131,7 @@ upload_abis_cert () {
     partner_cert_path="$MYDIR/certs/abis/client-inline.pem"
     root_ca_cert=`awk '{ print $0 }' $root_cert_path`
     partner_cert=`awk '{ print $0 }' $partner_cert_path`
-    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json \
+    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url=$URL \
     --env-var request-time=$DATE \
     --env-var cert-manager-username=$CERT_MANAGER \
@@ -143,16 +144,15 @@ upload_abis_cert () {
     --folder authenticate-as-cert-manager \
     --folder upload-ca-certificate \
     --folder upload-leaf-certificate \
-    -r htmlextra --reporter-htmlextra-export ./reports/abis.html --reporter-htmlextra-showEnvironmentData 
+    -r cli,htmlextra --reporter-htmlextra-export ./reports/abis.html --reporter-htmlextra-showEnvironmentData
 }
-
 upload_mpartner_default_mobile_cert() {
     echo "Uploading mpartner-default-mobile cert"
     root_cert_path="$MYDIR/certs/mpartner-default-mobile/root-ca-inline.pem"
     partner_cert_path="$MYDIR/certs/mpartner-default-mobile/client-inline.pem"
     root_ca_cert=`awk '{ print $0 }' $root_cert_path`
     partner_cert=`awk '{ print $0 }' $partner_cert_path`
-    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json \
+    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url=$URL \
     --env-var request-time=$DATE \
     --env-var cert-manager-username=$CERT_MANAGER \
@@ -168,11 +168,11 @@ upload_mpartner_default_mobile_cert() {
     --folder upload-ca-certificate \
     --folder upload-leaf-certificate \
     --folder mapping-partner-to-policy-credential-type \
-    -r htmlextra --reporter-htmlextra-export ./reports/mpartner-default-mobile.html --reporter-htmlextra-showEnvironmentData
+    -r cli,htmlextra --reporter-htmlextra-export ./reports/mpartner-default-mobile.html --reporter-htmlextra-showEnvironmentData
 }
 upload_mpartner_default_digitalcard_cert() {
     echo "Uploading mpartner-default-digitalcard cert"
-    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json \
+    newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url=$URL \
     --env-var request-time=$DATE \
     --env-var cert-application-id=DIGITAL_CARD \
@@ -189,17 +189,16 @@ upload_mpartner_default_digitalcard_cert() {
     --folder upload-ca-certificate \
     --folder upload-leaf-certificate \
     --folder upload-signed-leaf-certifcate-to-keymanager \
-    -r htmlextra --reporter-htmlextra-export ./reports/digitalcard.html --reporter-htmlextra-showEnvironmentData
+    -r cli,htmlextra --reporter-htmlextra-export ./reports/digitalcard.html --reporter-htmlextra-showEnvironmentData
 }
 
-
- upload_ida_root_cert
- upload_ida_cert
- upload_ida_partner_cert
- upload_ida_cred_cert
- upload_resident_cert
- upload_print_cert
- upload_abis_cert
- upload_mpartner_default_mobile_cert
- upload_mpartner_default_digitalcard_cert
+upload_ida_root_cert
+upload_ida_cert
+upload_ida_partner_cert
+upload_ida_cred_cert
+upload_resident_cert
+upload_print_cert
+upload_abis_cert
+upload_mpartner_default_mobile_cert
+upload_mpartner_default_digitalcard_cert
 

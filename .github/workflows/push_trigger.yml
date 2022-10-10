@@ -8,6 +8,7 @@ on:
       - develop
       - 1.2.*
       - master
+      - MOSIP-23963
   
 jobs:
 
