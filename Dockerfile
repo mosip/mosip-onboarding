@@ -32,5 +32,6 @@ ENV DATE="$(date --utc +%FT%T.%3NZ)"
 ENV URL=
 ENV CERT_MANAGER=mosip-deployment-client
 ENV CERT_MANAGER_PASSWORD=
+ENV ENABLE_INSECURE=false
 
 ENTRYPOINT ["./entrypoint.sh"]
