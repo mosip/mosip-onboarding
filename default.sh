@@ -12,7 +12,7 @@ CERT_MANAGER=mosip-deployment-client
 #URL=<export this env variable on command line>
 #CERT_MANAGER_PASSWORD=<export this env variable on command line>
 
-if [ "$ENABLE_INSECURE" == "true" ]; then
+if [ "$ENABLE_INSECURE" = "true" ]; then
   INSECURE='--insecure'
 fi
 
