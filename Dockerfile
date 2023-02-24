@@ -21,8 +21,8 @@ USER ${container_user_uid}:${container_user_gid}
 
 WORKDIR  /home/${container_user}
 COPY --chown=${container_user}:${container_user} certs/ ./certs/
-COPY *.json .
-COPY *.sh .
+COPY *.json ./
+COPY *.sh ./
 
 ENV MYDIR=`pwd`
 ENV DATE="$(date --utc +%FT%T.%3NZ)"
