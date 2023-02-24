@@ -205,13 +205,19 @@ upload_mpartner_default_digitalcard_cert() {
     -r cli,htmlextra --reporter-htmlextra-export ./reports/digitalcard.html --reporter-htmlextra-showEnvironmentData
 }
 
-upload_ida_root_cert
-upload_ida_cert
-upload_ida_partner_cert
-upload_ida_cred_cert
-upload_resident_cert
-upload_print_cert
-upload_abis_cert
-upload_mpartner_default_mobile_cert
-upload_mpartner_default_digitalcard_cert
-
+if [ $MODULE = "ida" ]; then
+  upload_ida_root_cert
+  upload_ida_cert
+  upload_ida_partner_cert
+  upload_ida_cred_cert
+elif [ $MODULE = "print" ]; then
+  upload_print_cert
+elif [ $MODULE = "resident" ]; then
+  upload_resident_cert
+elif [ $MODULE = "abis" ]; then
+  upload_abis_cert
+elif [ $MODULE = "mobileid" ]; then
+  upload_mpartner_default_mobile_cert
+elif [ $MODULE = "digitalcard" ]; then
+  upload_mpartner_default_digitalcard_cert
+fi
