@@ -1,5 +1,5 @@
 FROM node:lts-alpine3.17
-RUN npm install -g npm newman newman-reporter-htmlextra
+RUN npm install -g npm@latest newman@latest newman-reporter-htmlextra@latest
 RUN apk add curl && \
     curl https://dl.min.io/client/mc/release/linux-amd64/mc -o /bin/mc && \
     chmod +x /bin/mc
