@@ -9,10 +9,11 @@
     "policies": {
         "allowAuthRequestDelegation": true,
         "allowKycRequestDelegation":true,
-        "trustBindedAuthVerificationToken": true 
+        "trustBindedAuthVerificationToken": true,
+        "allowKeyBindingDelegation":true
         },
     "policyGroupName": "{{policy-group-name}}",
-    "policyType": "Auth"
+    "policyType": "MISP"
   },
   "requesttime": "{{$isoTimestamp}}",
   "version": "LTS"
