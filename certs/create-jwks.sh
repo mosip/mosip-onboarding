@@ -31,8 +31,6 @@ curl -s -D - -o /dev/null -X "POST" \
 }' > temp.txt 2>&1 &
 
 sleep 10
-#TOKEN=$(cat -n temp.txt | sed -n '/Authorization:/,/\;.*/pI' |  sed 's/.*Authorization://i; s/$\n.*//I' | awk 'NR==1{print $1}')
-#TOKEN=$(cat -n temp.txt | grep -i Authorization: |  sed 's/.*Authorization://i; s/$\n.*//' | awk 'NR==1{print $1}')
 TOKEN=$( cat temp.txt | awk '/[aA]uthorization:/{print $2}' | sed -E 's/\n//g' | sed -E 's/\r//g')
 
 if [[ -z $TOKEN ]]; then

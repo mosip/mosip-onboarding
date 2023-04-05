@@ -286,6 +286,11 @@ onboard_relying_party_with_demo_oidc_client(){
 onboard_resident_oidc_client() {
 echo "Onboarding resident oidc client"
     sh $MYDIR/certs/create-jwks.sh
+    if [ $? -gt 0 ]; then
+      echo "JWK Key generation failed; EXITING";
+      exit 1;
+    fi
+    echo "JWK Keys generated successfully"
     jwk_key=$(awk -F'"' '/"n"/ {print $8}' pubkey.jwk)
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url=$URL \
@@ -341,11 +346,11 @@ KEYCLOAK_URL=$(printenv keycloak-external-url)
 KEYCLOAK_CLIENT="mosip-deployment-client"
 KEYCLOAK_CLIENT_SECRET="$mosip_deployment_client_secret"
 echo "KEYCLOAK_CLIENT = $KEYCLOAK_CLIENT"
-echo "KEYCLOAK_CLIENT_SECRET = $KEYCLOAK_CLIENT_SECRET"
+#echo "KEYCLOAK_CLIENT_SECRET = $KEYCLOAK_CLIENT_SECRET"
 KEYCLOAK_ADMIN_USERNAME="$( printenv KEYCLOAK_ADMIN_USER)"
 KEYCLOAK_ADMIN_PASSWORD=$( printenv admin-password )
 echo " KEYCLOAK ADMIN USER : $KEYCLOAK_ADMIN_USER"
-echo " KEYCLOAK ADMIN PASSWORD : $KEYCLOAK_ADMIN_PASSWORD"
+#echo " KEYCLOAK ADMIN PASSWORD : $KEYCLOAK_ADMIN_PASSWORD"
 URL="https://$(printenv mosip-api-internal-host)"
 EXTERNAL_URL="https://$(printenv mosip-api-host)"
 
