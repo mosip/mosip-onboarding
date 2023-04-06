@@ -3,21 +3,32 @@
 # This is reference script.
 
 path=$1
-PROP_FILE=$path/onboarding.properties
+# PROP_FILE=$path/certdetails.properties
 
-function prop {
-    grep "${1}=" ${PROP_FILE}|cut -d'=' -f2
-}
+# function prop {
+    # grep "${1}=" ${PROP_FILE}|cut -d'=' -f2
+# }
 
-partner_name=$(prop 'partner-kc-username')
-pname=$(echo ${partner_name^})
-country=$(prop 'Country')
-state=$(prop 'State')
-locality=$(prop 'Locality')
-orgnisation=$(prop 'partner-org-name')
-email_id=$(prop 'partner-kc-user-email')
-common_name=$pname
-keystore_passowrd=$(prop 'keystore-passowrd')
+# partner_name=$(prop 'partner-kc-username')
+# pname=$(echo ${partner_name^})
+# country=$(prop 'Country')
+# state=$(prop 'State')
+# locality=$(prop 'Locality')
+# orgnisation=$(prop 'partner-org-name')
+# email_id=$(prop 'partner-kc-user-email')
+# common_name=$pname
+# keystore_passowrd=$(prop 'keystore-passowrd')
+
+
+partner_name=$( printenv PARTNER_KC_USERNAME ) 
+echo "$partner_name is the name of the partner."
+country=IN
+state=Kar
+locality=Blr
+orgnisation=IITB
+email_id=user_$(date +%s%N)@example.com
+common_name=$partner_name
+keystore_passowrd=
 
 echo "updating conf"
 sed -i 's/\(^C =\).*/\1 '$country'/' $path/certs/root-openssl.cnf

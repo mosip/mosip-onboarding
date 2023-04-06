@@ -2,7 +2,7 @@
     {
     "id": "string",
     "version": "string",
-    "requesttime": "{{request-time}}",
+    "requesttime": "{{$isoTimestamp}}",
     "metadata": {},
     "request": {
         "policyId": "",

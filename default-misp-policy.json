@@ -1,0 +1,21 @@
+[
+{
+  "id": "string",
+  "metadata": {},
+  "request": {
+    "desc": "{{policy-name}} Policy",
+    "name": "{{policy-name}}",
+    "version" : "1.0",
+    "policies": {
+        "allowAuthRequestDelegation": true,
+        "allowKycRequestDelegation":true,
+        "trustBindedAuthVerificationToken": true,
+        "allowKeyBindingDelegation":true
+        },
+    "policyGroupName": "{{policy-group-name}}",
+    "policyType": "MISP"
+  },
+  "requesttime": "{{$isoTimestamp}}",
+  "version": "LTS"
+}
+]
