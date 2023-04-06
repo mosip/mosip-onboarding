@@ -281,7 +281,7 @@ onboard_relying_party_with_demo_oidc_client(){
 	--folder create-oidc-client \
 	--folder delete-user \
     $INSECURE \
-    -d ./demo-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/demo-oidc.html --reporter-htmlextra-showEnvironmentData
+    -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/demo-oidc.html --reporter-htmlextra-showEnvironmentData
 }
 onboard_resident_oidc_client() {
 echo "Onboarding resident oidc client"
@@ -336,7 +336,7 @@ echo "Onboarding resident oidc client"
 	--folder create-oidc-client \
 	--folder delete-user \
 	$INSECURE \
-    -d ./resident-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/resident-oidc.html --reporter-htmlextra-showEnvironmentData
+    -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/resident-oidc.html --reporter-htmlextra-showEnvironmentData
 }
 
 ## Script starts from here
