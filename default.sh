@@ -355,6 +355,7 @@ onboard_mimoto_keybinding_partner(){
 	--env-var module-secretkey=$MODULE_SECRETKEY \
 	--env-var policy-group-name=$POLICY_GROUP_NAME \
 	--env-var partner-kc-username=$PARTNER_KC_USERNAME \
+	--env-var partner-kc-userpassword=$PARTNER_KC_USERPASSWORD \
 	--env-var partner-organization-name=$PARTNER_ORGANIZATION_NAME \
   --env-var partner-type=$PARTNER_TYPE \
   --env-var policy-name=$POLICY_NAME \
