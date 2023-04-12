@@ -323,7 +323,7 @@ echo "Onboarding resident oidc client"
 	--folder partner-self-registration \
 	--folder authenticate-as-cert-manager \
 	--folder download-ca-certificate-from-keymanager \
-	--folder download-intermediate-ca-certificate-from-keymanager \
+	--folder download-intermediate-resident-certificate-from-keymanager \
     --folder download-leaf-certificate-from-keymanager \
 	--folder authenticate-to-upload-certs \
     --folder upload-ca-certificate \
@@ -337,6 +337,48 @@ echo "Onboarding resident oidc client"
 	--folder delete-user \
 	$INSECURE \
     -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/resident-oidc.html --reporter-htmlextra-showEnvironmentData
+}
+onboard_keybinding_partner(){
+    echo "Onboarding Keybinding partner"
+	sh $MYDIR/certs/create-signing-certs.sh $MYDIR
+	root_ca_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $root_cert_path)
+	partner_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $client_cert_path)
+	echo $root_ca_cert
+	echo $partner_cert
+	newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
+    --env-var url="$URL" \
+    --env-var request-time="$DATE" \
+	--env-var partner-manager-username=$PARTNER_KC_USERNAME \
+	--env-var partner-manager-password=$PARTNER_KC_USERPASSWORD \
+	--env-var application-id=$APPLICATION_ID \
+	--env-var module-clientid=$MODULE_CLIENTID \
+	--env-var module-secretkey=$MODULE_SECRETKEY \
+	--env-var policy-group-name=$POLICY_GROUP_NAME \
+	--env-var partner-kc-username=$PARTNER_KC_USERNAME \
+	--env-var partner-organization-name=$PARTNER_ORGANIZATION_NAME \
+  --env-var partner-type=$PARTNER_TYPE \
+  --env-var policy-name=$POLICY_NAME \
+	--env-var keycloak-url=$KEYCLOAK_URL \
+	--env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
+	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
+	--env-var cert-manager-username="$KEYCLOAK_CLIENT" \
+  --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
+	--env-var partner-domain=Auth \
+	--env-var ca-certificate="$root_ca_cert" \
+	--env-var leaf-certificate="$partner_cert" \
+	--folder 'create_keycloak_user' \
+	--folder 'create/publish_policy_group_and_policy' \
+	--folder partner-self-registration \
+	--folder authenticate-to-upload-certs \
+  --folder upload-ca-certificate \
+  --folder upload-leaf-certificate \
+	--folder partner_request_mapping_to_policyname \
+	--folder approve-partner-mapping-to-policy \
+	--folder authenticate-as-partner-for-api-key \
+	--folder request-for-partner-apikey \
+	--folder delete-user \
+    $INSECURE \
+    -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/keybinding.html --reporter-htmlextra-showEnvironmentData
 }
 
 ## Script starts from here
@@ -413,4 +455,17 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   LOGO_URI="https://$( printenv mosip-resident-host )/assets/MOSIP%20Vertical%20Black.png"
   REDIRECT_URI="https://$( printenv mosip-api-internal-host )/resident/v1/login-redirect/**"
   onboard_resident_oidc_client
+  elif [ "$MODULE" = "keybinding" ]; then
+  APPLICATION_ID=partner
+  MODULE_CLIENTID=mosip-pms-client
+  MODULE_SECRETKEY=$mosip_pms_client_secret
+  POLICY_NAME=mpolicy-default-keybinding
+  POLICY_GROUP_NAME=mpolicygroup-default-keybinding
+  export PARTNER_KC_USERNAME=mpartner-default-keybinding
+  PARTNER_KC_USERPASSWORD=keybinding-kc-mockuserpassword
+  PARTNER_ORGANIZATION_NAME=IITB
+  PARTNER_TYPE=Auth_Partner
+  root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
+  client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
+  onboard_onboard_keybinding_partner
 fi
