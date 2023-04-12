@@ -94,9 +94,9 @@ upload_resident_cert() {
     --env-var partner-kc-username=mpartner-default-resident \
     --env-var partner-domain=AUTH \
     --folder authenticate-as-cert-manager \
-    --folder download-intermediate-ca-certificate-from-keymanager \
+    --folder download-intermediate-resident-certificate-from-keymanager \
     --folder download-leaf-certificate-from-keymanager \
-    --folder upload-ca-certificate \
+    --folder upload-intermediate-ca-certificate \
     --folder upload-leaf-certificate \
     --folder upload-signed-leaf-certifcate-to-keymanager \
     $INSECURE \
@@ -186,9 +186,9 @@ upload_mpartner_default_digitalcard_cert() {
     --env-var partner-kc-username=mpartner-default-digitalcard \
     --env-var partner-domain=AUTH \
     --folder authenticate-as-cert-manager \
-    --folder download-intermediate-ca-certificate-from-keymanager \
+    --folder download-intermediate-resident-certificate-from-keymanager \
     --folder download-leaf-certificate-from-keymanager \
-    --folder upload-ca-certificate \
+    --folder upload-intermediate-ca-certificate \
     --folder upload-leaf-certificate \
     --folder upload-signed-leaf-certifcate-to-keymanager \
     $INSECURE \
@@ -355,6 +355,7 @@ onboard_mimoto_keybinding_partner(){
 	--env-var module-secretkey=$MODULE_SECRETKEY \
 	--env-var policy-group-name=$POLICY_GROUP_NAME \
 	--env-var partner-kc-username=$PARTNER_KC_USERNAME \
+	--env-var partner-kc-userpassword=$PARTNER_KC_USERPASSWORD \
 	--env-var partner-organization-name=$PARTNER_ORGANIZATION_NAME \
   --env-var partner-type=$PARTNER_TYPE \
   --env-var policy-name=$POLICY_NAME \
