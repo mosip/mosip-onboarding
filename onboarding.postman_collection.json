@@ -1525,7 +1525,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"pm.environment.set(\"partner-domain\", \"Auth\");"
+									""
 								],
 								"type": "text/javascript"
 							}
