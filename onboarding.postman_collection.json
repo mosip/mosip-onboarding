@@ -956,6 +956,61 @@
 									"var jsonData = JSON.parse(responseBody);\r",
 									"var data = JSON.stringify(jsonData.response.certificate);\r",
 									"const unquoted = data.replace(/\"/g, \"\");\r",
+									"pm.environment.set(\"leaf-certificate\",unquoted);\r",
+									"console.log(unquoted);\r",
+									"\r",
+									"pm.test(\"Certificate download Successfull\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"BEGIN CERTIFICATE\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/v1/keymanager/getCertificate?applicationId={{cert-application-id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"keymanager",
+								"getCertificate"
+							],
+							"query": [
+								{
+									"key": "applicationId",
+									"value": "{{cert-application-id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "download-intermediate-resident-certificate-from-keymanager",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = JSON.stringify(jsonData.response.certificate);\r",
+									"const unquoted = data.replace(/\"/g, \"\");\r",
 									"pm.environment.set(\"intermediate-cert\",unquoted);\r",
 									"console.log(unquoted);\r",
 									"\r",
@@ -1470,7 +1525,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"pm.environment.set(\"partner-domain\", \"Auth\");"
+									""
 								],
 								"type": "text/javascript"
 							}
