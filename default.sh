@@ -94,7 +94,7 @@ upload_resident_cert() {
     --env-var partner-kc-username=mpartner-default-resident \
     --env-var partner-domain=AUTH \
     --folder authenticate-as-cert-manager \
-    --folder download-intermediate-ca-certificate-from-keymanager \
+    --folder download-intermediate-resident-certificate-from-keymanager \
     --folder download-leaf-certificate-from-keymanager \
     --folder upload-ca-certificate \
     --folder upload-leaf-certificate \
@@ -186,7 +186,7 @@ upload_mpartner_default_digitalcard_cert() {
     --env-var partner-kc-username=mpartner-default-digitalcard \
     --env-var partner-domain=AUTH \
     --folder authenticate-as-cert-manager \
-    --folder download-intermediate-ca-certificate-from-keymanager \
+    --folder download-intermediate-resident-certificate-from-keymanager \
     --folder download-leaf-certificate-from-keymanager \
     --folder upload-ca-certificate \
     --folder upload-leaf-certificate \
