@@ -338,8 +338,8 @@ echo "Onboarding resident oidc client"
 	$INSECURE \
     -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/resident-oidc.html --reporter-htmlextra-showEnvironmentData
 }
-onboard_keybinding_partner(){
-    echo "Onboarding Keybinding partner"
+onboard_mimoto_keybinding_partner(){
+    echo "Onboarding Mimoto Keybinding partner"
 	sh $MYDIR/certs/create-signing-certs.sh $MYDIR
 	root_ca_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $root_cert_path)
 	partner_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $client_cert_path)
@@ -378,7 +378,7 @@ onboard_keybinding_partner(){
 	--folder request-for-partner-apikey \
 	--folder delete-user \
     $INSECURE \
-    -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/keybinding.html --reporter-htmlextra-showEnvironmentData
+    -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/mimoto-keybinding.html --reporter-htmlextra-showEnvironmentData
 }
 
 ## Script starts from here
@@ -455,7 +455,7 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   LOGO_URI="https://$( printenv mosip-resident-host )/assets/MOSIP%20Vertical%20Black.png"
   REDIRECT_URI="https://$( printenv mosip-api-internal-host )/resident/v1/login-redirect/**"
   onboard_resident_oidc_client
-  elif [ "$MODULE" = "keybinding" ]; then
+  elif [ "$MODULE" = "mimoto-keybinding" ]; then
   APPLICATION_ID=partner
   MODULE_CLIENTID=mosip-pms-client
   MODULE_SECRETKEY=$mosip_pms_client_secret
@@ -467,5 +467,5 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   PARTNER_TYPE=Auth_Partner
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
-  onboard_onboard_keybinding_partner
+  onboard_mimoto_keybinding_partner
 fi
