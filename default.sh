@@ -9,12 +9,12 @@
 upload_ida_root_cert() {
     echo "Uploading ida root cert"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
-    --env-var url=$URL \
+    --env-var url="$URL" \
     --env-var cert-application-id=ROOT \
     --env-var cert-reference-id=  \
-    --env-var request-time=$DATE \
-    --env-var cert-manager-username=$CERT_MANAGER \
-    --env-var cert-manager-password=$CERT_MANAGER_PASSWORD \
+    --env-var request-time="$DATE" \
+    --env-var cert-manager-username="$KEYCLOAK_CLIENT" \
+    --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
     --env-var partner-domain=AUTH \
     --folder authenticate-as-cert-manager \
     --folder download-ida-certificate \
@@ -27,12 +27,12 @@ upload_ida_root_cert() {
 upload_ida_cert() {
     echo "Uploading ida cert"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
-    --env-var url=$URL \
+    --env-var url="$URL" \
     --env-var cert-application-id=IDA \
     --env-var cert-reference-id=  \
-    --env-var request-time=$DATE \
-    --env-var cert-manager-username=$CERT_MANAGER \
-    --env-var cert-manager-password=$CERT_MANAGER_PASSWORD \
+    --env-var request-time="$DATE" \
+    --env-var cert-manager-username="$KEYCLOAK_CLIENT" \
+    --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
     --env-var partner-domain=AUTH \
     --folder authenticate-as-cert-manager \
     --folder download-ida-certificate \
@@ -44,14 +44,14 @@ upload_ida_cert() {
 upload_ida_partner_cert () {
     echo "Uploading mpartner-default-auth cert"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
-    --env-var url=$URL \
-    --env-var request-time=$DATE \
+    --env-var url="$URL" \
+    --env-var request-time="$DATE" \
     --env-var cert-application-id=IDA \
     --env-var cert-reference-id=mpartner-default-auth \
-    --env-var cert-manager-username=$CERT_MANAGER \
-    --env-var cert-manager-password=$CERT_MANAGER_PASSWORD \
-    --env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USER \
-    --env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
+    --env-var cert-manager-username="$KEYCLOAK_CLIENT" \
+    --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
+    --env-var keycloak-admin-username="$KEYCLOAK_ADMIN_USER" \
+    --env-var keycloak-admin-password="$KEYCLOAK_ADMIN_PASSWORD" \
     --env-var partner-kc-username=mpartner-default-auth \
     --env-var partner-domain=AUTH \
     --folder authenticate-as-cert-manager \
@@ -65,12 +65,12 @@ upload_ida_partner_cert () {
 upload_ida_cred_cert () {
     echo "Uploading ida cred cert to keymanager for zero knowledge encryption"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
-    --env-var url=$URL \
-    --env-var request-time=$DATE \
+    --env-var url="$URL" \
+    --env-var request-time="$DATE" \
     --env-var cert-application-id=IDA \
     --env-var cert-reference-id=CRED_SERVICE \
-    --env-var cert-manager-username=$CERT_MANAGER \
-    --env-var cert-manager-password=$CERT_MANAGER_PASSWORD \
+    --env-var cert-manager-username="$KEYCLOAK_CLIENT" \
+    --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
     --env-var partner-kc-username=mpartner-default-auth \
     --env-var partner-domain=AUTH \
     --folder authenticate-as-cert-manager \
@@ -83,14 +83,14 @@ upload_ida_cred_cert () {
 upload_resident_cert() {
     echo "Uploading mpartner-default-resident cert"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
-    --env-var url=$URL \
-    --env-var request-time=$DATE \
+    --env-var url="$URL" \
+    --env-var request-time="$DATE" \
     --env-var cert-application-id=RESIDENT \
     --env-var cert-reference-id=mpartner-default-resident \
-    --env-var cert-manager-username=$CERT_MANAGER \
-    --env-var cert-manager-password=$CERT_MANAGER_PASSWORD \
-    --env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USER \
-    --env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
+    --env-var cert-manager-username="$KEYCLOAK_CLIENT" \
+    --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
+    --env-var keycloak-admin-username="$KEYCLOAK_ADMIN_USER" \
+    --env-var keycloak-admin-password="$KEYCLOAK_ADMIN_PASSWORD" \
     --env-var partner-kc-username=mpartner-default-resident \
     --env-var partner-domain=AUTH \
     --folder authenticate-as-cert-manager \
@@ -109,10 +109,10 @@ upload_print_cert() {
     root_ca_cert=`awk '{ print $0 }' $root_cert_path`
     partner_cert=`awk '{ print $0 }' $partner_cert_path`
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
-    --env-var url=$URL \
-    --env-var request-time=$DATE \
-    --env-var cert-manager-username=$CERT_MANAGER \
-    --env-var cert-manager-password=$CERT_MANAGER_PASSWORD \
+    --env-var url="$URL" \
+    --env-var request-time="$DATE" \
+    --env-var cert-manager-username="$KEYCLOAK_CLIENT" \
+    --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
     --env-var partner-kc-username=mpartner-default-print \
     --env-var application-id=ida \
     --env-var partner-domain=AUTH \
@@ -132,10 +132,10 @@ upload_abis_cert () {
     root_ca_cert=`awk '{ print $0 }' $root_cert_path`
     partner_cert=`awk '{ print $0 }' $partner_cert_path`
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
-    --env-var url=$URL \
-    --env-var request-time=$DATE \
-    --env-var cert-manager-username=$CERT_MANAGER \
-    --env-var cert-manager-password=$CERT_MANAGER_PASSWORD \
+    --env-var url="$URL" \
+    --env-var request-time="$DATE" \
+    --env-var cert-manager-username="$KEYCLOAK_CLIENT" \
+    --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
     --env-var partner-kc-username=mpartner-default-abis \
     --env-var application-id=ida \
     --env-var partner-domain=AUTH \
@@ -154,10 +154,10 @@ upload_mpartner_default_mobile_cert() {
     root_ca_cert=`awk '{ print $0 }' $root_cert_path`
     partner_cert=`awk '{ print $0 }' $partner_cert_path`
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
-    --env-var url=$URL \
-    --env-var request-time=$DATE \
-    --env-var cert-manager-username=$CERT_MANAGER \
-    --env-var cert-manager-password=$CERT_MANAGER_PASSWORD \
+    --env-var url="$URL" \
+    --env-var request-time="$DATE" \
+    --env-var cert-manager-username="$KEYCLOAK_CLIENT" \
+    --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
     --env-var partner-kc-username=mpartner-default-mobile \
     --env-var application-id=ida \
     --env-var partner-domain=AUTH \
@@ -175,14 +175,14 @@ upload_mpartner_default_mobile_cert() {
 upload_mpartner_default_digitalcard_cert() {
     echo "Uploading mpartner-default-digitalcard cert"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
-    --env-var url=$URL \
-    --env-var request-time=$DATE \
+    --env-var url="$URL" \
+    --env-var request-time="$DATE" \
     --env-var cert-application-id=DIGITAL_CARD \
     --env-var cert-reference-id=mpartner-default-digitalcard \
-    --env-var cert-manager-username=$CERT_MANAGER \
-    --env-var cert-manager-password=$CERT_MANAGER_PASSWORD \
-    --env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USER \
-    --env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
+    --env-var cert-manager-username="$KEYCLOAK_CLIENT" \
+    --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
+    --env-var keycloak-admin-username="$KEYCLOAK_ADMIN_USER" \
+    --env-var keycloak-admin-password="$KEYCLOAK_ADMIN_PASSWORD" \
     --env-var partner-kc-username=mpartner-default-digitalcard \
     --env-var partner-domain=AUTH \
     --folder authenticate-as-cert-manager \
@@ -262,8 +262,8 @@ onboard_relying_party_with_demo_oidc_client(){
 	--env-var keycloak-url=$KEYCLOAK_URL \
 	--env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
 	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
-	--env-var cert-manager-username="$CERT_MANAGER" \
-    --env-var cert-manager-password="$CERT_MANAGER_PASSWORD" \
+	--env-var cert-manager-username="$KEYCLOAK_CLIENT" \
+    --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
 	--env-var partner-domain=Auth \
 	--env-var ca-certificate="$root_ca_cert" \
 	--env-var leaf-certificate="$partner_cert" \
@@ -310,8 +310,8 @@ echo "Onboarding resident oidc client"
 	--env-var keycloak-url=$KEYCLOAK_URL \
 	--env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
 	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
-	--env-var cert-manager-username="$CERT_MANAGER" \
-    --env-var cert-manager-password="$CERT_MANAGER_PASSWORD" \
+	--env-var cert-manager-username="$KEYCLOAK_CLIENT" \
+    --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
 	--env-var cert-application-id=RESIDENT \
     --env-var cert-reference-id=ESIGNET_USER_INFO \
 	--env-var key="$jwk_key" \
@@ -343,10 +343,10 @@ echo "Onboarding resident oidc client"
 MYDIR=$(pwd)
 DATE=$(date -u +%FT%T.%3NZ)
 KEYCLOAK_URL=$(printenv keycloak-external-url)
-CERT_MANAGER="mosip-deployment-client"
-CERT_MANAGER_PASSWORD="$mosip_deployment_client_secret"
-echo "CERT_MANAGER = $CERT_MANAGER"
-#echo "CERT_MANAGER_PASSWORD = $CERT_MANAGER_PASSWORD"
+KEYCLOAK_CLIENT="mosip-deployment-client"
+KEYCLOAK_CLIENT_SECRET="$mosip_deployment_client_secret"
+echo "KEYCLOAK_CLIENT = $KEYCLOAK_CLIENT"
+#echo "KEYCLOAK_CLIENT_SECRET = $KEYCLOAK_CLIENT_SECRET"
 KEYCLOAK_ADMIN_USERNAME="$( printenv KEYCLOAK_ADMIN_USER)"
 KEYCLOAK_ADMIN_PASSWORD=$( printenv admin-password )
 echo " KEYCLOAK ADMIN USER : $KEYCLOAK_ADMIN_USER"
@@ -360,50 +360,57 @@ if [ "$ENABLE_INSECURE" = "true" ]; then
   INSECURE='--insecure'
 fi
 
-upload_ida_root_cert
-upload_ida_cert
-upload_ida_partner_cert
-upload_ida_cred_cert
-upload_print_cert
-upload_resident_cert
-upload_abis_cert
-upload_mpartner_default_mobile_cert
-upload_mpartner_default_digitalcard_cert
-
-APPLICATION_ID=partner
-MODULE_CLIENTID=mosip-pms-client
-MODULE_SECRETKEY=$mosip_pms_client_secret
-POLICY_NAME=mpolicy-default-esignet
-POLICY_GROUP_NAME=mpolicygroup-default-esignet
-PARTNER_KC_USERNAME=mpartner-default-esignet
-PARTNER_ORGANIZATION_NAME=IITB
-PARTNER_TYPE=Misp_Partner
-onboard_esignet_partner
-
-APPLICATION_ID=partner
-MODULE_CLIENTID=mosip-pms-client
-MODULE_SECRETKEY=$mosip_pms_client_secret
-POLICY_NAME=mpolicy-default-demo-oidc
-POLICY_GROUP_NAME=mpolicygroup-default-demo-oidc
-export PARTNER_KC_USERNAME=mpartner-default-demo-oidc
-PARTNER_ORGANIZATION_NAME=IITB
-PARTNER_TYPE=Auth_Partner
-OIDC_CLIENT_NAME='Health service OIDC Client'
-LOGO_URI=https://healthservices.$( printenv installation-domain)/logo.png
-REDIRECT_URI=https://healthservices.$( printenv installation-domain)/userprofile
-root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
-client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
-onboard_relying_party_with_demo_oidc_client
-
-APPLICATION_ID=partner
-MODULE_CLIENTID=mosip-pms-client
-MODULE_SECRETKEY=$mosip_pms_client_secret
-POLICY_NAME=mpolicy-default-resident-oidc
-POLICY_GROUP_NAME=mpolicygroup-default-resident-oidc
-PARTNER_KC_USERNAME=mpartner-default-resident-oidc
-PARTNER_ORGANIZATION_NAME=IITB
-PARTNER_TYPE=Auth_Partner
-OIDC_CLIENT_NAME=Resident-Portal
-LOGO_URI="https://$( printenv mosip-resident-host )/assets/MOSIP%20Vertical%20Black.png"
-REDIRECT_URI="https://$( printenv mosip-api-internal-host )/resident/v1/login-redirect/**"
-onboard_resident_oidc_client
+if [ "$MODULE" = "ida" ]; then
+  upload_ida_root_cert
+  upload_ida_cert
+  upload_ida_partner_cert
+  upload_ida_cred_cert
+elif [ "$MODULE" = "print" ]; then
+  upload_print_cert
+elif [ "$MODULE" = "resident" ]; then
+  upload_resident_cert
+elif [ "$MODULE" = "abis" ]; then
+  upload_abis_cert
+elif [ "$MODULE" = "mobileid" ]; then
+  upload_mpartner_default_mobile_cert
+elif [ "$MODULE" = "digitalcard" ]; then
+  upload_mpartner_default_digitalcard_cert
+elif [ "$MODULE" = "esignet" ]; then
+  APPLICATION_ID=partner
+  MODULE_CLIENTID=mosip-pms-client
+  MODULE_SECRETKEY=$mosip_pms_client_secret
+  POLICY_NAME=mpolicy-default-esignet
+  POLICY_GROUP_NAME=mpolicygroup-default-esignet
+  PARTNER_KC_USERNAME=mpartner-default-esignet
+  PARTNER_ORGANIZATION_NAME=IITB
+  PARTNER_TYPE=Misp_Partner
+  onboard_esignet_partner
+elif [ "$MODULE" = "demo-oidc" ]; then
+  APPLICATION_ID=partner
+  MODULE_CLIENTID=mosip-pms-client
+  MODULE_SECRETKEY=$mosip_pms_client_secret
+  POLICY_NAME=mpolicy-default-demo-oidc
+  POLICY_GROUP_NAME=mpolicygroup-default-demo-oidc
+  export PARTNER_KC_USERNAME=mpartner-default-demo-oidc
+  PARTNER_ORGANIZATION_NAME=IITB
+  PARTNER_TYPE=Auth_Partner
+  OIDC_CLIENT_NAME='Health service OIDC Client'
+  LOGO_URI=https://healthservices.$( printenv installation-domain)/logo.png
+  REDIRECT_URI=https://healthservices.$( printenv installation-domain)/userprofile
+  root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
+  client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
+  onboard_relying_party_with_demo_oidc_client
+elif [ "$MODULE" = "resident-oidc" ]; then
+  APPLICATION_ID=partner
+  MODULE_CLIENTID=mosip-pms-client
+  MODULE_SECRETKEY=$mosip_pms_client_secret
+  POLICY_NAME=mpolicy-default-resident-oidc
+  POLICY_GROUP_NAME=mpolicygroup-default-resident-oidc
+  PARTNER_KC_USERNAME=mpartner-default-resident-oidc
+  PARTNER_ORGANIZATION_NAME=IITB
+  PARTNER_TYPE=Auth_Partner
+  OIDC_CLIENT_NAME=Resident-Portal
+  LOGO_URI="https://$( printenv mosip-resident-host )/assets/MOSIP%20Vertical%20Black.png"
+  REDIRECT_URI="https://$( printenv mosip-api-internal-host )/resident/v1/login-redirect/**"
+  onboard_resident_oidc_client
+fi
