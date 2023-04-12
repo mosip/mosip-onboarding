@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6bfefcd6-7f27-47d8-b518-a193e929bda7",
+		"_postman_id": "5d3e6258-c3ca-4fd3-852e-2b103ca1db28",
 		"name": "onboarding Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "12620596"
@@ -982,7 +982,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/v1/keymanager/getCertificate?applicationId=RESIDENT",
+							"raw": "{{url}}/v1/keymanager/getCertificate?applicationId={{cert-application-id}}",
 							"host": [
 								"{{url}}"
 							],
@@ -994,7 +994,7 @@
 							"query": [
 								{
 									"key": "applicationId",
-									"value": "RESIDENT"
+									"value": "{{cert-application-id}}"
 								}
 							]
 						}
