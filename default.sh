@@ -378,7 +378,7 @@ onboard_keybinding_partner(){
 	--folder request-for-partner-apikey \
 	--folder delete-user \
     $INSECURE \
-    -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/demo-oidc.html --reporter-htmlextra-showEnvironmentData
+    -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/keybinding.html --reporter-htmlextra-showEnvironmentData
 }
 
 ## Script starts from here
