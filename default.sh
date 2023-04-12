@@ -96,7 +96,7 @@ upload_resident_cert() {
     --folder authenticate-as-cert-manager \
     --folder download-intermediate-resident-certificate-from-keymanager \
     --folder download-leaf-certificate-from-keymanager \
-    --folder uupload-intermediate-ca-certificate \
+    --folder upload-intermediate-ca-certificate \
     --folder upload-leaf-certificate \
     --folder upload-signed-leaf-certifcate-to-keymanager \
     $INSECURE \
@@ -379,7 +379,7 @@ onboard_mimoto_keybinding_partner(){
 	--folder request-for-partner-apikey \
 	--folder delete-user \
     $INSECURE \
-    -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/keybinding.html --reporter-htmlextra-showEnvironmentData
+    -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/mimoto-keybinding.html --reporter-htmlextra-showEnvironmentData
 }
 
 ## Script starts from here
