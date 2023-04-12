@@ -1,8 +1,10 @@
 FROM node:lts-alpine3.17
-RUN npm install -g npm newman newman-reporter-htmlextra pem-jwk http-server
+RUN npm install -g npm newman newman-reporter-htmlextra pem-jwk
 RUN apk add curl && \
     apk add openssl && \
-    apk add jq
+    apk add jq && \
+    curl https://dl.min.io/client/mc/release/linux-amd64/mc -o /bin/mc && \
+    chmod +x /bin/mc
 
 ARG container_user=mosip
 ARG container_user_group=mosip
@@ -29,9 +31,12 @@ USER ${container_user_uid}:${container_user_gid}
 
 ENV MYDIR=`pwd`
 ENV DATE="$(date --utc +%FT%T.%3NZ)"
-ENV URL=
-ENV CERT_MANAGER=mosip-deployment-client
-ENV CERT_MANAGER_PASSWORD=
 ENV ENABLE_INSECURE=false
+ENV MODULE=
+
+ENV s3-host=
+ENV s3-region=
+ENV s3-user-key=
+ENV s3-user-secret=
 
 ENTRYPOINT ["./entrypoint.sh"]
