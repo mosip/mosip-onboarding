@@ -96,7 +96,7 @@ upload_resident_cert() {
     --folder authenticate-as-cert-manager \
     --folder download-intermediate-resident-certificate-from-keymanager \
     --folder download-leaf-certificate-from-keymanager \
-    --folder upload-ca-certificate \
+    --folder uupload-intermediate-ca-certificate \
     --folder upload-leaf-certificate \
     --folder upload-signed-leaf-certifcate-to-keymanager \
     $INSECURE \
@@ -188,7 +188,7 @@ upload_mpartner_default_digitalcard_cert() {
     --folder authenticate-as-cert-manager \
     --folder download-intermediate-resident-certificate-from-keymanager \
     --folder download-leaf-certificate-from-keymanager \
-    --folder upload-ca-certificate \
+    --folder upload-intermediate-ca-certificate \
     --folder upload-leaf-certificate \
     --folder upload-signed-leaf-certifcate-to-keymanager \
     $INSECURE \
