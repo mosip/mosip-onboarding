@@ -14,7 +14,7 @@ echo "AUTHMANAGER URL : $AUTHMANAGER_URL"
 echo "KEYMANAGER URL : $KEYMANAGER_URL"
 
 #echo "* Request for authorization"
-curl -s -D - -o /dev/null -X "POST" \
+curl $ADD_SSL_CURL -s -D - -o /dev/null -X "POST" \
   "$AUTHMANAGER_URL/v1/authmanager/authenticate/clientidsecretkey" \
   -H "accept: */*" \
   -H "Content-Type: application/json" \
@@ -40,7 +40,7 @@ fi
 
 echo -e "\nGot Authorization token from authmanager"
 
-curl -X "GET" \
+curl $ADD_SSL_CURL -X "GET" \
   -H "Accept: application/json" \
   --cookie "Authorization=$TOKEN" \
   "$KEYMANAGER_URL/v1/keymanager/getCertificate?applicationId=RESIDENT&referenceId=" > result.txt

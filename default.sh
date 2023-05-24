@@ -19,7 +19,7 @@ upload_ida_root_cert() {
     --folder authenticate-as-cert-manager \
     --folder download-ida-certificate \
     --folder upload-ca-certificate \
-    $INSECURE \
+    $ADD_SSL_NEWMAN \
 	  -r cli,htmlextra --reporter-htmlextra-export ./reports/ida-root.html
 
 }
@@ -37,7 +37,7 @@ upload_ida_cert() {
     --folder authenticate-as-cert-manager \
     --folder download-ida-certificate \
     --folder upload-ca-certificate \
-    $INSECURE \
+    $ADD_SSL_NEWMAN \
     -r cli,htmlextra --reporter-htmlextra-export ./reports/ida-ca.html
 }
 
@@ -58,7 +58,7 @@ upload_ida_partner_cert () {
     --folder download-ida-certificate \
     --folder upload-leaf-certificate \
     --folder upload-signed-leaf-certificate \
-    $INSECURE \
+    $ADD_SSL_NEWMAN \
     -r cli,htmlextra --reporter-htmlextra-export ./reports/ida-partner.html --reporter-htmlextra-showEnvironmentData
 }
 
@@ -76,7 +76,7 @@ upload_ida_cred_cert () {
     --folder authenticate-as-cert-manager \
     --folder download-ida-certificate \
     --folder upload-ida-cred-cert-to-keymanager \
-    $INSECURE \
+    $ADD_SSL_NEWMAN \
     -r cli,htmlextra --reporter-htmlextra-export ./reports/ida-cred.html --reporter-htmlextra-showEnvironmentData
 }
 
@@ -99,7 +99,7 @@ upload_resident_cert() {
     --folder upload-intermediate-ca-certificate \
     --folder upload-leaf-certificate \
     --folder upload-signed-leaf-certifcate-to-keymanager \
-    $INSECURE \
+    $ADD_SSL_NEWMAN \
     -r cli,htmlextra --reporter-htmlextra-export ./reports/resident.html --reporter-htmlextra-showEnvironmentData
 }
 upload_print_cert() {
@@ -121,7 +121,7 @@ upload_print_cert() {
     --folder authenticate-as-cert-manager \
     --folder upload-ca-certificate \
     --folder upload-leaf-certificate \
-    $INSECURE \
+    $ADD_SSL_NEWMAN \
     -r cli,htmlextra --reporter-htmlextra-export ./reports/print.html --reporter-htmlextra-showEnvironmentData
 }
 
@@ -144,7 +144,7 @@ upload_abis_cert () {
     --folder authenticate-as-cert-manager \
     --folder upload-ca-certificate \
     --folder upload-leaf-certificate \
-    $INSECURE \
+    $ADD_SSL_NEWMAN \
     -r cli,htmlextra --reporter-htmlextra-export ./reports/abis.html --reporter-htmlextra-showEnvironmentData
 }
 upload_mpartner_default_mobile_cert() {
@@ -169,7 +169,7 @@ upload_mpartner_default_mobile_cert() {
     --folder upload-ca-certificate \
     --folder upload-leaf-certificate \
     --folder mapping-partner-to-policy-credential-type \
-    $INSECURE \
+    $ADD_SSL_NEWMAN \
     -r cli,htmlextra --reporter-htmlextra-export ./reports/mpartner-default-mobile.html --reporter-htmlextra-showEnvironmentData
 }
 upload_mpartner_default_digitalcard_cert() {
@@ -191,7 +191,7 @@ upload_mpartner_default_digitalcard_cert() {
     --folder upload-intermediate-ca-certificate \
     --folder upload-leaf-certificate \
     --folder upload-signed-leaf-certifcate-to-keymanager \
-    $INSECURE \
+    $ADD_SSL_NEWMAN \
     -r cli,htmlextra --reporter-htmlextra-export ./reports/digitalcard.html --reporter-htmlextra-showEnvironmentData
 }
 
@@ -232,7 +232,7 @@ onboard_esignet_partner() {
 	--folder create-the-MISP-license-key-for-partner \
 	--folder login-to-keycloak-as-admin \
 	--folder delete-user \
-    $INSECURE \
+    $ADD_SSL_NEWMAN \
     -d ./default-misp-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/e-signet.html --reporter-htmlextra-showEnvironmentData
 }
 
@@ -280,7 +280,7 @@ onboard_relying_party_with_demo_oidc_client(){
 	--folder get-jwks \
 	--folder create-oidc-client \
 	--folder delete-user \
-    $INSECURE \
+    $ADD_SSL_NEWMAN \
     -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/demo-oidc.html --reporter-htmlextra-showEnvironmentData
 }
 onboard_resident_oidc_client() {
@@ -335,7 +335,7 @@ echo "Onboarding resident oidc client"
 	--folder get-keyid-from-keymanager \
 	--folder create-oidc-client \
 	--folder delete-user \
-	$INSECURE \
+	$ADD_SSL_NEWMAN \
     -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/resident-oidc.html --reporter-htmlextra-showEnvironmentData
 }
 onboard_mimoto_keybinding_partner(){
@@ -378,12 +378,12 @@ onboard_mimoto_keybinding_partner(){
 	--folder authenticate-as-partner-for-api-key \
 	--folder request-for-partner-apikey \
 	--folder delete-user \
-    $INSECURE \
+    $ADD_SSL_NEWMAN \
     -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/mimoto-keybinding.html --reporter-htmlextra-showEnvironmentData
 }
 
 ## Script starts from here
-MYDIR=$(pwd)
+export MYDIR=$(pwd)
 DATE=$(date -u +%FT%T.%3NZ)
 KEYCLOAK_URL=$(printenv keycloak-external-url)
 KEYCLOAK_CLIENT="mosip-deployment-client"
@@ -400,7 +400,17 @@ EXTERNAL_URL="https://$(printenv mosip-api-host)"
 echo "URL : $URL and $EXTERNAL_URL"
 
 if [ "$ENABLE_INSECURE" = "true" ]; then
-  INSECURE='--insecure'
+  export HOST=$(printenv mosip-api-internal-host)
+  if [ -z $HOST ]; then
+    echo "Env variable mosip-api-internal-host not provided; EXITING;";
+    exit 1;
+  fi
+  openssl s_client -servername "$HOST" -connect "$HOST":443  > "$MYDIR/$HOST.cer" 2>/dev/null & sleep 2 ;
+  sed -i -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' "$MYDIR/$HOST.cer";
+  cat "$MYDIR/$HOST.cer";
+
+  export ADD_SSL_CURL="--cacert $MYDIR/$HOST.cer"
+  export ADD_SSL_NEWMAN="--ssl-extra-ca-certs $MYDIR/$HOST.cer"
 fi
 
 if [ "$MODULE" = "ida" ]; then
