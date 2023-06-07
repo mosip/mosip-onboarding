@@ -38,5 +38,6 @@ ENV s3-host=
 ENV s3-region=
 ENV s3-user-key=
 ENV s3-user-secret=
+ENV s3-bucket-name=
 
 ENTRYPOINT ["./entrypoint.sh"]
