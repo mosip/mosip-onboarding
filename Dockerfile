@@ -8,7 +8,6 @@ LABEL source=${SOURCE}
 LABEL commit_hash=${COMMIT_HASH}
 LABEL commit_id=${COMMIT_ID}
 LABEL build_time=${BUILD_TIME}
-
 RUN npm install -g npm newman newman-reporter-htmlextra pem-jwk
 RUN apk add curl && \
     apk add openssl && \
