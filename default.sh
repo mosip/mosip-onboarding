@@ -234,10 +234,10 @@ onboard_esignet_partner() {
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
     --export-environment ./config-secrets.json -d ./default-misp-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/e-signet.html --reporter-htmlextra-showEnvironmentData
-    MISP_LICENSE_KEY=$(jq -r '.values[] | select(.key == "mpartner-default-esignet-misp-license-key") | .value' new.json)
+    MISP_LICENSE_KEY=$(jq -r '.values[] | select(.key == "mpartner-default-esignet-misp-license-key") | .value' config-secrets.json)
 
 if [ -z "$MISP_LICENSE_KEY" ]; then
-    MISP_LICENSE_KEY=$(jq -r '.values[] | select(.key | contains("mpartner-default-esignet-misp-license-key")) | .value' new.json)
+    MISP_LICENSE_KEY=$(jq -r '.values[] | select(.key | contains("mpartner-default-esignet-misp-license-key")) | .value' config-secrets.json)
 fi
 echo "MISP License Key: $MISP_LICENSE_KEY"
 }
