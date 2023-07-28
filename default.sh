@@ -287,7 +287,10 @@ onboard_relying_party_with_demo_oidc_client(){
 	--folder create-oidc-client \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
-    -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/demo-oidc.html --reporter-htmlextra-showEnvironmentData
+    --export-environment ./config-secrets.json -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/demo-oidc.html --reporter-htmlextra-showEnvironmentData
+privateandpublickeypair=$(jq -r '.values[] | select(.key == "privateandpublickeypair") | .value' config-secrets.json)
+privateandpublickeypair=$(echo -n "$privateandpublickeypair" | base64)
+mpartnerdefaultdemooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-demo-oidc-clientID") | .value' "config-secrets.json")
 }
 onboard_resident_oidc_client() {
 echo "Onboarding resident oidc client"
@@ -342,7 +345,8 @@ echo "Onboarding resident oidc client"
 	--folder create-oidc-client \
 	--folder delete-user \
 	$ADD_SSL_NEWMAN \
-    -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/resident-oidc.html --reporter-htmlextra-showEnvironmentData
+    --export-environment ./config-secrets.json -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/resident-oidc.html --reporter-htmlextra-showEnvironmentData
+mpartnerdefaultresidentoidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-resident-oidc-clientID") | .value' "config-secrets.json")
 }
 onboard_mimoto_keybinding_partner(){
     echo "Onboarding Mimoto Keybinding partner"
@@ -385,7 +389,8 @@ onboard_mimoto_keybinding_partner(){
 	--folder request-for-partner-apikey \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
-    -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/mimoto-keybinding.html --reporter-htmlextra-showEnvironmentData
+    --export-environment ./config-secrets.json -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/mimoto-keybinding.html --reporter-htmlextra-showEnvironmentData
+mpartnerdefaultmimotokeybindingapikey=$(jq -r '.values[] | select(.key == "mpartner-default-mimotokeybinding-apikey") | .value' "config-secrets.json")
 }
 
 ## Script starts from here
