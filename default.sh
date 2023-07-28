@@ -291,6 +291,8 @@ onboard_relying_party_with_demo_oidc_client(){
 privateandpublickeypair=$(jq -r '.values[] | select(.key == "privateandpublickeypair") | .value' config-secrets.json)
 privateandpublickeypair=$(echo -n "$privateandpublickeypair" | base64)
 mpartnerdefaultdemooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-demo-oidc-clientID") | .value' "config-secrets.json")
+echo "Private and Public KeyPair: $privateandpublickeypair"
+echo "mpartner default demo OIDC clientId:$mpartnerdefaultdemooidcclientID"
 }
 onboard_resident_oidc_client() {
 echo "Onboarding resident oidc client"
@@ -347,6 +349,7 @@ echo "Onboarding resident oidc client"
 	$ADD_SSL_NEWMAN \
     --export-environment ./config-secrets.json -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/resident-oidc.html --reporter-htmlextra-showEnvironmentData
 mpartnerdefaultresidentoidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-resident-oidc-clientID") | .value' "config-secrets.json")
+echo "mpartner default resident OIDC clientId: $mpartnerdefaultresidentoidcclientID"
 }
 onboard_mimoto_keybinding_partner(){
     echo "Onboarding Mimoto Keybinding partner"
@@ -391,6 +394,7 @@ onboard_mimoto_keybinding_partner(){
     $ADD_SSL_NEWMAN \
     --export-environment ./config-secrets.json -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/mimoto-keybinding.html --reporter-htmlextra-showEnvironmentData
 mpartnerdefaultmimotokeybindingapikey=$(jq -r '.values[] | select(.key == "mpartner-default-mimotokeybinding-apikey") | .value' "config-secrets.json")
+echo "mpartner default mimoto keybinding apikey: $mpartnerdefaultmimotokeybindingapikey"
 }
 
 ## Script starts from here
