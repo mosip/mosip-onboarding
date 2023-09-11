@@ -18,7 +18,7 @@ on:
       - develop
       - 1.*
       - master
-      - MOSIP-23963
+      - MOSIP*
   workflow_dispatch:
     inputs:
       message:
