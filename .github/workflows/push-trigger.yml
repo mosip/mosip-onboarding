@@ -5,20 +5,6 @@ on:
     types: [published]
   pull_request:
     types: [opened]
-    branches:
-      - '!release-branch'
-      - release-1*
-      - 1.*
-      - develop
-      - MOSIP*
-  push:
-    branches:
-      - '!release-branch'
-      - release-1*
-      - develop
-      - 1.*
-      - master
-      - MOSIP*
   workflow_dispatch:
     inputs:
       message:
@@ -26,6 +12,14 @@ on:
         required: false
         default: 'Triggered for Updates'
         type: string
+  push:
+    branches:
+      - '!release-branch'
+      - release*
+      - develop
+      - 1.*
+      - master
+      - MOSIP*        
 jobs:
   build-dockers:
     strategy:
