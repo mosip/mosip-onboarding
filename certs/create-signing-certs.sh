@@ -17,7 +17,7 @@ path=$1
 # orgnisation=$(prop 'partner-org-name')
 # email_id=$(prop 'partner-kc-user-email')
 # common_name=$pname
-# keystore_passowrd=$(prop 'keystore-passowrd')
+# keystore_password=$(prop 'keystore-password')
 
 
 partner_name=$( printenv PARTNER_KC_USERNAME ) 
@@ -28,7 +28,9 @@ locality=Blr
 orgnisation=IITB
 email_id=user_$(date +%s%N)@example.com
 common_name=$partner_name
-keystore_passowrd=
+keystore_password=mosip123
+export keystore_password
+echo "$keystore_password" > key.pwd
 
 echo "updating conf"
 sed -i 's/\(^C =\).*/\1 '$country'/' $path/certs/root-openssl.cnf
@@ -64,7 +66,7 @@ else
   openssl req -new -key $cert_path/Client.key -out $cert_path/Client.csr -config $path/certs/client-openssl.cnf
   openssl x509 -req -days 1825 -extensions v3_req -extfile $path/certs/client-openssl.cnf -in $cert_path/Client.csr -CA $cert_path/RootCA.pem -CAkey $cert_path/RootCA.key -CAcreateserial -out $cert_path/Client.pem
 
-  openssl pkcs12 -export -in $cert_path/Client.pem -inkey $cert_path/Client.key -out $cert_path/keystore.p12 -name $partner_name -password pass:$keystore_passowrd
+  openssl pkcs12 -export -in $cert_path/Client.pem -inkey $cert_path/Client.key -out $cert_path/keystore.p12 -name $partner_name -password pass:$keystore_password
 
   echo "Cert generation complete"$'\n'
 
