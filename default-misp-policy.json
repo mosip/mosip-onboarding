@@ -10,7 +10,8 @@
         "allowAuthRequestDelegation": true,
         "allowKycRequestDelegation":true,
         "trustBindedAuthVerificationToken": true,
-        "allowKeyBindingDelegation":true
+        "allowKeyBindingDelegation":true,
+        "allowVciRequestDelegation": true
         },
     "policyGroupName": "{{policy-group-name}}",
     "policyType": "MISP"

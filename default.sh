@@ -359,8 +359,8 @@ onboard_mimoto_keybinding_partner(){
 	echo $root_ca_cert
 	echo $partner_cert
 	newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
-    --env-var url="$URL" \
-    --env-var request-time="$DATE" \
+  --env-var url="$URL" \
+  --env-var request-time="$DATE" \
 	--env-var partner-manager-username=$PARTNER_KC_USERNAME \
 	--env-var partner-manager-password=$PARTNER_KC_USERPASSWORD \
 	--env-var application-id=$APPLICATION_ID \
@@ -395,6 +395,59 @@ onboard_mimoto_keybinding_partner(){
     --export-environment ./config-secrets.json -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/mimoto-keybinding.html --reporter-htmlextra-showEnvironmentData
 mpartnerdefaultmimotokeybindingapikey=$(jq -r '.values[] | select(.key == "mpartner-default-mimotokeybinding-apikey") | .value' "config-secrets.json")
 echo "mpartner default mimoto keybinding apikey: $mpartnerdefaultmimotokeybindingapikey"
+}
+onboard_mimoto_oidc_partner(){
+    echo "Onboarding Mimoto OIDC partner"
+	sh $MYDIR/certs/create-signing-certs.sh $MYDIR
+	root_ca_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $root_cert_path)
+	partner_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $client_cert_path)
+	sh $MYDIR/certs/convert.sh $MYDIR
+	if [ $? -gt 0 ]; then
+      echo "JWK Key generation failed; EXITING";
+      exit 1;
+    fi
+    echo "JWK Keys generated successfully"
+    jwk_key=$(awk -F'"' '/"n"/ {print $8}' $MYDIR/certs/$PARTNER_KC_USERNAME/publickey.jwk)
+	echo $jwk_key
+	newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
+  --env-var url="$URL" \
+  --env-var request-time="$DATE" \
+	--env-var partner-manager-username=$PARTNER_KC_USERNAME \
+	--env-var partner-manager-password=$PARTNER_KC_USERPASSWORD \
+	--env-var logo-uri=$LOGO_URI \
+	--env-var redirect-uri=$REDIRECT_URI \
+	--env-var application-id=$APPLICATION_ID \
+	--env-var module-clientid=$MODULE_CLIENTID \
+	--env-var module-secretkey=$MODULE_SECRETKEY \
+	--env-var policy-group-name=$POLICY_GROUP_NAME \
+	--env-var partner-kc-username=$PARTNER_KC_USERNAME \
+	--env-var partner-kc-userpassword=$PARTNER_KC_USERPASSWORD \
+	--env-var partner-organization-name=$PARTNER_ORGANIZATION_NAME \
+  --env-var partner-type=$PARTNER_TYPE \
+	--env-var key="$jwk_key" \
+	--env-var keyid="" \
+  --env-var policy-name=$POLICY_NAME \
+	--env-var keycloak-url=$KEYCLOAK_URL \
+	--env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
+	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
+	--env-var cert-manager-username="$KEYCLOAK_CLIENT" \
+  --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
+	--env-var partner-domain=Auth \
+	--env-var oidc-client-name="$OIDC_CLIENT_NAME" \
+	--env-var ca-certificate="$root_ca_cert" \
+	--env-var leaf-certificate="$partner_cert" \
+	--folder 'create_keycloak_user' \
+	--folder 'create/publish_policy_group_and_policy' \
+	--folder partner-self-registration \
+	--folder authenticate-to-upload-certs \
+  --folder upload-ca-certificate \
+  --folder upload-leaf-certificate \
+	--folder partner_request_mapping_to_policyname \
+	--folder approve-partner-mapping-to-policy \
+	--folder create-oidc-client \
+	--folder delete-user \
+    $ADD_SSL_NEWMAN \
+  --export-environment ./config-secrets.json -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/mimoto-oidc.html --reporter-htmlextra-showEnvironmentData
 }
 
 ## Script starts from here
@@ -494,4 +547,17 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
   onboard_mimoto_keybinding_partner
+  elif [ "$MODULE" = "mimoto-oidc" ]; then
+  APPLICATION_ID=partner
+  MODULE_CLIENTID=mosip-pms-client
+  MODULE_SECRETKEY=$mosip_pms_client_secret
+  POLICY_NAME=mpolicy-default-mimotooidc
+  POLICY_GROUP_NAME=mpolicygroup-default-mimotooidc
+  export PARTNER_KC_USERNAME=mpartner-default-mimotooidc
+  PARTNER_KC_USERPASSWORD=mimotooidc-kc-mockuserpassword
+  PARTNER_ORGANIZATION_NAME=IITB
+  PARTNER_TYPE=Auth_Partner
+  root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
+  client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
+  onboard_mimoto_oidc_partner
 fi
