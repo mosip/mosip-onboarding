@@ -453,6 +453,9 @@ elif [ "$MODULE" = "esignet" ]; then
   PARTNER_ORGANIZATION_NAME=IITB
   PARTNER_TYPE=Misp_Partner
   onboard_esignet_partner
+  echo "Updating esignet MISP_LICENSE_KEY"
+  kubectl create secret generic esignet-misp-onboarder-key -n esignet --from-literal=mosip-esignet-misp-key=$MISP_LICENSE_KEY --dry-run=client -o yaml | kubectl apply -f -
+  echo "MISP Key Updated successfully"
 elif [ "$MODULE" = "demo-oidc" ]; then
   APPLICATION_ID=partner
   MODULE_CLIENTID=mosip-pms-client
@@ -468,6 +471,11 @@ elif [ "$MODULE" = "demo-oidc" ]; then
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
   onboard_relying_party_with_demo_oidc_client
+  echo "Updating jwk privateandpublickeypair and Mpartner Default Demo Oidc Client ID"
+  kubectl patch secret mock-relying-party-service-secrets -n esignet -p '{"data":{"client-private-key":"'$(echo -n "$privateandpublickeypair" | base64 | tr -d '\n')'"}}'
+  kubectl rollout restart deployment -n esignet mock-relying-party-service
+  kubectl -n esignet set env deployment/mock-relying-party-ui CLIENT_ID=$mpartnerdefaultdemooidcclientID
+  echo "JWK PrivatePublic Key Pair and Mpartner Default Demo Oidc Client ID updated successfully"
 elif [ "$MODULE" = "resident-oidc" ]; then
   APPLICATION_ID=partner
   MODULE_CLIENTID=mosip-pms-client
@@ -481,6 +489,9 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   LOGO_URI="https://$( printenv mosip-resident-host )/assets/MOSIP%20Vertical%20Black.png"
   REDIRECT_URI="https://$( printenv mosip-api-internal-host )/resident/v1/login-redirect/**"
   onboard_resident_oidc_client
+  echo "Updating Resident OIDC Client Id"
+  kubectl create secret generic resident-oidc-onboarder-key -n esignet --from-literal=resident-oidc-clientid=$mpartnerdefaultresidentoidcclientID --dry-run=client -o yaml | kubectl apply -f -
+  echo "Resident OIDC client id updated successfully"
   elif [ "$MODULE" = "mimoto-keybinding" ]; then
   APPLICATION_ID=partner
   MODULE_CLIENTID=mosip-pms-client
@@ -494,4 +505,7 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
   onboard_mimoto_keybinding_partner
+  echo "Updating Mimoto Wallet Binding Partner API Key"
+  kubectl create secret generic mimoto-wallet-binding-partner-api-key -n mimoto --from-literal=mimoto-wallet-binding-partner-api-key=$mpartnerdefaultmimotokeybindingapikey --dry-run=client -o yaml | kubectl apply -f -
+  echo "Mimoto Wallet Binding Partner API Key updated successfully"
 fi
