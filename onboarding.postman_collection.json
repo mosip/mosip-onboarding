@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "842f3035-5571-4206-8c59-92bff941a16c",
+		"_postman_id": "8889c214-7080-4abf-9120-7377befd92a3",
 		"name": "onboarding Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "12620596"
@@ -2549,8 +2549,9 @@
 									"    pm.environment.set(\"mpartner-default-demo-oidc-clientID\", responseJson.response.clientId);",
 									"} else if (partnerKcUsername === \"mpartner-default-resident-oidc\") {",
 									"    pm.environment.set(\"mpartner-default-resident-oidc-clientID\", responseJson.response.clientId);",
+									"} else if (partnerKcUsername === \"mpartner-default-mimotooidc\") {",
+									"    pm.environment.set(\"mpartner-default-mimotooidc-clientID\", responseJson.response.clientId);",
 									"}",
-									"",
 									"",
 									""
 								],
