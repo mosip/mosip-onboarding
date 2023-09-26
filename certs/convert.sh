@@ -24,7 +24,7 @@ CERTIFICATE_FILE=./input.pem
 openssl x509 -in "${CERTIFICATE_FILE}" -pubkey -noout > pubkey.pem
 
 # Convert the PEM public key to JWK format using the pem-jwk tool
-npm install -g pem-jwk
+#npm install -g pem-jwk
 pem-jwk pubkey.pem > ./publickey.jwk
 cat publickey.jwk
 mv ./publickey.jwk $cert_path/publickey.jwk
