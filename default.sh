@@ -571,7 +571,7 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   PARTNER_TYPE=Auth_Partner
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
-  OIDC_CLIENT_NAME=Mimoto Oidc Portal
+  OIDC_CLIENT_NAME=mimoto-oidc
   LOGO_URI="https://$( printenv mosip-mimoto-host )/assets/inji-oidc.png"
   REDIRECT_URI="io.mosip.residentapp.inji:\/\/oauthredirect"
   onboard_mimoto_oidc_partner
