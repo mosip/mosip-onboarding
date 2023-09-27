@@ -57,4 +57,7 @@ ENV s3-user-key=
 ENV s3-user-secret=
 ENV s3-bucket-name=
 
+ENV ns_mimoto=
+ENV ns_esignet=
+
 ENTRYPOINT ["./entrypoint.sh"]

@@ -505,7 +505,7 @@ elif [ "$MODULE" = "esignet" ]; then
   PARTNER_TYPE=Misp_Partner
   onboard_esignet_partner
   echo "Updating esignet MISP_LICENSE_KEY"
-  kubectl create secret generic esignet-misp-onboarder-key -n esignet --from-literal=mosip-esignet-misp-key=$MISP_LICENSE_KEY --dry-run=client -o yaml | kubectl apply -f -
+  kubectl create secret generic esignet-misp-onboarder-key -n $ns_esignet --from-literal=mosip-esignet-misp-key=$MISP_LICENSE_KEY --dry-run=client -o yaml | kubectl apply -f -
   echo "MISP Key Updated successfully"
 elif [ "$MODULE" = "demo-oidc" ]; then
   APPLICATION_ID=partner
@@ -523,9 +523,9 @@ elif [ "$MODULE" = "demo-oidc" ]; then
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
   onboard_relying_party_with_demo_oidc_client
   echo "Updating jwk privateandpublickeypair and Mpartner Default Demo Oidc Client ID"
-  kubectl patch secret mock-relying-party-service-secrets -n esignet -p '{"data":{"client-private-key":"'$(echo -n "$privateandpublickeypair" | base64 | tr -d '\n')'"}}'
-  kubectl rollout restart deployment -n esignet mock-relying-party-service
-  kubectl -n esignet set env deployment/mock-relying-party-ui CLIENT_ID=$mpartnerdefaultdemooidcclientID
+  kubectl patch secret mock-relying-party-service-secrets -n $ns_esignet -p '{"data":{"client-private-key":"'$(echo -n "$privateandpublickeypair" | base64 | tr -d '\n')'"}}'
+  kubectl rollout restart deployment -n $ns_esignet mock-relying-party-service
+  kubectl -n $ns_esignet set env deployment/mock-relying-party-ui CLIENT_ID=$mpartnerdefaultdemooidcclientID
   echo "JWK PrivatePublic Key Pair and Mpartner Default Demo Oidc Client ID updated successfully"
 elif [ "$MODULE" = "resident-oidc" ]; then
   APPLICATION_ID=partner
@@ -541,7 +541,7 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   REDIRECT_URI="https://$( printenv mosip-api-internal-host )/resident/v1/login-redirect/**"
   onboard_resident_oidc_client
   echo "Updating Resident OIDC Client Id"
-  kubectl create secret generic resident-oidc-onboarder-key -n esignet --from-literal=resident-oidc-clientid=$mpartnerdefaultresidentoidcclientID --dry-run=client -o yaml | kubectl apply -f -
+  kubectl create secret generic resident-oidc-onboarder-key -n $ns_esignet --from-literal=resident-oidc-clientid=$mpartnerdefaultresidentoidcclientID --dry-run=client -o yaml | kubectl apply -f -
   echo "Resident OIDC client id updated successfully"
   elif [ "$MODULE" = "mimoto-keybinding" ]; then
   APPLICATION_ID=partner
@@ -557,7 +557,7 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
   onboard_mimoto_keybinding_partner
   echo "Updating Mimoto Wallet Binding Partner API Key"
-  kubectl create secret generic mimoto-wallet-binding-partner-api-key -n mimoto --from-literal=mimoto-wallet-binding-partner-api-key=$mpartnerdefaultmimotokeybindingapikey --dry-run=client -o yaml | kubectl apply -f -
+  kubectl create secret generic mimoto-wallet-binding-partner-api-key -n $ns_mimoto --from-literal=mimoto-wallet-binding-partner-api-key=$mpartnerdefaultmimotokeybindingapikey --dry-run=client -o yaml | kubectl apply -f -
   echo "Mimoto Wallet Binding Partner API Key updated successfully"
   elif [ "$MODULE" = "mimoto-oidc" ]; then
   APPLICATION_ID=partner
@@ -576,6 +576,6 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   REDIRECT_URI="io.mosip.residentapp.inji:\/\/oauthredirect"
   onboard_mimoto_oidc_partner
   echo "Updating Mimoto OIDC Partner Client ID"
-  kubectl create secret generic mimoto-oidc-partner-clientid -n mimoto --from-literal=mimoto-oidc-partner-clientid=$mpartner-default-mimotooidc-clientID --dry-run=client -o yaml | kubectl apply -f -
+  kubectl create secret generic mimoto-oidc-partner-clientid -n $ns_mimoto --from-literal=mimoto-oidc-partner-clientid=$mpartner-default-mimotooidc-clientID --dry-run=client -o yaml | kubectl apply -f -
   echo "Mimoto OIDC Partner Client ID updated successfully"
 fi
