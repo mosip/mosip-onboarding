@@ -2354,7 +2354,7 @@
 								"exec": [
 									"pm.test('created',function(){\r",
 									"    const {response} =pm.response.json();\r",
-									"    pm.environment.set('misp-license-key',response.licenseKey);\r",
+									"    pm.environment.set('mpartner-default-esignet-misp-license-key',response.licenseKey);\r",
 									"})"
 								],
 								"type": "text/javascript"
@@ -2463,7 +2463,7 @@
 							"script": {
 								"exec": [
 									"var resbody = pm.response.json();\r",
-									"pm.environment.set(\"privatekey\", JSON.stringify(resbody.jwk));\r",
+									"pm.environment.set(\"privateandpublickeypair\", JSON.stringify(resbody.jwk));\r",
 									"\r",
 									"var resbody = pm.response.json();\r",
 									"pm.environment.set(\"publickey\", JSON.stringify(resbody.pub));\r",
@@ -2475,9 +2475,10 @@
 									"pm.environment.set (\"keyid\",keyid)\r",
 									"pm.environment.set (\"key\",key)\r",
 									"\r",
-									"var keypair = pm.response.json();\r",
-									"console.log (keypair.jwk);\r",
-									"console.log (\"Take the above values and base64 encode it and use it in the deployment\");"
+									"//var keypair = pm.response.json();\r",
+									"//console.log (keypair.jwk);\r",
+									"//console.log (\"Take the above values and base64 encode it and use it in the deployment\");\r",
+									"//pm.environment.set (\"jwkkeypair\",keypair.jwk);"
 								],
 								"type": "text/javascript"
 							}
@@ -2541,6 +2542,17 @@
 									"pm.test(\"validating clientid status\", function () {",
 									"    pm.expect(pm.response.text()).to.include(\"ACTIVE\");",
 									"});",
+									"var responseJson = pm.response.json();",
+									"var partnerKcUsername = pm.variables.get(\"partner-kc-username\");",
+									"",
+									"if (partnerKcUsername === \"mpartner-default-demo-oidc\") {",
+									"    pm.environment.set(\"mpartner-default-demo-oidc-clientID\", responseJson.response.clientId);",
+									"} else if (partnerKcUsername === \"mpartner-default-resident-oidc\") {",
+									"    pm.environment.set(\"mpartner-default-resident-oidc-clientID\", responseJson.response.clientId);",
+									"} else if (partnerKcUsername === \"mpartner-default-mimotooidc\") {",
+									"    pm.environment.set(\"mpartner-default-mimotooidc-clientID\", responseJson.response.clientId);",
+									"}",
+									"",
 									""
 								],
 								"type": "text/javascript"
@@ -2663,7 +2675,7 @@
 								"exec": [
 									"pm.test('getting apikey',function(){\r",
 									"    const {response} =pm.response.json();\r",
-									"    pm.environment.set('partner-api-key',response.apiKey);\r",
+									"    pm.environment.set('mpartner-default-mimotokeybinding-apikey',response.apiKey);\r",
 									"})\r",
 									""
 								],
@@ -2674,7 +2686,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"\r",
+
 									""
 								],
 								"type": "text/javascript"
