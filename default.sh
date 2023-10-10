@@ -401,7 +401,7 @@ onboard_mimoto_oidc_partner(){
 	partner_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $client_cert_path)
 	sh $MYDIR/certs/convert.sh $MYDIR
 
-	kubectl create secret generic mimoto -n $ns_mimoto --from-file=$MYDIR/certs/$PARTNER_KC_USERNAME/keystore.p12 --dry-run=client -o yaml | kubectl apply -f -
+	kubectl -n $ns_mimoto create secret generic mimoto --from-file=$MYDIR/certs/$PARTNER_KC_USERNAME/keystore.p12 --dry-run=client -o yaml | kubectl apply -f -
 
 	if [ $? -gt 0 ]; then
       echo "JWK Key generation failed; EXITING";
