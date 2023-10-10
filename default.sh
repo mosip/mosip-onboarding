@@ -449,6 +449,7 @@ onboard_mimoto_oidc_partner(){
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
   --export-environment ./config-secrets.json -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/mimoto-oidc.html --reporter-htmlextra-showEnvironmentData
+mpartnerdefaultmimotooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-mimotooidc-clientID") | .value' "config-secrets.json")
 }
 
 ## Script starts from here
@@ -579,6 +580,6 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   REDIRECT_URI="io.mosip.residentapp.inji:\/\/oauthredirect"
   onboard_mimoto_oidc_partner
   echo "Updating Mimoto OIDC Partner Client ID"
-  kubectl create secret generic mimoto-oidc-partner-clientid -n $ns_mimoto --from-literal=mimoto-oidc-partner-clientid=$mpartner-default-mimotooidc-clientID --dry-run=client -o yaml | kubectl apply -f -
+  kubectl create secret generic mimoto-oidc-partner-clientid -n $ns_mimoto --from-literal=mimoto-oidc-partner-clientid=$mpartnerdefaultmimotooidcclientID --dry-run=client -o yaml | kubectl apply -f -
   echo "Mimoto OIDC Partner Client ID updated successfully"
 fi
