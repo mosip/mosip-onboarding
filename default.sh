@@ -239,7 +239,6 @@ onboard_esignet_partner() {
 if [ -z "$MISP_LICENSE_KEY" ]; then
     MISP_LICENSE_KEY=$(jq -r '.values[] | select(.key | contains("mpartner-default-esignet-misp-license-key")) | .value' config-secrets.json)
 fi
-echo "MISP License Key: $MISP_LICENSE_KEY"
 }
 
 onboard_relying_party_with_demo_oidc_client(){
@@ -291,8 +290,6 @@ onboard_relying_party_with_demo_oidc_client(){
 privateandpublickeypair=$(jq -r '.values[] | select(.key == "privateandpublickeypair") | .value' config-secrets.json)
 privateandpublickeypair=$(echo -n "$privateandpublickeypair" | base64)
 mpartnerdefaultdemooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-demo-oidc-clientID") | .value' "config-secrets.json")
-echo "Private and Public KeyPair: $privateandpublickeypair"
-echo "mpartner default demo OIDC clientId:$mpartnerdefaultdemooidcclientID"
 }
 onboard_resident_oidc_client() {
 echo "Onboarding resident oidc client"
@@ -449,6 +446,7 @@ onboard_mimoto_oidc_partner(){
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
   --export-environment ./config-secrets.json -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/mimoto-oidc.html --reporter-htmlextra-showEnvironmentData
+mpartnerdefaultmimotooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-mimotooidc-clientID") | .value' "config-secrets.json")
 }
 
 ## Script starts from here
@@ -579,6 +577,6 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   REDIRECT_URI="io.mosip.residentapp.inji:\/\/oauthredirect"
   onboard_mimoto_oidc_partner
   echo "Updating Mimoto OIDC Partner Client ID"
-  kubectl create secret generic mimoto-oidc-partner-clientid -n $ns_mimoto --from-literal=mimoto-oidc-partner-clientid=$mpartner-default-mimotooidc-clientID --dry-run=client -o yaml | kubectl apply -f -
+  kubectl create secret generic mimoto-oidc-partner-clientid -n $ns_mimoto --from-literal=mimoto-oidc-partner-clientid=$mpartnerdefaultmimotooidcclientID --dry-run=client -o yaml | kubectl apply -f -
   echo "Mimoto OIDC Partner Client ID updated successfully"
 fi
