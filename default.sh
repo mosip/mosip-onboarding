@@ -239,7 +239,6 @@ onboard_esignet_partner() {
 if [ -z "$MISP_LICENSE_KEY" ]; then
     MISP_LICENSE_KEY=$(jq -r '.values[] | select(.key | contains("mpartner-default-esignet-misp-license-key")) | .value' config-secrets.json)
 fi
-echo "MISP License Key: $MISP_LICENSE_KEY"
 }
 
 onboard_relying_party_with_demo_oidc_client(){
@@ -291,8 +290,6 @@ onboard_relying_party_with_demo_oidc_client(){
 privateandpublickeypair=$(jq -r '.values[] | select(.key == "privateandpublickeypair") | .value' config-secrets.json)
 privateandpublickeypair=$(echo -n "$privateandpublickeypair" | base64)
 mpartnerdefaultdemooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-demo-oidc-clientID") | .value' "config-secrets.json")
-echo "Private and Public KeyPair: $privateandpublickeypair"
-echo "mpartner default demo OIDC clientId:$mpartnerdefaultdemooidcclientID"
 }
 onboard_resident_oidc_client() {
 echo "Onboarding resident oidc client"
