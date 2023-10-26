@@ -20,6 +20,14 @@ ARG container_user_group=mosip
 ARG container_user_uid=1001
 ARG container_user_gid=1001
 
+# Install required packages using 'apk'
+RUN apk update && apk add --no-cache curl bash
+
+# Install kubectl binary
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+    chmod +x kubectl && \
+    mv kubectl /usr/local/bin/
+
 # Install packages and create user
 RUN addgroup -g ${container_user_gid} ${container_user_group} \
 && adduser -u ${container_user_uid} -G ${container_user_group} -s /bin/bash -D ${container_user}
@@ -48,5 +56,8 @@ ENV s3-region=
 ENV s3-user-key=
 ENV s3-user-secret=
 ENV s3-bucket-name=
+
+ENV ns_mimoto=
+ENV ns_esignet=
 
 ENTRYPOINT ["./entrypoint.sh"]

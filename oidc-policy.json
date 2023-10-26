@@ -73,7 +73,11 @@
 				"authSubType": "",
 				"authType": "wla",
 				"mandatory": false
-			}]
+			}, {
+				"authSubType": "",
+				"authType": "vciexchange",
+				"mandatory": false
+			    }]
 		},
 		"policyGroupName": "{{policy-group-name}}",
 		"policyType": "Auth",
