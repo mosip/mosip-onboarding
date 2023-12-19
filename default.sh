@@ -449,6 +449,107 @@ onboard_mimoto_oidc_partner(){
   --export-environment ./config-secrets.json -d ./mimoto-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/mimoto-oidc.html --reporter-htmlextra-showEnvironmentData
 mpartnerdefaultmimotooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-mimotooidc-clientID") | .value' "config-secrets.json")
 }
+onboard_opencrvs_credential_partner(){
+    echo "Onboarding opencrvs partner"
+	sh $MYDIR/certs/create-signing-certs.sh $MYDIR
+	root_ca_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $root_cert_path)
+	partner_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $client_cert_path)
+	sh $MYDIR/certs/convert.sh $MYDIR
+	mv $MYDIR/certs/$PARTNER_KC_USERNAME/keystore.p12 $MYDIR/certs/$PARTNER_KC_USERNAME/credkeystore.p12
+
+	kubectl -n $ns_mimoto create secret generic crvscred --from-file=$MYDIR/certs/$PARTNER_KC_USERNAME/credkeystore.p12 --dry-run=client -o yaml | kubectl apply -f -
+
+	if [ $? -gt 0 ]; then
+      echo "JWK Key generation failed; EXITING";
+      exit 1;
+    fi
+    echo "JWK Keys generated successfully"
+    jwk_key=$(awk -F'"' '/"n"/ {print $8}' $MYDIR/certs/$PARTNER_KC_USERNAME/publickey.jwk)
+	echo $jwk_key
+	newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
+  --env-var url="$URL" \
+  --env-var request-time="$DATE" \
+	--env-var partner-manager-username=$PARTNER_KC_USERNAME \
+	--env-var partner-manager-password=$PARTNER_KC_USERPASSWORD \
+	--env-var application-id=$APPLICATION_ID \
+	--env-var module-clientid=$MODULE_CLIENTID \
+	--env-var module-secretkey=$MODULE_SECRETKEY \
+	--env-var policy-group-name=$POLICY_GROUP_NAME \
+	--env-var partner-kc-username=$PARTNER_KC_USERNAME \
+	--env-var partner-kc-userpassword=$PARTNER_KC_USERPASSWORD \
+	--env-var partner-organization-name=$PARTNER_ORGANIZATION_NAME \
+  --env-var partner-type=$PARTNER_TYPE \
+  --env-var policy-name=$POLICY_NAME \
+	--env-var keycloak-url=$KEYCLOAK_URL \
+	--env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
+	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
+	--env-var cert-manager-username="$KEYCLOAK_CLIENT" \
+  --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
+	--env-var partner-domain=Auth \
+	--env-var oidc-client-name="$OIDC_CLIENT_NAME" \
+	--env-var ca-certificate="$root_ca_cert" \
+	--env-var leaf-certificate="$partner_cert" \
+	--env-var credential-type=opencrvs \
+	--folder 'create_keycloak_user' \
+	--folder 'create/publish_policy_group_and_policy' \
+	--folder partner-self-registration \
+	--folder authenticate-to-upload-certs \
+    --folder upload-ca-certificate \
+    --folder upload-leaf-certificate \
+	--folder mapping-partner-to-policy-credential-type \
+    $ADD_SSL_NEWMAN \
+  --export-environment ./config-secrets.json -d ./opencrvspolicy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/opencrvs-credential.html --reporter-htmlextra-showEnvironmentData
+    POLICY_GROUP_NAME=mpolicygroup-default-opencrvs-auth
+	PARTNER_KC_USERNAME=mpartner-default-opencrvs-auth
+	PARTNER_KC_USERPASSWORD=partner-default-opencrvs-mockpassword
+	POLICY_NAME=mpolicy-default-opencrvs-auth
+	
+	echo "Onboarding opencrvs auth partner"
+	sh $MYDIR/certs/create-signing-certs.sh $MYDIR
+	root_ca_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $root_cert_path)
+	partner_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $client_cert_path)
+	sh $MYDIR/certs/convert.sh $MYDIR
+	mv $MYDIR/certs/$PARTNER_KC_USERNAME/keystore.p12 $MYDIR/certs/$PARTNER_KC_USERNAME/authkeystore.p12
+
+	kubectl -n $ns_mimoto create secret generic crvsauth --from-file=$MYDIR/certs/$PARTNER_KC_USERNAME/authkeystore.p12 --dry-run=client -o yaml | kubectl apply -f -
+
+	if [ $? -gt 0 ]; then
+      echo "JWK Key generation failed; EXITING";
+      exit 1;
+    fi
+    echo "JWK Keys generated successfully"
+    jwk_key=$(awk -F'"' '/"n"/ {print $8}' $MYDIR/certs/$PARTNER_KC_USERNAME/publickey.jwk)
+	echo $jwk_key
+	newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
+  --env-var url="$URL" \
+  --env-var request-time="$DATE" \
+	--env-var partner-manager-username=$PARTNER_KC_USERNAME \
+	--env-var partner-manager-password=$PARTNER_KC_USERPASSWORD \
+	--env-var application-id=$APPLICATION_ID \
+	--env-var module-clientid=$MODULE_CLIENTID \
+	--env-var module-secretkey=$MODULE_SECRETKEY \
+	--env-var policy-group-name=$POLICY_GROUP_NAME \
+	--env-var partner-kc-username=$PARTNER_KC_USERNAME \
+	--env-var partner-kc-userpassword=$PARTNER_KC_USERPASSWORD \
+	--env-var partner-organization-name=$PARTNER_ORGANIZATION_NAME \
+    --env-var partner-type=$PARTNER_TYPE \
+    --env-var policy-name=$POLICY_NAME \
+	--env-var cert-manager-username="$KEYCLOAK_CLIENT" \
+    --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
+	--env-var partner-domain=Auth \
+	--env-var ca-certificate="$root_ca_cert" \
+	--env-var leaf-certificate="$partner_cert" \
+	--env-var credential-type=opencrvs \
+	--folder 'create_keycloak_user' \
+	--folder 'create/publish_policy_group_and_policy' \
+	--folder partner-self-registration \
+	--folder authenticate-to-upload-certs \
+    --folder upload-ca-certificate \
+    --folder upload-leaf-certificate \
+    $ADD_SSL_NEWMAN \
+  --export-environment ./config-secrets.json -d ./opencrvspolicy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/opencrvs-auth.html --reporter-htmlextra-showEnvironmentData
+}
+
 
 ## Script starts from here
 export MYDIR=$(pwd)
@@ -580,4 +681,18 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   echo "Updating Mimoto OIDC Partner Client ID"
   kubectl create secret generic mimoto-oidc-partner-clientid -n $ns_mimoto --from-literal=mimoto-oidc-partner-clientid=$mpartnerdefaultmimotooidcclientID --dry-run=client -o yaml | kubectl apply -f -
   echo "Mimoto OIDC Partner Client ID updated successfully"
+  elif [ "$MODULE" = "opencrvs" ]; then
+  APPLICATION_ID=partner
+  MODULE_CLIENTID=mosip-pms-client
+  MODULE_SECRETKEY=$mosip_pms_client_secret
+  POLICY_NAME=mpolicy-default-opencrvs-credential
+  POLICY_GROUP_NAME=mpolicygroup-default-opencrvs-credential
+  export PARTNER_KC_USERNAME=mpartner-default-opencrvs-credential
+  PARTNER_KC_USERPASSWORD=mpartner-default-opencrvs-mockpassword
+  PARTNER_ORGANIZATION_NAME=IITB
+  PARTNER_TYPE=Credential_Partner
+  root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
+  client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
+  onboard_mimoto_oidc_partner
+  echo "opencrvs auth_partner and opencrvs Credential_Partner onboarding"
 fi
