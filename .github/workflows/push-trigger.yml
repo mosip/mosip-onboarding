@@ -4,7 +4,7 @@ on:
   release:
     types: [published]
   pull_request:
-    types: [opened]
+    types: [opened, reopened, synchronize]
   workflow_dispatch:
     inputs:
       message:
@@ -28,6 +28,7 @@ jobs:
           - SERVICE_LOCATION: './'
             SERVICE_NAME: 'partner-onboarder'
       fail-fast: false
+    name: ${{ matrix.SERVICE_NAME }}  
     uses: mosip/kattu/.github/workflows/docker-build.yml@master
     with:
       SERVICE_LOCATION: ${{ matrix.SERVICE_LOCATION }}
