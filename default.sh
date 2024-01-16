@@ -501,7 +501,7 @@ onboard_opencrvs_credential_partner(){
   --export-environment ./config-secrets.json -d ./opencrvspolicy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/opencrvs-credential.html --reporter-htmlextra-showEnvironmentData
     POLICY_GROUP_NAME=mpolicygroup-default-opencrvs-auth
 	PARTNER_KC_USERNAME=mpartner-default-opencrvs-auth
-	PARTNER_KC_USERPASSWORD=partner-default-opencrvs-mockpassword
+	PARTNER_KC_USERPASSWORD=mpartner-default-opencrvs-mockpassword
 	POLICY_NAME=mpolicy-default-opencrvs-auth
 	
 	echo "Onboarding opencrvs auth partner"
@@ -694,5 +694,5 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
   onboard_mimoto_oidc_partner
-  echo "opencrvs auth_partner and opencrvs Credential_Partner onboarding"
+  echo "opencrvs Auth_Partner and opencrvs Credential_Partner onboarding"
 fi
