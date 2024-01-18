@@ -457,7 +457,7 @@ onboard_opencrvs_credential_partner(){
 	sh $MYDIR/certs/convert.sh $MYDIR
 	mv $MYDIR/certs/$PARTNER_KC_USERNAME/keystore.p12 $MYDIR/certs/$PARTNER_KC_USERNAME/credkeystore.p12
 
-	kubectl -n $ns_mimoto create secret generic crvscred --from-file=$MYDIR/certs/$PARTNER_KC_USERNAME/credkeystore.p12 --dry-run=client -o yaml | kubectl apply -f -
+	kubectl -n $ns_opencrvs create secret generic crvscred --from-file=$MYDIR/certs/$PARTNER_KC_USERNAME/credkeystore.p12 --dry-run=client -o yaml | kubectl apply -f -
 
 	if [ $? -gt 0 ]; then
       echo "JWK Key generation failed; EXITING";
@@ -511,7 +511,7 @@ onboard_opencrvs_credential_partner(){
 	sh $MYDIR/certs/convert.sh $MYDIR
 	mv $MYDIR/certs/$PARTNER_KC_USERNAME/keystore.p12 $MYDIR/certs/$PARTNER_KC_USERNAME/authkeystore.p12
 
-	kubectl -n $ns_mimoto create secret generic crvsauth --from-file=$MYDIR/certs/$PARTNER_KC_USERNAME/authkeystore.p12 --dry-run=client -o yaml | kubectl apply -f -
+	kubectl -n $ns_opencrvs create secret generic crvsauth --from-file=$MYDIR/certs/$PARTNER_KC_USERNAME/authkeystore.p12 --dry-run=client -o yaml | kubectl apply -f -
 
 	if [ $? -gt 0 ]; then
       echo "JWK Key generation failed; EXITING";
