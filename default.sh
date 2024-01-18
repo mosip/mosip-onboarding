@@ -286,7 +286,7 @@ onboard_relying_party_with_demo_oidc_client(){
 	--folder create-oidc-client \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
-    --export-environment ./config-secrets.json -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/demo-oidc.html --reporter-htmlextra-showEnvironmentData
+    --export-environment ./config-secrets.json -d ./demo-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/demo-oidc.html --reporter-htmlextra-showEnvironmentData
 privateandpublickeypair=$(jq -r '.values[] | select(.key == "privateandpublickeypair") | .value' config-secrets.json)
 privateandpublickeypair=$(echo -n "$privateandpublickeypair" | base64)
 mpartnerdefaultdemooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-demo-oidc-clientID") | .value' "config-secrets.json")
