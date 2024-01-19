@@ -34,15 +34,6 @@
 					},
 					{
 						"attributeName": "individual_id"
-					},
-					{
-						"attributeName": "password",
-						"source": [
-							{
-								"attribute": "password"
-							}
-						],
-						"encrypted": true
 					}
 				],
 				"allowedAuthTypes": [
@@ -109,6 +100,11 @@
 					{
 						"authSubType": "",
 						"authType": "vciexchange",
+						"mandatory": false
+					},
+					{
+						"authSubType": "",
+						"authType": "pwd",
 						"mandatory": false
 					}
 				]
