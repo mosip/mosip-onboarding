@@ -40,6 +40,7 @@ fi
 
 echo -e "\nGot Authorization token from authmanager"
 
+
 curl $ADD_SSL_CURL -X "GET" \
   -H "Accept: application/json" \
   --cookie "Authorization=$TOKEN" \

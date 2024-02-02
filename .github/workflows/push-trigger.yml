@@ -20,6 +20,8 @@ on:
       - 1.*
       - master
       - MOSIP*        
+
+
 jobs:
   build-dockers:
     strategy:

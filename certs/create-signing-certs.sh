@@ -19,7 +19,6 @@ path=$1
 # common_name=$pname
 # keystore_password=$(prop 'keystore-password')
 
-
 partner_name=$( printenv PARTNER_KC_USERNAME ) 
 echo "$partner_name is the name of the partner."
 country=IN
@@ -31,6 +30,8 @@ common_name=$partner_name
 keystore_password=mosip123
 export keystore_password
 echo "$keystore_password" > key.pwd
+
+
 
 echo "updating conf"
 sed -i 's/\(^C =\).*/\1 '$country'/' $path/certs/root-openssl.cnf
