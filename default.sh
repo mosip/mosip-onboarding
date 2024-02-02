@@ -449,8 +449,8 @@ onboard_mimoto_oidc_partner(){
   --export-environment ./config-secrets.json -d ./mimoto-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/mimoto-oidc.html --reporter-htmlextra-showEnvironmentData
 mpartnerdefaultmimotooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-mimotooidc-clientID") | .value' "config-secrets.json")
 }
-onboard_opencrvs_credential_partner(){
-    echo "Onboarding opencrvs partner"
+onboard_opencrvs_partner(){
+    echo "Onboarding opencrvs credential partner"
 	sh $MYDIR/certs/create-signing-certs.sh $MYDIR
 	root_ca_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $root_cert_path)
 	partner_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $client_cert_path)
@@ -693,6 +693,6 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   PARTNER_TYPE=Credential_Partner
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
-  onboard_mimoto_oidc_partner
+  onboard_opencrvs_partner
   echo "opencrvs Auth_Partner and opencrvs Credential_Partner onboarding"
 fi
