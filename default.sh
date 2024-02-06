@@ -235,9 +235,10 @@ onboard_esignet_partner() {
     $ADD_SSL_NEWMAN \
     --export-environment ./config-secrets.json -d ./default-misp-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/e-signet.html --reporter-htmlextra-showEnvironmentData
     MISP_LICENSE_KEY=$(jq -r '.values[] | select(.key == "mpartner-default-esignet-misp-license-key") | .value' config-secrets.json)
-    if [ -z "$MISP_LICENSE_KEY" ]; then
-        MISP_LICENSE_KEY=$(jq -r '.values[] | select(.key | contains("mpartner-default-esignet-misp-license-key")) | .value' config-secrets.json)
-    fi
+
+if [ -z "$MISP_LICENSE_KEY" ]; then
+    MISP_LICENSE_KEY=$(jq -r '.values[] | select(.key | contains("mpartner-default-esignet-misp-license-key")) | .value' config-secrets.json)
+fi
 }
 
 onboard_relying_party_with_demo_oidc_client(){
@@ -285,7 +286,7 @@ onboard_relying_party_with_demo_oidc_client(){
 	--folder create-oidc-client \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
-    --export-environment ./config-secrets.json -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/demo-oidc.html --reporter-htmlextra-showEnvironmentData
+    --export-environment ./config-secrets.json -d ./demo-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/demo-oidc.html --reporter-htmlextra-showEnvironmentData
 privateandpublickeypair=$(jq -r '.values[] | select(.key == "privateandpublickeypair") | .value' config-secrets.json)
 privateandpublickeypair=$(echo -n "$privateandpublickeypair" | base64)
 mpartnerdefaultdemooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-demo-oidc-clientID") | .value' "config-secrets.json")
@@ -342,7 +343,7 @@ echo "Onboarding resident oidc client"
 	--folder get-keyid-from-keymanager \
 	--folder create-oidc-client \
 	--folder delete-user \
-	  $ADD_SSL_NEWMAN \
+	$ADD_SSL_NEWMAN \
     --export-environment ./config-secrets.json -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/resident-oidc.html --reporter-htmlextra-showEnvironmentData
 mpartnerdefaultresidentoidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-resident-oidc-clientID") | .value' "config-secrets.json")
 }
@@ -354,8 +355,8 @@ onboard_mimoto_keybinding_partner(){
 	echo $root_ca_cert
 	echo $partner_cert
 	newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
-    --env-var url="$URL" \
-    --env-var request-time="$DATE" \
+  --env-var url="$URL" \
+  --env-var request-time="$DATE" \
 	--env-var partner-manager-username=$PARTNER_KC_USERNAME \
 	--env-var partner-manager-password=$PARTNER_KC_USERPASSWORD \
 	--env-var application-id=$APPLICATION_ID \
@@ -396,8 +397,9 @@ onboard_mimoto_oidc_partner(){
 	root_ca_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $root_cert_path)
 	partner_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $client_cert_path)
 	sh $MYDIR/certs/convert.sh $MYDIR
+	mv $MYDIR/certs/$PARTNER_KC_USERNAME/keystore.p12 $MYDIR/certs/$PARTNER_KC_USERNAME/oidckeystore.p12
 
-	kubectl -n $ns_mimoto create secret generic mimoto --from-file=$MYDIR/certs/$PARTNER_KC_USERNAME/keystore.p12 --dry-run=client -o yaml | kubectl apply -f -
+	kubectl -n $ns_mimoto create secret generic mimotooidc --from-file=$MYDIR/certs/$PARTNER_KC_USERNAME/oidckeystore.p12 --dry-run=client -o yaml | kubectl apply -f -
 
 	if [ $? -gt 0 ]; then
       echo "JWK Key generation failed; EXITING";
@@ -474,6 +476,7 @@ if [ "$ENABLE_INSECURE" = "true" ]; then
   openssl s_client -servername "$HOST" -connect "$HOST":443  > "$MYDIR/$HOST.cer" 2>/dev/null & sleep 2 ;
   sed -i -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' "$MYDIR/$HOST.cer";
   cat "$MYDIR/$HOST.cer";
+
   export ADD_SSL_CURL="--cacert $MYDIR/$HOST.cer"
   export ADD_SSL_NEWMAN="--ssl-extra-ca-certs $MYDIR/$HOST.cer"
 fi
