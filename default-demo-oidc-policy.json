@@ -31,9 +31,6 @@
 					},
 					{
 						"attributeName": "addressLine1"
-					},
-					{
-						"attributeName": "individual_id"
 					}
 				],
 				"allowedAuthTypes": [

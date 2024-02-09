@@ -233,7 +233,7 @@ onboard_esignet_partner() {
 	--folder login-to-keycloak-as-admin \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
-    --export-environment ./config-secrets.json -d ./default-misp-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/e-signet.html --reporter-htmlextra-showEnvironmentData
+    --export-environment ./config-secrets.json -d ./default-esignet-misp-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/e-signet.html --reporter-htmlextra-showEnvironmentData
     MISP_LICENSE_KEY=$(jq -r '.values[] | select(.key == "mpartner-default-esignet-misp-license-key") | .value' config-secrets.json)
 
 if [ -z "$MISP_LICENSE_KEY" ]; then
@@ -286,7 +286,7 @@ onboard_relying_party_with_demo_oidc_client(){
 	--folder create-oidc-client \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
-    --export-environment ./config-secrets.json -d ./demo-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/demo-oidc.html --reporter-htmlextra-showEnvironmentData
+    --export-environment ./config-secrets.json -d ./default-demo-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/demo-oidc.html --reporter-htmlextra-showEnvironmentData
 privateandpublickeypair=$(jq -r '.values[] | select(.key == "privateandpublickeypair") | .value' config-secrets.json)
 privateandpublickeypair=$(echo -n "$privateandpublickeypair" | base64)
 mpartnerdefaultdemooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-demo-oidc-clientID") | .value' "config-secrets.json")
@@ -344,7 +344,7 @@ echo "Onboarding resident oidc client"
 	--folder create-oidc-client \
 	--folder delete-user \
 	$ADD_SSL_NEWMAN \
-    --export-environment ./config-secrets.json -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/resident-oidc.html --reporter-htmlextra-showEnvironmentData
+    --export-environment ./config-secrets.json -d ./default-resident-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/resident-oidc.html --reporter-htmlextra-showEnvironmentData
 mpartnerdefaultresidentoidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-resident-oidc-clientID") | .value' "config-secrets.json")
 }
 onboard_mimoto_keybinding_partner(){
@@ -388,7 +388,7 @@ onboard_mimoto_keybinding_partner(){
 	--folder request-for-partner-apikey \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
-    --export-environment ./config-secrets.json -d ./oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/mimoto-keybinding.html --reporter-htmlextra-showEnvironmentData
+    --export-environment ./config-secrets.json -d ./default-mimoto-keybinding-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/mimoto-keybinding.html --reporter-htmlextra-showEnvironmentData
 mpartnerdefaultmimotokeybindingapikey=$(jq -r '.values[] | select(.key == "mpartner-default-mimotokeybinding-apikey") | .value' "config-secrets.json")
 }
 onboard_mimoto_oidc_partner(){
@@ -446,7 +446,7 @@ onboard_mimoto_oidc_partner(){
 	--folder create-oidc-client \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
-  --export-environment ./config-secrets.json -d ./mimoto-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/mimoto-oidc.html --reporter-htmlextra-showEnvironmentData
+  --export-environment ./config-secrets.json -d ./default-mimoto-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/mimoto-oidc.html --reporter-htmlextra-showEnvironmentData
 mpartnerdefaultmimotooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-mimotooidc-clientID") | .value' "config-secrets.json")
 }
 onboard_opencrvs_partner(){
@@ -498,7 +498,7 @@ onboard_opencrvs_partner(){
     --folder upload-leaf-certificate \
 	--folder mapping-partner-to-policy-credential-type \
     $ADD_SSL_NEWMAN \
-  --export-environment ./config-secrets.json -d ./opencrvspolicy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/opencrvs-credential.html --reporter-htmlextra-showEnvironmentData
+  --export-environment ./config-secrets.json -d ./default-opencrvs-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/opencrvs-credential.html --reporter-htmlextra-showEnvironmentData
     POLICY_GROUP_NAME=mpolicygroup-default-opencrvs-auth
 	PARTNER_KC_USERNAME=mpartner-default-opencrvs-auth
 	PARTNER_KC_USERPASSWORD=mpartner-default-opencrvs-mockpassword
@@ -547,7 +547,7 @@ onboard_opencrvs_partner(){
     --folder upload-ca-certificate \
     --folder upload-leaf-certificate \
     $ADD_SSL_NEWMAN \
-  --export-environment ./config-secrets.json -d ./opencrvspolicy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/opencrvs-auth.html --reporter-htmlextra-showEnvironmentData
+  --export-environment ./config-secrets.json -d ./default-opencrvs-policy.json -r cli,htmlextra --reporter-htmlextra-export ./reports/opencrvs-auth.html --reporter-htmlextra-showEnvironmentData
 }
 
 
@@ -675,7 +675,7 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
   OIDC_CLIENT_NAME=mimoto-oidc
-  LOGO_URI="https://$( printenv mosip-api-host )/inji/inji-home-logo.png"
+  LOGO_URI="https://$( printenv mosip-api-host )/inji/mosip-logo.png"
   REDIRECT_URI="io.mosip.residentapp.inji:\/\/oauthredirect"
   onboard_mimoto_oidc_partner
   echo "Updating Mimoto OIDC Partner Client ID"
