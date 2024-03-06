@@ -15,4 +15,3 @@ If the `ENABLE_INSECURE` environment variable is set to `true`, the script will 
 
 ## License
 This project is licensed under the terms of [Mozilla Public License 2.0](LICENSE).
-
