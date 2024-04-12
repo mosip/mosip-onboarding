@@ -24,7 +24,7 @@ COPY *.json ./
 COPY *.sh ./
 
 # Install required packages using 'apk'
-RUN npm install -g npm newman newman-reporter-htmlextra pem-jwk
+RUN npm install -g npm newman newman-reporter-htmlextra pem-jwk \
 && apk add curl && \
 && apk add openssl && \
 && apk add jq && \
