@@ -1,24 +1,22 @@
 FROM node:lts-alpine3.17
 
-ARG SOURCE
-ARG COMMIT_HASH
-ARG COMMIT_ID
-ARG BUILD_TIME
-LABEL source=${SOURCE}
-LABEL commit_hash=${COMMIT_HASH}
-LABEL commit_id=${COMMIT_ID}
-LABEL build_time=${BUILD_TIME}
-RUN npm install -g npm newman newman-reporter-htmlextra pem-jwk
-RUN apk add curl && \
-    apk add openssl && \
-    apk add jq && \
-    curl https://dl.min.io/client/mc/release/linux-amd64/mc -o /bin/mc && \
-    chmod +x /bin/mc
-
+# can be passed during Docker build as build time environment variable for mosip user level change.
 ARG container_user=mosip
 ARG container_user_group=mosip
 ARG container_user_uid=1001
 ARG container_user_gid=1001
+
+# can be passed during Docker build as build time environment for label related addition to docker.
+ARG SOURCE
+ARG COMMIT_HASH
+ARG COMMIT_ID
+ARG BUILD_TIME
+
+# can be passed during Docker build as build time environment for label.
+LABEL source=${SOURCE}
+LABEL commit_hash=${COMMIT_HASH}
+LABEL commit_id=${COMMIT_ID}
+LABEL build_time=${BUILD_TIME}
 
 WORKDIR  /home/${container_user}
 COPY --chown=${container_user}:${container_user} certs/ ./certs/
@@ -26,7 +24,13 @@ COPY *.json ./
 COPY *.sh ./
 
 # Install required packages using 'apk'
-RUN apk update && apk add --no-cache curl bash \
+RUN npm install -g npm newman newman-reporter-htmlextra pem-jwk
+&& apk add curl && \
+&& apk add openssl && \
+&& apk add jq && \
+&& curl https://dl.min.io/client/mc/release/linux-amd64/mc -o /bin/mc && \
+&& chmod +x /bin/mc \
+&& apk update && apk add --no-cache curl bash \
 # Install kubectl binary
 && curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
 && chmod +x kubectl \
