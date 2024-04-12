@@ -25,10 +25,10 @@ COPY *.sh ./
 
 # Install required packages using 'apk'
 RUN npm install -g npm newman newman-reporter-htmlextra pem-jwk \
-&& apk add curl && \
-&& apk add openssl && \
-&& apk add jq && \
-&& curl https://dl.min.io/client/mc/release/linux-amd64/mc -o /bin/mc && \
+&& apk add curl \
+&& apk add openssl \
+&& apk add jq \
+&& curl https://dl.min.io/client/mc/release/linux-amd64/mc -o /bin/mc \
 && chmod +x /bin/mc \
 && apk update && apk add --no-cache curl bash \
 # Install kubectl binary
