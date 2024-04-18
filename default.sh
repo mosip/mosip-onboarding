@@ -564,7 +564,7 @@ KEYCLOAK_ADMIN_PASSWORD=$( printenv admin-password )
 echo " KEYCLOAK ADMIN USER : $KEYCLOAK_ADMIN_USER"
 #echo " KEYCLOAK ADMIN PASSWORD : $KEYCLOAK_ADMIN_PASSWORD"
 URL="https://$(printenv mosip-api-internal-host)"
-EXTERNAL_URL="https://$(printenv mosip-api-host)"
+EXTERNAL_URL="https://$(printenv mosip-esignet-host)"
 
 echo "URL : $URL and $EXTERNAL_URL"
 
