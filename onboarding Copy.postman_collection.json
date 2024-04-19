@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "8889c214-7080-4abf-9120-7377befd92a3",
+		"_postman_id": "6c3d4395-7473-4678-9047-e7935692cddf",
 		"name": "onboarding Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "12620596"
+		"_exporter_id": "29007532"
 	},
 	"item": [
 		{
@@ -374,10 +374,21 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test('set policy id',function(){\r",
-									"    const {response} =pm.response.json();\r",
-									"    pm.environment.set('policy-group-id',response.id);\r",
-									"})\r",
+									" pm.test('policy-group created successfully', function(){\r",
+									"    \r",
+									"\r",
+									"    // Check for a specific string in the response body\r",
+									"    const responseBody = pm.response.text();\r",
+									"    if (responseBody.includes(\"Policy group exists with name \")) {\r",
+									"        true;\r",
+									"    } else {\r",
+									"\r",
+									"        const { response } = pm.response.json();\r",
+									"        if (true) {\r",
+									"            pm.environment.set('policy-group-id', response.id);\r",
+									"        } \r",
+									"    }\r",
+									"});\r",
 									""
 								],
 								"type": "text/javascript"
@@ -460,14 +471,22 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test('set policy id',function(){\r",
-									"    const {response} =pm.response.json();\r",
-									"    pm.environment.set('policy-id',response.id);\r",
-									"})\r",
-									"pm.test('set policy name',function(){\r",
-									"    const {response} =pm.response.json();\r",
-									"    pm.environment.set('policy-name',response.name);\r",
-									"})"
+									"pm.test('policy created successfully', function(){\r",
+									"    \r",
+									"\r",
+									"    // Check for a specific string in the response body\r",
+									"    const responseBody = pm.response.text();\r",
+									"    if (responseBody.includes(\"policy exists with name\")) {\r",
+									"        true;\r",
+									"    } else {\r",
+									"\r",
+									"        const { response } = pm.response.json();\r",
+									"        if (true) {\r",
+									"            pm.environment.set('policy-id', response.id);\r",
+									"            pm.environment.set('policy-name',response.name);\r",
+									"        } \r",
+									"    }\r",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -649,7 +668,11 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									""
+									"pm.test(\"partner-registration successfull \", function ()\r",
+									" {\r",
+									"    responseText = pm.response.text();\r",
+									"     pm.expect(responseText).to.include.oneOf([\"InProgress\",\"Email is already exists.\",\"A Partner is already registered with the same Id\"])\r",
+									" })"
 								],
 								"type": "text/javascript"
 							}
