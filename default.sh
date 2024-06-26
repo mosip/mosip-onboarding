@@ -451,50 +451,30 @@ mpartnerdefaultmimotooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-
 }
 onboard_esignet_signup_oidc_partner(){
     echo "Onboarding Esignet-signup OIDC partner"
-	sh $MYDIR/certs/create-signing-certs.sh $MYDIR
-	root_ca_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $root_cert_path)
-	partner_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $client_cert_path)
-	sh $MYDIR/certs/convert.sh $MYDIR
-	mv $MYDIR/certs/$PARTNER_KC_USERNAME/keystore.p12 $MYDIR/certs/$PARTNER_KC_USERNAME/oidckeystore.p12
 
-	kubectl -n $ns_signup create secret generic signupoidc --from-file=$MYDIR/certs/$PARTNER_KC_USERNAME/oidckeystore.p12 --dry-run=client -o yaml | kubectl apply -f -
-
-	if [ $? -gt 0 ]; then
-      echo "JWK Key generation failed; EXITING";
-      exit 1;
-    fi
-    echo "JWK Keys generated successfully"
-    jwk_key=$(awk -F'"' '/"n"/ {print $8}' $MYDIR/certs/$PARTNER_KC_USERNAME/publickey.jwk)
-	echo $jwk_key
 	newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
+    --env-var external-url=$EXTERNAL_URL \
     --env-var request-time="$DATE" \
 	--env-var logo-uri=$LOGO_URI \
-	--env-var redirect-uri=$REDIRECT_URI \
-	--env-var partner-kc-username=$PARTNER_KC_USERNAME \
-	--env-var partner-kc-userpassword=$PARTNER_KC_USERPASSWORD \
-	--env-var partner-organization-name=$PARTNER_ORGANIZATION_NAME \
-    --env-var partner-type=$PARTNER_TYPE \
-	--env-var key="$jwk_key" \
-	--env-var keyid="" \
+	--env-var redirect-uris=$REDIRECT_URIS \
+	--env-var application-id=$APPLICATION_ID \
+	--env-var module-clientid=$MODULE_CLIENTID \
+	--env-var module-secretkey=$MODULE_SECRETKEY \
+	--env-var partner-manager-username=signup-oidc-kc-mockusername \
+	--env-var partner-manager-password=signup-oidc-kc-mockuserpassword \
 	--env-var keycloak-url=$KEYCLOAK_URL \
 	--env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
 	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
-	--env-var cert-manager-username="$KEYCLOAK_CLIENT" \
-    --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
-	--env-var partner-domain=Auth \
 	--env-var oidc-client-name="$OIDC_CLIENT_NAME" \
 	--env-var oidc-clientid="$OIDC_CLIENTID" \
-	--env-var ca-certificate="$root_ca_cert" \
-	--env-var leaf-certificate="$partner_cert" \
 	--folder 'create_keycloak_user' \
-	--folder partner-self-registration \
 	--folder authenticate-to-upload-certs \
-	--folder create-oidc-client \
+	--folder get-jwks \
+	--folder create-oidc-client-through-esignet \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
   --export-environment ./config-secrets.json  -r cli,htmlextra --reporter-htmlextra-export ./reports/signup-oidc.html --reporter-htmlextra-showEnvironmentData
-mpartnerdefaultmimotooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-mimotooidc-clientID") | .value' "config-secrets.json")
 }
 
 ## Script starts from here
@@ -627,18 +607,14 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   echo "Updating Mimoto OIDC Partner Client ID"
   kubectl create secret generic mimoto-oidc-partner-clientid -n $ns_mimoto --from-literal=mimoto-oidc-partner-clientid=$mpartnerdefaultmimotooidcclientID --dry-run=client -o yaml | kubectl apply -f -
   echo "Mimoto OIDC Partner Client ID updated successfully"
-  elif [ "$MODULE" = "opencrvs" ]; then
+  elif [ "$MODULE" = "signup-oidc" ]; then
   APPLICATION_ID=partner
   MODULE_CLIENTID=mosip-pms-client
   MODULE_SECRETKEY=$mosip_pms_client_secret
-  POLICY_NAME=mpolicy-default-opencrvs-credential
-  POLICY_GROUP_NAME=mpolicygroup-default-opencrvs-credential
-  export PARTNER_KC_USERNAME=mpartner-default-opencrvs-credential
-  PARTNER_KC_USERPASSWORD=mpartner-default-opencrvs-mockpassword
-  PARTNER_ORGANIZATION_NAME=IITB
-  PARTNER_TYPE=Credential_Partner
-  root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
-  client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
-  onboard_opencrvs_partner
-  echo "opencrvs Auth_Partner and opencrvs Credential_Partner onboarding"
+  OIDC_CLIENT_NAME='mosip-signup-oauth-client'
+  OIDC_CLIENTID= 'default-esignet-signup-oidc-client'
+  LOGO_URI="https://healthservices.$( printenv installation-domain)/logo.png"
+  REDIRECT_URIS="https://signup.$( printenv installation-domain)/identity-verification"
+  onboard_esignet_signup_oidc_partner
+  echo "Esignet signup oidc client onboarding completed"
 fi
