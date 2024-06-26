@@ -263,7 +263,7 @@ onboard_relying_party_with_demo_oidc_client(){
     --env-var external-url=$EXTERNAL_URL \
 	--env-var policy-name=$POLICY_NAME \
 	--env-var logo-uri=$LOGO_URI \
-	--env-var redirect-uri=$REDIRECT_URI \
+	--env-var redirect-uri=$REDIRECT_URIS\
 	--env-var keycloak-url=$KEYCLOAK_URL \
 	--env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
 	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
@@ -325,7 +325,7 @@ echo "Onboarding resident oidc client"
 	--env-var key="$jwk_key" \
 	--env-var oidc-client-name=$OIDC_CLIENT_NAME \
 	--env-var logo-uri=$LOGO_URI \
-	--env-var redirect-uri=$REDIRECT_URI \
+	--env-var redirect-uri=$REDIRECT_URIS \
 	--folder 'create_keycloak_user' \
 	--folder 'create/publish_policy_group_and_policy' \
 	--folder partner-self-registration \
@@ -414,7 +414,7 @@ onboard_mimoto_oidc_partner(){
 	--env-var partner-manager-username=$PARTNER_KC_USERNAME \
 	--env-var partner-manager-password=$PARTNER_KC_USERPASSWORD \
 	--env-var logo-uri=$LOGO_URI \
-	--env-var redirect-uri=$REDIRECT_URI \
+	--env-var redirect-uri=$REDIRECT_URIS \
 	--env-var application-id=$APPLICATION_ID \
 	--env-var module-clientid=$MODULE_CLIENTID \
 	--env-var module-secretkey=$MODULE_SECRETKEY \
@@ -547,7 +547,7 @@ elif [ "$MODULE" = "demo-oidc" ]; then
   PARTNER_TYPE=Auth_Partner
   OIDC_CLIENT_NAME='Health service OIDC Client'
   LOGO_URI=https://healthservices.$( printenv installation-domain)/logo.png
-  REDIRECT_URI=https://healthservices.$( printenv installation-domain)/userprofile
+  REDIRECT_URIS=https://healthservices.$( printenv installation-domain)/userprofile
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
   onboard_relying_party_with_demo_oidc_client
@@ -567,7 +567,7 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   PARTNER_TYPE=Auth_Partner
   OIDC_CLIENT_NAME=Resident-Portal
   LOGO_URI="https://$( printenv mosip-resident-host )/assets/MOSIP%20Vertical%20Black.png"
-  REDIRECT_URI="https://$( printenv mosip-api-internal-host )/resident/v1/login-redirect/**"
+  REDIRECT_URIS="https://$( printenv mosip-api-internal-host )/resident/v1/login-redirect/**"
   onboard_resident_oidc_client
   echo "Updating Resident OIDC Client Id"
   kubectl create secret generic resident-oidc-onboarder-key -n $ns_esignet --from-literal=resident-oidc-clientid=$mpartnerdefaultresidentoidcclientID --dry-run=client -o yaml | kubectl apply -f -
@@ -602,7 +602,7 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
   OIDC_CLIENT_NAME=mimoto-oidc
   LOGO_URI="https://$( printenv mosip-api-host )/inji/inji-home-logo.png"
-  REDIRECT_URI="io.mosip.residentapp.inji:\/\/oauthredirect"
+  REDIRECT_URIS="io.mosip.residentapp.inji:\/\/oauthredirect,https://inji.$( printenv installation-domain).mosip.net/redirect"
   onboard_mimoto_oidc_partner
   echo "Updating Mimoto OIDC Partner Client ID"
   kubectl create secret generic mimoto-oidc-partner-clientid -n $ns_mimoto --from-literal=mimoto-oidc-partner-clientid=$mpartnerdefaultmimotooidcclientID --dry-run=client -o yaml | kubectl apply -f -
