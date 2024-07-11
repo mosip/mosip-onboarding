@@ -451,6 +451,17 @@ mpartnerdefaultmimotooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-
 }
 onboard_esignet_signup_oidc_partner(){
     echo "Onboarding Esignet-signup OIDC partner"
+  sh $MYDIR/certs/create-signing-certs.sh $MYDIR
+	root_ca_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $root_cert_path)
+	partner_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $client_cert_path)
+	sh $MYDIR/certs/convert.sh $MYDIR
+
+	if [ $? -gt 0 ]; then
+      echo "JWK Key generation failed; EXITING";
+      exit 1;
+    fi
+    echo "JWK Keys generated successfully"
+    jwk_key=$(awk -F'"' '/"n"/ {print $8}' $MYDIR/certs/$PARTNER_KC_USERNAME/publickey.jwk)
 
 	newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
@@ -461,6 +472,7 @@ onboard_esignet_signup_oidc_partner(){
 	--env-var application-id=$APPLICATION_ID \
 	--env-var module-clientid=$MODULE_CLIENTID \
 	--env-var module-secretkey=$MODULE_SECRETKEY \
+	--env-var partner-kc-username=$PARTNER_KC_USERNAME \
 	--env-var partner-manager-username=signup-oidc-kc-mockusername \
 	--env-var partner-manager-password=signup-oidc-kc-mockuserpassword \
 	--env-var keycloak-url=$KEYCLOAK_URL \
@@ -470,7 +482,6 @@ onboard_esignet_signup_oidc_partner(){
 	--env-var oidc-clientid="$OIDC_CLIENTID" \
 	--folder 'create_keycloak_user' \
 	--folder authenticate-to-upload-certs \
-	--folder get-jwks \
 	--folder create-oidc-client-through-esignet \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
@@ -613,6 +624,9 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   MODULE_SECRETKEY=$mosip_pms_client_secret
   OIDC_CLIENT_NAME='mosip-signup-oauth-client'
   OIDC_CLIENTID= 'default-esignet-signup-oidc-client'
+  export PARTNER_KC_USERNAME=mpartner-default-signup
+  root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
+  client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
   LOGO_URI="https://healthservices.$( printenv installation-domain)/logo.png"
   REDIRECT_URIS="https://signup.$( printenv installation-domain)/identity-verification"
   onboard_esignet_signup_oidc_partner
