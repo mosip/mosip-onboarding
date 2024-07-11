@@ -263,7 +263,7 @@ onboard_relying_party_with_demo_oidc_client(){
     --env-var external-url=$EXTERNAL_URL \
 	--env-var policy-name=$POLICY_NAME \
 	--env-var logo-uri=$LOGO_URI \
-	--env-var redirect-uri=$REDIRECT_URIS\
+	--env-var redirect-uris=$REDIRECT_URIS\
 	--env-var keycloak-url=$KEYCLOAK_URL \
 	--env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
 	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
@@ -325,7 +325,7 @@ echo "Onboarding resident oidc client"
 	--env-var key="$jwk_key" \
 	--env-var oidc-client-name=$OIDC_CLIENT_NAME \
 	--env-var logo-uri=$LOGO_URI \
-	--env-var redirect-uri=$REDIRECT_URIS \
+	--env-var redirect-uris=$REDIRECT_URIS \
 	--folder 'create_keycloak_user' \
 	--folder 'create/publish_policy_group_and_policy' \
 	--folder partner-self-registration \
@@ -414,7 +414,7 @@ onboard_mimoto_oidc_partner(){
 	--env-var partner-manager-username=$PARTNER_KC_USERNAME \
 	--env-var partner-manager-password=$PARTNER_KC_USERPASSWORD \
 	--env-var logo-uri=$LOGO_URI \
-	--env-var redirect-uri=$REDIRECT_URIS \
+	--env-var redirect-uris=$REDIRECT_URIS \
 	--env-var application-id=$APPLICATION_ID \
 	--env-var module-clientid=$MODULE_CLIENTID \
 	--env-var module-secretkey=$MODULE_SECRETKEY \
@@ -455,6 +455,8 @@ onboard_esignet_signup_oidc_partner(){
 	root_ca_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $root_cert_path)
 	partner_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $client_cert_path)
 	sh $MYDIR/certs/convert.sh $MYDIR
+  mv $MYDIR/certs/$PARTNER_KC_USERNAME/keystore.p12 $MYDIR/certs/$PARTNER_KC_USERNAME/oidckeystore.p12
+	kubectl -n $ns_signup create secret generic signupoidc --from-file=$MYDIR/certs/$PARTNER_KC_USERNAME/oidckeystore.p12 --dry-run=client -o yaml | kubectl apply -f -
 
 	if [ $? -gt 0 ]; then
       echo "JWK Key generation failed; EXITING";
@@ -627,7 +629,7 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   export PARTNER_KC_USERNAME=mpartner-default-signup
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
-  LOGO_URI="https://healthservices.$( printenv installation-domain)/logo.png"
+  LOGO_URI="https://healthservices.$( printenv installation-domain)/images/brand_logo.png"
   REDIRECT_URIS="https://signup.$( printenv installation-domain)/identity-verification"
   onboard_esignet_signup_oidc_partner
   echo "Esignet signup oidc client onboarding completed"
