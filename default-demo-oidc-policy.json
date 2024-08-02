@@ -103,6 +103,16 @@
 						"authSubType": "",
 						"authType": "pwd",
 						"mandatory": false
+					},
+					{
+						"authSubType": "",
+						"authType": "kba",
+						"mandatory": false
+					},
+					{
+						"authSubType": "",
+						"authType": "pin",
+						"mandatory": false
 					}
 				]
 			},
