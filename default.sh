@@ -491,7 +491,47 @@ onboard_esignet_signup_oidc_partner(){
     $ADD_SSL_NEWMAN \
   --export-environment ./config-secrets.json  -r cli,htmlextra --reporter-htmlextra-export ./reports/signup-oidc.html --reporter-htmlextra-showEnvironmentData
 }
+ echo "Onboarding Sunbird partner"
+  sh $MYDIR/certs/create-signing-certs.sh $MYDIR
+	root_ca_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $root_cert_path)
+	partner_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $client_cert_path)
+	sh $MYDIR/certs/convert.sh $MYDIR
+  mv $MYDIR/certs/$PARTNER_KC_USERNAME/keystore.p12 $MYDIR/certs/$PARTNER_KC_USERNAME/oidckeystore.p12
+	kubectl -n $ns_mimoto create secret generic sunbirdoidc --from-file=$MYDIR/certs/$PARTNER_KC_USERNAME/oidckeystore.p12 --dry-run=client -o yaml | kubectl apply -f -
 
+	if [ $? -gt 0 ]; then
+      echo "JWK Key generation failed; EXITING";
+      exit 1;
+    fi
+    echo "JWK Keys generated successfully"
+    jwk_key=$(awk -F'"' '/"n"/ {print $8}' $MYDIR/certs/$PARTNER_KC_USERNAME/publickey.jwk)
+
+	newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
+    --env-var url="$URL" \
+    --env-var sunbird-url=$SUNBIRD_URL \
+    --env-var request-time="$DATE" \
+	--env-var logo-uri=$LOGO_URI \
+	--env-var redirect-uris=$REDIRECT_URIS \
+	--env-var application-id=$APPLICATION_ID \
+	--env-var module-clientid=$MODULE_CLIENTID \
+	--env-var module-secretkey=$MODULE_SECRETKEY \
+	--env-var partner-kc-username=$PARTNER_KC_USERNAME \
+	--env-var key="$jwk_key" \
+	--env-var keyid="" \
+	--env-var partner-manager-username=sunbird-oidc-kc-mockusername \
+	--env-var partner-manager-password=sunbird-oidc-kc-mockuserpassword \
+	--env-var keycloak-url=$KEYCLOAK_URL \
+	--env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
+	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
+	--env-var oidc-client-name="$OIDC_CLIENT_NAME" \
+	--env-var oidc-clientid="$OIDC_CLIENTID" \
+	--folder 'create_keycloak_user' \
+	--folder authenticate-to-upload-certs \
+	--folder create-oidc-client-through-esignet-sunbird \
+	--folder delete-user \
+    $ADD_SSL_NEWMAN \
+  --export-environment ./config-secrets.json  -r cli,htmlextra --reporter-htmlextra-export ./reports/sunbird-oidc.html --reporter-htmlextra-showEnvironmentData
+}
 ## Script starts from here
 export MYDIR=$(pwd)
 DATE=$(date -u +%FT%T.%3NZ)
@@ -506,6 +546,7 @@ echo " KEYCLOAK ADMIN USER : $KEYCLOAK_ADMIN_USER"
 #echo " KEYCLOAK ADMIN PASSWORD : $KEYCLOAK_ADMIN_PASSWORD"
 URL="https://$(printenv mosip-api-internal-host)"
 EXTERNAL_URL="https://$(printenv mosip-esignet-host)"
+SUNBIRD_URL="https://$(printenv mosip-esignet-insurance-host)"
 
 echo "URL : $URL and $EXTERNAL_URL"
 
@@ -635,4 +676,17 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   REDIRECT_URIS="https://signup.$( printenv installation-domain)/identity-verification"
   onboard_esignet_signup_oidc_partner
   echo "Esignet signup oidc client onboarding completed"
+  elif [ "$MODULE" = "sunbird-oidc" ]; then
+  APPLICATION_ID=partner
+  MODULE_CLIENTID=mosip-pms-client
+  MODULE_SECRETKEY=$mosip_pms_client_secret
+  OIDC_CLIENT_NAME='esignet-sunbird-partner'
+  OIDC_CLIENTID='esignet-sunbird-partner'
+  export PARTNER_KC_USERNAME=esignet-sunbird-partner
+  root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
+  client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
+  LOGO_URI="https://sunbird.org/images/sunbird-logo-new.png"
+  REDIRECT_URIS="io.mosip.residentapp.inji:\/\/oauthredirect,https://inji.$( printenv installation-domain)/redirect"
+  onboard_esignet_sunbird_partner
+  echo "Esignet Sunbird Partner onboarding completed"
 fi
