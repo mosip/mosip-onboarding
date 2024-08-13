@@ -491,6 +491,7 @@ onboard_esignet_signup_oidc_partner(){
     $ADD_SSL_NEWMAN \
   --export-environment ./config-secrets.json  -r cli,htmlextra --reporter-htmlextra-export ./reports/signup-oidc.html --reporter-htmlextra-showEnvironmentData
 }
+onboard_esignet_sunbird_partner(){
  echo "Onboarding Sunbird partner"
   sh $MYDIR/certs/create-signing-certs.sh $MYDIR
 	root_ca_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $root_cert_path)
