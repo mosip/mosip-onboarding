@@ -689,5 +689,7 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   LOGO_URI="https://sunbird.org/images/sunbird-logo-new.png"
   REDIRECT_URIS="io.mosip.residentapp.inji:\/\/oauthredirect,https://inji.$( printenv installation-domain)/redirect"
   onboard_esignet_sunbird_partner
+  echo "Updating Sunbird OIDC Partner Client ID"
+  kubectl create secret generic sunbird-oidc-partner-clientid -n $ns_mimoto --from-literal=sunbird-oidc-partner-clientid=$mpartnerdefaultsunbirdoidcclientID --dry-run=client -o yaml | kubectl apply -f -
   echo "Esignet Sunbird Partner onboarding completed"
 fi
