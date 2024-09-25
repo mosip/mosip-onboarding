@@ -8,6 +8,7 @@ on:
       - develop
       - '1.2.*'
       - patch-1
+      - test
       - MOSIP-35889
   pull_request:
     branches:
@@ -16,6 +17,7 @@ on:
       - develop
       - '1.2.*'
       - master
+      - test
       - MOSIP-35889
 
 jobs:
