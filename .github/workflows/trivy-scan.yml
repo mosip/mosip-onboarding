@@ -8,7 +8,7 @@ on:
       - develop
       - '1.2.*'
       - master
-      - MOSIP-35889
+      - patch-1
   pull_request:
     branches:
       - main
