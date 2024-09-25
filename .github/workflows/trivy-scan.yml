@@ -54,7 +54,6 @@ jobs:
           scanners: 'vuln'
 
       - name: Report vulnerabilities in PR
-        if: failure() && steps.scan.outcome == 'failure'
         env:
           GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         shell: bash
