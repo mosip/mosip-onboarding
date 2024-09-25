@@ -49,6 +49,7 @@ jobs:
           severity: 'CRITICAL,HIGH'
           output: 'trivy.json'
           exit-code: 1
+          scanners: 'vuln'
 
       - name: Report vulnerabilities in PR
         if: failure() && steps.scan.outcome == 'failure'
