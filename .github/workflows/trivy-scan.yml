@@ -56,7 +56,7 @@ jobs:
       - name: Report vulnerabilities in PR
         if: failure() && steps.scan.outcome == 'failure'
         env:
-          GITHUB_TOKEN: ${{ secrets.T }}
+          GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         shell: bash
         run: |
           echo -n "{\"body\":\"### Vulnerabilities detected\nThe following vulnerabilities of HIGH or CRITICAL severity has been detected in the code. Please resolve these before merging the pull request.\n\n" > result.json
