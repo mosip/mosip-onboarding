@@ -41,7 +41,9 @@ jobs:
         
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.20.0
+        id: scan
         with:
+          scan-type: 'fs'
           image-ref: 'docker.io/${{ env.SERVICE_NAME }}:${{ env.VERSION }}'
           format: 'template'
           template: '@trivy-pr-comment.tpl'
