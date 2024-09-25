@@ -7,7 +7,7 @@ on:
       - 'release-1*'
       - develop
       - '1.2.*'
-      - master
+      - patch-1
       - MOSIP-35889
   pull_request:
     branches:
