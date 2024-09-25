@@ -35,6 +35,10 @@ jobs:
           cd "${{ env.SERVICE_LOCATION }}"
           docker build . --file Dockerfile --tag ${{ env.SERVICE_NAME }}:${{ env.VERSION }}
 
+      - name: Obtain template file
+        shell: bash
+        run: curl -o trivy-pr-comment.tpl https://raw.githubusercontent.com/domstolene/trivy-pr-report/main/trivy-pr-comment.tpl
+        
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.20.0
         with:
