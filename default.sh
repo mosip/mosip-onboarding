@@ -8,7 +8,7 @@
 
 upload_ida_root_cert() {
     echo "Uploading ida root cert"
-    reports_dir="./reports/IDA/$current_date/$current_time"
+    reports_dir="./reports/IDA/$current_datetime"
     mkdir -p "$reports_dir"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
@@ -28,7 +28,7 @@ upload_ida_root_cert() {
 
 upload_ida_cert() {
     echo "Uploading ida cert"
-    reports_dir="./reports/IDA/$current_date/$current_time"
+    reports_dir="./reports/IDA/$current_datetime"
     mkdir -p "$reports_dir"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
@@ -47,7 +47,7 @@ upload_ida_cert() {
 
 upload_ida_partner_cert () {
     echo "Uploading mpartner-default-auth cert"
-    reports_dir="./reports/IDA/$current_date/$current_time"
+    reports_dir="./reports/IDA/$current_datetime"
     mkdir -p "$reports_dir"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
@@ -70,7 +70,7 @@ upload_ida_partner_cert () {
 
 upload_ida_cred_cert () {
     echo "Uploading ida cred cert to keymanager for zero knowledge encryption"
-    reports_dir="./reports/IDA/$current_date/$current_time"
+    reports_dir="./reports/IDA/$current_datetime"
     mkdir -p "$reports_dir"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
@@ -90,7 +90,7 @@ upload_ida_cred_cert () {
 
 upload_resident_cert() {
     echo "Uploading mpartner-default-resident cert"
-    reports_dir="./reports/RESIDENT/$current_date/$current_time"
+    reports_dir="./reports/RESIDENT/$current_datetime"
     mkdir -p "$reports_dir"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
@@ -114,7 +114,7 @@ upload_resident_cert() {
 }
 upload_print_cert() {
     echo "Uploading mpartner-default-print cert"
-    reports_dir="./reports/PRINT/$current_date/$current_time"
+    reports_dir="./reports/PRINT/$current_datetime"
     mkdir -p "$reports_dir"
     root_cert_path="$MYDIR/certs/print/root-ca-inline.pem"
     partner_cert_path="$MYDIR/certs/print/client-inline.pem"
@@ -139,7 +139,7 @@ upload_print_cert() {
 
 upload_abis_cert () {
     echo "Uploading mpartner-default-abis cert"
-    reports_dir="./reports/ABIS/$current_date/$current_time"
+    reports_dir="./reports/ABIS/$current_datetime"
     mkdir -p "$reports_dir"
     root_cert_path="$MYDIR/certs/abis/root-ca-inline.pem"
     partner_cert_path="$MYDIR/certs/abis/client-inline.pem"
@@ -163,7 +163,7 @@ upload_abis_cert () {
 }
 upload_mpartner_default_mobile_cert() {
     echo "Uploading mpartner-default-mobile cert"
-    reports_dir="./reports/MOBILEID/$current_date/$current_time"
+    reports_dir="./reports/MOBILEID/$current_datetime"
     mkdir -p "$reports_dir"
     root_cert_path="$MYDIR/certs/mpartner-default-mobile/root-ca-inline.pem"
     partner_cert_path="$MYDIR/certs/mpartner-default-mobile/client-inline.pem"
@@ -190,7 +190,7 @@ upload_mpartner_default_mobile_cert() {
 }
 upload_mpartner_default_digitalcard_cert() {
     echo "Uploading mpartner-default-digitalcard cert"
-    reports_dir="./reports/DIGITALCARD/$current_date/$current_time"
+    reports_dir="./reports/DIGITALCARD/$current_datetime"
     mkdir -p "$reports_dir"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
@@ -215,7 +215,7 @@ upload_mpartner_default_digitalcard_cert() {
 
 onboard_esignet_partner() {
     echo "Onboarding esignet-partner"
-    reports_dir="./reports/ESIGNET/$current_date/$current_time"
+    reports_dir="./reports/ESIGNET/$current_datetime"
     mkdir -p "$reports_dir"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
@@ -261,9 +261,9 @@ if [ -z "$MISP_LICENSE_KEY" ]; then
 fi
 }
 
-onboard_relying_party_with_demo_oidc_client(){
-    echo "Onboarding demo-oidc-client"
-  reports_dir="./reports/DEMO_OIDC/$current_date/$current_time"
+onboard_mock_relying_party_with_mock_rp_oidc_client(){
+    echo "Onboarding mock-rp-oidc-client"
+  reports_dir="./reports/MOCK_RP_OIDC/$current_datetime"
   mkdir -p "$reports_dir"
 	sh $MYDIR/certs/create-signing-certs.sh $MYDIR
 	root_ca_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $root_cert_path)
@@ -273,8 +273,8 @@ onboard_relying_party_with_demo_oidc_client(){
 	newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
     --env-var request-time="$DATE" \
-	--env-var partner-manager-username=demooidc-kc-mockusername \
-	--env-var partner-manager-password=demooidc-kc-mockuserpassword \
+	--env-var partner-manager-username=mock-rp-oidc-kc-mockusername \
+	--env-var partner-manager-password=mock-rp-oidc-kc-mockuserpassword \
 	--env-var application-id=$APPLICATION_ID \
 	--env-var module-clientid=$MODULE_CLIENTID \
 	--env-var module-secretkey=$MODULE_SECRETKEY \
@@ -308,14 +308,14 @@ onboard_relying_party_with_demo_oidc_client(){
 	--folder create-oidc-client \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
-    --export-environment ./config-secrets.json -d ./default-demo-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/demo-oidc.html" --reporter-htmlextra-showEnvironmentData
+    --export-environment ./config-secrets.json -d ./default-mock-rp-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/mock-rp-oidc.html" --reporter-htmlextra-showEnvironmentData
 privateandpublickeypair=$(jq -r '.values[] | select(.key == "privateandpublickeypair") | .value' config-secrets.json)
 privateandpublickeypair=$(echo -n "$privateandpublickeypair" | base64)
 mpartnerdefaultdemooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-demo-oidc-clientID") | .value' "config-secrets.json")
 }
 onboard_resident_oidc_client() {
 echo "Onboarding resident oidc client"
-reports_dir="./reports/RESIDENT_OIDC/$current_date/$current_time"
+reports_dir="./reports/RESIDENT_OIDC/$current_datetime"
   mkdir -p "$reports_dir"
     sh $MYDIR/certs/create-jwks.sh
     if [ $? -gt 0 ]; then
@@ -373,7 +373,7 @@ mpartnerdefaultresidentoidcclientID=$(jq -r '.values[] | select(.key == "mpartne
 }
 onboard_mimoto_keybinding_partner(){
     echo "Onboarding Mimoto Keybinding partner"
-    reports_dir="./reports/MIMOTO_KEYBINDING/$current_date/$current_time"
+    reports_dir="./reports/MIMOTO_KEYBINDING/$current_datetime"
   mkdir -p "$reports_dir"
 	sh $MYDIR/certs/create-signing-certs.sh $MYDIR
 	root_ca_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $root_cert_path)
@@ -419,7 +419,7 @@ mpartnerdefaultmimotokeybindingapikey=$(jq -r '.values[] | select(.key == "mpart
 }
 onboard_mimoto_oidc_partner(){
     echo "Onboarding Mimoto OIDC partner"
-    reports_dir="./reports/MIMOTO_OIDC/$current_date/$current_time"
+    reports_dir="./reports/MIMOTO_OIDC/$current_datetime"
   mkdir -p "$reports_dir"
 	sh $MYDIR/certs/create-signing-certs.sh $MYDIR
 	root_ca_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $root_cert_path)
@@ -479,7 +479,7 @@ mpartnerdefaultmimotooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-
 }
 onboard_esignet_signup_oidc_partner(){
     echo "Onboarding Esignet-signup OIDC partner"
-    reports_dir="./reports/SIGNUP_OIDC/$current_date/$current_time"
+    reports_dir="./reports/SIGNUP_OIDC/$current_datetime"
   mkdir -p "$reports_dir"
   sh $MYDIR/certs/create-signing-certs.sh $MYDIR
 	root_ca_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $root_cert_path)
@@ -523,7 +523,7 @@ onboard_esignet_signup_oidc_partner(){
 }
 onboard_esignet_sunbird_partner(){
  echo "Onboarding Sunbird partner"
- reports_dir="./reports/SUNBIRD/$current_date/$current_time"
+ reports_dir="./reports/SUNBIRD/$current_datetime"
   mkdir -p "$reports_dir"
   sh $MYDIR/certs/create-signing-certs.sh $MYDIR
 	root_ca_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $root_cert_path)
@@ -568,8 +568,7 @@ onboard_esignet_sunbird_partner(){
 ## Script starts from here
 export MYDIR=$(pwd)
 DATE=$(date -u +%FT%T.%3NZ)
-current_date=$(date +"%d-%m-%Y")
-current_time=$(date +"%H-%M %p")
+current_datetime=$(date +"%dth-%b-%I-%M %p")
 KEYCLOAK_URL=$(printenv keycloak-external-url)
 KEYCLOAK_CLIENT="mosip-deployment-client"
 KEYCLOAK_CLIENT_SECRET="$mosip_deployment_client_secret"
@@ -627,13 +626,13 @@ elif [ "$MODULE" = "esignet" ]; then
   echo "Updating esignet MISP_LICENSE_KEY"
   kubectl create secret generic esignet-misp-onboarder-key -n $ns_esignet --from-literal=mosip-esignet-misp-key=$MISP_LICENSE_KEY --dry-run=client -o yaml | kubectl apply -f -
   echo "MISP Key Updated successfully"
-elif [ "$MODULE" = "demo-oidc" ]; then
+elif [ "$MODULE" = "mock-rp-oidc" ]; then
   APPLICATION_ID=partner
   MODULE_CLIENTID=mosip-pms-client
   MODULE_SECRETKEY=$mosip_pms_client_secret
-  POLICY_NAME=mpolicy-default-demo-oidc
-  POLICY_GROUP_NAME=mpolicygroup-default-demo-oidc
-  export PARTNER_KC_USERNAME=mpartner-default-demo-oidc
+  POLICY_NAME=mpolicy-default-mock-rp-oidc
+  POLICY_GROUP_NAME=mpolicygroup-default-mock-rp-oidc
+  export PARTNER_KC_USERNAME=mpartner-default-mock-rp-oidc
   PARTNER_ORGANIZATION_NAME=IITB
   PARTNER_TYPE=Auth_Partner
   OIDC_CLIENT_NAME='Health service OIDC Client'
@@ -641,12 +640,12 @@ elif [ "$MODULE" = "demo-oidc" ]; then
   REDIRECT_URIS=https://healthservices.$( printenv installation-domain)/userprofile
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
-  onboard_relying_party_with_demo_oidc_client
-  echo "Updating jwk privateandpublickeypair and Mpartner Default Demo Oidc Client ID"
+  onboard_relying_party_with_mock_rp_oidc_client
+  echo "Updating jwk privateandpublickeypair and Mpartner Default Mock Relying Party  Oidc Client ID"
   kubectl patch secret mock-relying-party-service-secrets -n $ns_esignet -p '{"data":{"client-private-key":"'$(echo -n "$privateandpublickeypair" | base64 | tr -d '\n')'"}}'
   kubectl rollout restart deployment -n $ns_esignet mock-relying-party-service
   kubectl -n $ns_esignet set env deployment/mock-relying-party-ui CLIENT_ID=$mpartnerdefaultdemooidcclientID
-  echo "JWK PrivatePublic Key Pair and Mpartner Default Demo Oidc Client ID updated successfully"
+  echo "JWK PrivatePublic Key Pair and Mpartner Default Mock Relying Party Oidc Client ID updated successfully"
 elif [ "$MODULE" = "resident-oidc" ]; then
   APPLICATION_ID=partner
   MODULE_CLIENTID=mosip-pms-client
