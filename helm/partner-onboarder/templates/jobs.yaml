@@ -38,6 +38,8 @@ spec:
           env:
             - name: MODULE
               value: {{ $module.name }}
+            - name: push_reports_to_s3
+              value: {{ quote $.Values.onboarding.variables.push_reports_to_s3 }}
           envFrom:
             {{- if $.Values.onboarding.configmaps }}
             {{- range $cm_name, $cm_value := $.Values.onboarding.configmaps }}
@@ -66,5 +68,16 @@ spec:
           {{- if $.Values.resources }}
           resources: {{- toYaml $.Values.resources | nindent 12 }}
           {{- end }}
+          volumeMounts:
+          {{- if eq $.Values.onboarding.variables.push_reports_to_s3 false }}
+            - name: {{ $.Values.onboarding.volumes.reports.name }}
+              mountPath: /home/mosip/reports/
+          {{- end }}
+      volumes:
+      {{- if eq $.Values.onboarding.variables.push_reports_to_s3 false }}
+      - name: {{ $.Values.onboarding.volumes.reports.name }}
+        persistentVolumeClaim:
+          claimName: {{ $.Values.onboarding.volumes.reports.name }}-{{ $module.name }}-pvc
+      {{- end }}
 {{- end }}
 {{- end }}

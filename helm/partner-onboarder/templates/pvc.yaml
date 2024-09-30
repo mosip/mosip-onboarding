@@ -1,6 +1,6 @@
 {{- range $module := $.Values.onboarding.modules }}
 {{- if $module.enabled }}
-{{- if $.Values.onboarding.volumes.reports.enabled }}
+{{- if eq $.Values.onboarding.variables.push_reports_to_s3 false }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
