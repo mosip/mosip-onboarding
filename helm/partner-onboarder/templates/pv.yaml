@@ -1,0 +1,19 @@
+{{- if .Values.onboarding.volumes.reports.enabled }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.onboarding.volumes.reports.name }}
+  labels:
+    name: {{ .Values.onboarding.volumes.reports.name }}
+spec:
+  storageClassName: {{ .Values.onboarding.volumes.reports.storageClass }}
+  capacity:
+    storage: {{ .Values.onboarding.volumes.reports.size }}
+  accessModes:
+    {{- range .Values.onboarding.volumes.reports.accessModes }}
+      - {{ . }}
+    {{- end }}
+  nfs:
+    server: {{ .Values.onboarding.volumes.reports.nfs.server }}
+    path: {{ .Values.onboarding.volumes.reports.nfs.path }}
+{{- end }}
