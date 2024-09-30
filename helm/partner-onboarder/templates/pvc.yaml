@@ -4,20 +4,23 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ $.Values.onboarding.volumes.reports.name }}-{{ $module.name }}-pvc
+  name: {{ $.Values.onboarding.volumes.reports.name }}-{{ $.Release.Namespace  }}-{{ $module.name }}-pvc
   namespace: {{ $.Release.Namespace | quote }}
+  labels: {{- include "common.labels.standard" $ | nindent 4 }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $.Values.commonAnnotations "context" $ ) | nindent 4 }}
 spec:
-  storageClassName: {{ $.Values.onboarding.volumes.reports.storageClass }}
   accessModes:
-    {{- range $.Values.onboarding.volumes.reports.accessModes }}
-      - {{ . }}
-    {{- end }}
+  {{- if not (empty $.Values.persistence.accessModes) }}
+  {{- range $.Values.persistence.accessModes }}
+  - {{ . | quote }}
+  {{- end }}
+  {{- else }}
+  - {{ $.Values.persistence.accessMode | quote }}
+  {{- end }}
   resources:
     requests:
-      storage: {{ $.Values.onboarding.volumes.reports.size }}
-  selector:
-    matchLabels:
-      name: {{ $.Values.onboarding.volumes.reports.name }}
+      storage: {{ $.Values.persistence.size | quote }}
+  {{- include "common.storage.class" (dict "persistence" $.Values.persistence "global" $.Values.global) | nindent 2 }}
 {{- end }}
 {{- end }}
 {{- end }}

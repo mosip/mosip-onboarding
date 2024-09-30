@@ -77,7 +77,7 @@ spec:
       {{- if eq $.Values.onboarding.variables.push_reports_to_s3 false }}
       - name: {{ $.Values.onboarding.volumes.reports.name }}
         persistentVolumeClaim:
-          claimName: {{ $.Values.onboarding.volumes.reports.name }}-{{ $module.name }}-pvc
+          claimName: {{ $.Values.onboarding.volumes.reports.name }}-{{ $.Release.Namespace  }}-{{ $module.name }}-pvc
       {{- end }}
 {{- end }}
 {{- end }}
