@@ -44,13 +44,13 @@ spec:
             {{- if $.Values.onboarding.configmaps }}
             {{- range $cm_name, $cm_value := $.Values.onboarding.configmaps }}
             - configMapRef:
-                name: {{ $cm_name }}
+                name: {{ $cm_name }}-{{ $.Release.Name }}
             {{- end }}
             {{- end }}
             {{- if $.Values.onboarding.secrets }}
             {{- range $secret_name, $secret_value := $.Values.onboarding.secrets }}
             - secretRef:
-                name: {{ $secret_name }}
+                name: {{ $secret_name }}-{{ $.Release.Name }}
             {{- end }}
             {{- end }}
             {{- if $.Values.extraEnvVarsSecret }}
