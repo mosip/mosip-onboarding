@@ -568,7 +568,7 @@ onboard_esignet_sunbird_partner(){
 ## Script starts from here
 export MYDIR=$(pwd)
 DATE=$(date -u +%FT%T.%3NZ)
-current_datetime=$(date +"%dth-%b-%I-%M %p")
+current_datetime=$(date -u +"%d-%m-%y-%H-%M"-UTC)
 KEYCLOAK_URL=$(printenv keycloak-external-url)
 KEYCLOAK_CLIENT="mosip-deployment-client"
 KEYCLOAK_CLIENT_SECRET="$mosip_deployment_client_secret"
