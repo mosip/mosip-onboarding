@@ -17,8 +17,8 @@ RUN apk add curl && \
 
 ARG container_user=mosip
 ARG container_user_group=mosip
-ARG container_user_uid=1001
-ARG container_user_gid=1001
+ARG container_user_uid=1000
+ARG container_user_gid=1000
 
 # Install required packages using 'apk'
 RUN apk update && apk add --no-cache curl bash
