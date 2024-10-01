@@ -427,17 +427,17 @@ metrics:
 onboarding:
   modules:
     - name: ida
-      enabled: true
+      enabled: false
     - name: print
-      enabled: true
+      enabled: false
     - name: abis
-      enabled: true
+      enabled: false
     - name: resident
-      enabled: true
+      enabled: false
     - name: mimoto
-      enabled: true
+      enabled: false
     - name: digitalcard
-      enabled: true
+      enabled: false
     - name: esignet
       enabled: false
     - name: mock-rp-oidc
@@ -445,7 +445,7 @@ onboarding:
     - name: resident-oidc
       enabled: false
     - name: mimoto-keybinding
-      enabled: true
+      enabled: false
     - name: mimoto-oidc
       enabled: false
     - name: signup-oidc
