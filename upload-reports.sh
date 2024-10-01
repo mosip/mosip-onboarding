@@ -1,7 +1,6 @@
 #!/bin/sh
 
-
-PUSH_REPORTS_TO_S3=$( printenv push-reports-to-s3 )
+PUSH_REPORTS_TO_S3=$( printenv push_reports_to_s3 )
 
 
 if [ "$PUSH_REPORTS_TO_S3" = "true" ]; then
@@ -33,5 +32,5 @@ if [ "$PUSH_REPORTS_TO_S3" = "true" ]; then
 
   echo -e "\n\nReports pushed to MinIO"
 else
-  echo -e "\n\nFlag 'push-reports-to-s3' is not set to false. Skipping report push to s3 bucket.\n"
+  echo -e "\n\nFlag 'push_reports_to_s3' is set to false. Skipping report push to s3 bucket.\n"
 fi
