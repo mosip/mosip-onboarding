@@ -4,7 +4,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ $.Values.onboarding.volumes.reports.name }}-{{ $module.name }}-pvc
+  name: {{ $.Values.onboarding.volumes.reports.name }}-{{ $.Release.Namespace }}-{{ $module.name }}-pvc
   namespace: {{ $.Release.Namespace | quote }}
 spec:
   storageClassName: {{ $.Values.onboarding.volumes.reports.storageClass }}
