@@ -640,7 +640,7 @@ elif [ "$MODULE" = "mock-rp-oidc" ]; then
   REDIRECT_URIS=https://healthservices.$( printenv installation-domain)/userprofile
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
-  onboard_relying_party_with_mock_rp_oidc_client
+  onboard_mock_relying_party_with_mock_rp_oidc_client
   echo "Updating jwk privateandpublickeypair and Mpartner Default Mock Relying Party  Oidc Client ID"
   kubectl patch secret mock-relying-party-service-secrets -n $ns_esignet -p '{"data":{"client-private-key":"'$(echo -n "$privateandpublickeypair" | base64 | tr -d '\n')'"}}'
   kubectl rollout restart deployment -n $ns_esignet mock-relying-party-service
