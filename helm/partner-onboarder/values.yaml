@@ -53,8 +53,8 @@ service:
 
 image:
   registry: docker.io
-  repository: mosipqa/partner-onboarder
-  tag: develop
+  repository: mosipdev/partner-onboarder
+  tag: MOSIP-35987
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
   ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -460,7 +460,7 @@ onboarding:
       ns_esignet: esignet
       ns_signup: signup
   secrets:
-     s3:
+    s3:
       s3-user-secret: 'password'
   volumes:
     reports:
@@ -477,4 +477,3 @@ onboarding:
         server: "nfs-server"  # Ip address of nfs server.
   variables:
     push_reports_to_s3: true
-
