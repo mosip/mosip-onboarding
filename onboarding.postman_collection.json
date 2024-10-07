@@ -1,0 +1,3038 @@
+{
+	"info": {
+		"_postman_id": "aac9a17f-14fc-43cf-a894-693c7f28c9ed",
+		"name": "onboarding Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12620596"
+	},
+	"item": [
+		{
+			"name": "create_keycloak_user",
+			"item": [
+				{
+					"name": "login-to-keycloak-as-admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"//var data = JSON.stringify(jsonData);\r",
+									"console.log(jsonData.access_token);\r",
+									"pm.environment.set(\"keycloak-token\", jsonData.access_token);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "admin-cli",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "{{keycloak-admin-username}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{keycloak-admin-password}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{keycloak-url}}/auth/realms/master/protocol/openid-connect/token",
+							"host": [
+								"{{keycloak-url}}"
+							],
+							"path": [
+								"auth",
+								"realms",
+								"master",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{keycloak-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{partner-manager-username}}\",\r\n    \"firstName\": \"{{$randomFirstName}}\",\r\n    \"lastName\": \"{{$randomLastName}}\",\r\n    \"email\": \"{{$randomExampleEmail}}\",\r\n    \"enabled\": true,\r\n    \"credentials\": [\r\n        {\r\n            \"temporary\": false,\r\n            \"type\": \"password\",\r\n            \"value\": \"{{partner-manager-password}}\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{keycloak-url}}/auth/admin/realms/mosip/users",
+							"host": [
+								"{{keycloak-url}}"
+							],
+							"path": [
+								"auth",
+								"admin",
+								"realms",
+								"mosip",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-user-details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"//\r",
+									"var userid = jsonData[0].id;\r",
+									"console.log(userid);\r",
+									"pm.environment.set(\"partner-kc-userid\",userid);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{keycloak-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{keycloak-url}}/auth/admin/realms/mosip/users?username={{partner-manager-username}}",
+							"host": [
+								"{{keycloak-url}}"
+							],
+							"path": [
+								"auth",
+								"admin",
+								"realms",
+								"mosip",
+								"users"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{partner-manager-username}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-role-id-for-all-roles",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var count =jsonData.length;\r",
+									"//console.log (count);\r",
+									"for(var i=0;i<count;i++){\r",
+									"var val=jsonData[i].name;\r",
+									" if (val === \"PARTNER_ADMIN\")\r",
+									"{\r",
+									"var any=jsonData[i].id\r",
+									"console.log(any,val);\r",
+									"var role=pm.environment.set(\"PARTNER_ADMIN_roleid\",any);\r",
+									"}\r",
+									"if (val === \"AUTH_PARTNER\")\r",
+									"{\r",
+									"var any=jsonData[i].id\r",
+									"console.log(any,val);\r",
+									"var role=pm.environment.set(\"AUTH_PARTNER_roleid\",any);\r",
+									"}\r",
+									"\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{keycloak-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{keycloak-url}}/auth/admin/realms/mosip/roles",
+							"host": [
+								"{{keycloak-url}}"
+							],
+							"path": [
+								"auth",
+								"admin",
+								"realms",
+								"mosip",
+								"roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "assign-role-to-user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{keycloak-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[ \r\n    {\"id\" : \"{{PARTNER_ADMIN_roleid}}\",\r\n   \"name\":\"PARTNER_ADMIN\"},\r\n   {\"id\" : \"{{AUTH_PARTNER_roleid}}\",\r\n   \"name\":\"AUTH_PARTNER\"}\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{keycloak-url}}/auth/admin/realms/mosip/users/{{partner-kc-userid}}/role-mappings/realm",
+							"host": [
+								"{{keycloak-url}}"
+							],
+							"path": [
+								"auth",
+								"admin",
+								"realms",
+								"mosip",
+								"users",
+								"{{partner-kc-userid}}",
+								"role-mappings",
+								"realm"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "create/publish_policy_group_and_policy",
+			"item": [
+				{
+					"name": "authenticate-as-policy-manager",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = jsonData.response.token;\r",
+									"//console.log(data);\r",
+									"pm.environment.set(\"authtoken\",data);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"\",\n  \"version\": \"LTS\",\n  \"requesttime\":\"{{$isoTimestamp}}\",\n  \"metadata\": {},\n  \"request\": {\n    \"userName\":\"{{partner-manager-username}}\",\n    \"password\":\"{{partner-manager-password}}\",\n    \"appId\":\"{{application-id}}\",\n    \"clientId\": \"{{module-clientid}}\",\n    \"clientSecret\": \"{{module-secretkey}}\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"authmanager",
+								"authenticate",
+								"internal",
+								"useridPwd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-policy-group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('set policy id',function(){\r",
+									"    const {response} =pm.response.json();\r",
+									"    pm.environment.set('policy-group-id',response.id);\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"desc\":\"PolicyGroup\",\r\n    \"name\":\"{{policy-group-name}}\"\r\n  },\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"version\": \"LTS\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/policymanager/policies/group/new",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"policymanager",
+								"policies",
+								"group",
+								"new"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-policy",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const policydata = pm.iterationData.toObject();\r",
+									"console.log(JSON.stringify(policydata));\r",
+									"pm.environment.set('policy-data', JSON.stringify(policydata));\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('set policy id',function(){\r",
+									"    const {response} =pm.response.json();\r",
+									"    pm.environment.set('policy-id',response.id);\r",
+									"})\r",
+									"pm.test('set policy name',function(){\r",
+									"    const {response} =pm.response.json();\r",
+									"    pm.environment.set('policy-name',response.name);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{policy-data}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/policymanager/policies",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"policymanager",
+								"policies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "publish-policy-and-policy-group",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/v1/policymanager/policies/{{policy-id}}/group/{{policy-group-id}}/publish",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"policymanager",
+								"policies",
+								"{{policy-id}}",
+								"group",
+								"{{policy-group-id}}",
+								"publish"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "partner_self_registration",
+			"item": [
+				{
+					"name": "authenticate-as-partner-manager",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = jsonData.response.token;\r",
+									"//console.log(data);\r",
+									"pm.environment.set(\"authtoken\",data);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"\",\n  \"version\": \"LTS\",\n  \"requesttime\":\"{{$isoTimestamp}}\",\n  \"metadata\": {},\n  \"request\": {\n    \"userName\":\"{{partner-manager-username}}\",\n    \"password\":\"{{partner-manager-password}}\",\n    \"appId\":\"{{application-id}}\",\n    \"clientId\": \"{{module-clientid}}\",\n    \"clientSecret\": \"{{module-secretkey}}\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"authmanager",
+								"authenticate",
+								"internal",
+								"useridPwd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "partner-self-registration",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"address\": \"{{$randomStreetAddress}}\",\r\n    \"contactNumber\": \"{{$randomPhoneNumber}}\",\r\n    \"emailId\": \"{{$randomEmail}}\",\r\n    \"organizationName\": \"{{partner-organization-name}}\",\r\n    \"partnerId\": \"{{partner-kc-username}}\",\r\n    \"partnerType\": \"{{partner-type}}\",\r\n    \"policyGroup\": \"{{policy-group-name}}\"\r\n  },\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"version\": \"LTS\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "cert_download",
+			"item": [
+				{
+					"name": "authenticate-to-download-certs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Auth Successfull\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Clientid and Token combination had been validated successfully\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set('request-time',  (new Date()).toISOString())"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"appId\": \"ida\",\r\n    \"clientId\": \"{{cert-manager-username}}\",\r\n    \"secretKey\": \"{{cert-manager-password}}\"\r\n  },\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"version\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/authmanager/authenticate/clientidsecretkey",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"authmanager",
+								"authenticate",
+								"clientidsecretkey"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "authenticate-as-cert-manager",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Auth Successfull\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Clientid and Token combination had been validated successfully\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set('request-time',  (new Date()).toISOString())"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"appId\": \"ida\",\r\n    \"clientId\": \"{{cert-manager-username}}\",\r\n    \"secretKey\": \"{{cert-manager-password}}\"\r\n  },\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"version\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/authmanager/authenticate/clientidsecretkey",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"authmanager",
+								"authenticate",
+								"clientidsecretkey"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "download-ida-certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = JSON.stringify(jsonData.response.certificate);\r",
+									"const unquoted = data.replace(/\"/g, \"\");\r",
+									"var certId = pm.environment.get('cert-reference-id');\r",
+									"if (certId == pm.environment.get('partner-kc-username') || certId == 'mpartner-default-auth' || certId == 'CRED_SERVICE') {\r",
+									"  pm.environment.set(\"leaf-certificate\", unquoted);\r",
+									"}\r",
+									"else{\r",
+									"  pm.environment.set(\"ca-certificate\", unquoted);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Certificate download Successfull\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"BEGIN CERTIFICATE\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/idauthentication/v1/internal/getCertificate?applicationId={{cert-application-id}}&referenceId={{cert-reference-id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"idauthentication",
+								"v1",
+								"internal",
+								"getCertificate"
+							],
+							"query": [
+								{
+									"key": "applicationId",
+									"value": "{{cert-application-id}}"
+								},
+								{
+									"key": "referenceId",
+									"value": "{{cert-reference-id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "download-ca-certificate-from-keymanager",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = JSON.stringify(jsonData.response.certificate);\r",
+									"const unquoted = data.replace(/\"/g, \"\");\r",
+									"pm.environment.set(\"ca-certificate\",unquoted);\r",
+									"console.log(unquoted);\r",
+									"\r",
+									"pm.test(\"Certificate download Successfull\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"BEGIN CERTIFICATE\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/v1/keymanager/getCertificate?applicationId=ROOT",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"keymanager",
+								"getCertificate"
+							],
+							"query": [
+								{
+									"key": "applicationId",
+									"value": "ROOT"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "download-intermediate-ca-certificate-from-keymanager",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = JSON.stringify(jsonData.response.certificate);\r",
+									"const unquoted = data.replace(/\"/g, \"\");\r",
+									"pm.environment.set(\"leaf-certificate\",unquoted);\r",
+									"console.log(unquoted);\r",
+									"\r",
+									"pm.test(\"Certificate download Successfull\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"BEGIN CERTIFICATE\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/v1/keymanager/getCertificate?applicationId={{cert-application-id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"keymanager",
+								"getCertificate"
+							],
+							"query": [
+								{
+									"key": "applicationId",
+									"value": "{{cert-application-id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "download-intermediate-resident-certificate-from-keymanager",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = JSON.stringify(jsonData.response.certificate);\r",
+									"const unquoted = data.replace(/\"/g, \"\");\r",
+									"pm.environment.set(\"intermediate-cert\",unquoted);\r",
+									"console.log(unquoted);\r",
+									"\r",
+									"pm.test(\"Certificate download Successfull\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"BEGIN CERTIFICATE\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/v1/keymanager/getCertificate?applicationId={{cert-application-id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"keymanager",
+								"getCertificate"
+							],
+							"query": [
+								{
+									"key": "applicationId",
+									"value": "{{cert-application-id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "download-leaf-certificate-from-keymanager",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = JSON.stringify(jsonData.response.certificate);\r",
+									"const unquoted = data.replace(/\"/g, \"\");\r",
+									"pm.environment.set(\"leaf-certificate\",unquoted);\r",
+									"\r",
+									"pm.test(\"Certificate download Successfull\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"BEGIN CERTIFICATE\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/v1/keymanager/getCertificate?applicationId={{cert-application-id}}&referenceId={{cert-reference-id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"keymanager",
+								"getCertificate"
+							],
+							"query": [
+								{
+									"key": "applicationId",
+									"value": "{{cert-application-id}}"
+								},
+								{
+									"key": "referenceId",
+									"value": "{{cert-reference-id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "download-esignet-root-certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = JSON.stringify(jsonData.response.certificate);\r",
+									"const unquoted = data.replace(/\"/g, \"\");\r",
+									"pm.environment.set(\"ca-certificate\",unquoted);\r",
+									"\r",
+									"pm.test(\"Certificate download Successfull\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"BEGIN CERTIFICATE\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authtoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{external-url}}/v1/esignet/system-info/certificate?applicationId=ROOT",
+							"host": [
+								"{{external-url}}"
+							],
+							"path": [
+								"v1",
+								"esignet",
+								"system-info",
+								"certificate"
+							],
+							"query": [
+								{
+									"key": "applicationId",
+									"value": "ROOT"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "download-esignet-leaf-certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = JSON.stringify(jsonData.response.certificate);\r",
+									"const unquoted = data.replace(/\"/g, \"\");\r",
+									"pm.environment.set(\"intermediate-cert\",unquoted);\r",
+									"\r",
+									"pm.test(\"Certificate download Successfull\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"BEGIN CERTIFICATE\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authtoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{external-url}}/v1/esignet/system-info/certificate?applicationId=OIDC_SERVICE",
+							"host": [
+								"{{external-url}}"
+							],
+							"path": [
+								"v1",
+								"esignet",
+								"system-info",
+								"certificate"
+							],
+							"query": [
+								{
+									"key": "applicationId",
+									"value": "OIDC_SERVICE"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "download-esignet-partner-certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = JSON.stringify(jsonData.response.certificate);\r",
+									"const unquoted = data.replace(/\"/g, \"\");\r",
+									"pm.environment.set(\"leaf-certificate\",unquoted);\r",
+									"\r",
+									"pm.test(\"Certificate download Successfull\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"BEGIN CERTIFICATE\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authtoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{external-url}}/v1/esignet/system-info/certificate?applicationId=OIDC_PARTNER",
+							"host": [
+								"{{external-url}}"
+							],
+							"path": [
+								"v1",
+								"esignet",
+								"system-info",
+								"certificate"
+							],
+							"query": [
+								{
+									"key": "applicationId",
+									"value": "OIDC_PARTNER"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "cert_upload",
+			"item": [
+				{
+					"name": "authenticate-to-upload-certs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = jsonData.response.token;\r",
+									"//console.log(data);\r",
+									"pm.environment.set(\"authtoken\",data);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set('request-time',  (new Date()).toISOString())"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"userName\": \"{{partner-manager-username}}\",\r\n    \"password\": \"{{partner-manager-password}}\",\r\n    \"appId\": \"{{application-id}}\",\r\n    \"clientId\": \"{{module-clientid}}\",\r\n    \"clientSecret\": \"{{module-secretkey}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"authmanager",
+								"authenticate",
+								"internal",
+								"useridPwd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload-ca-certificate",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upload Successfull or Certificate is already present in DB \", function ()\r",
+									" {\r",
+									"    responseText = pm.response.text();\r",
+									"     pm.expect(responseText).to.include.oneOf([\"Certificate already exists in store\", \"Upload Success.\"])\r",
+									" })\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"certificateData\": \"{{ca-certificate}}\",\r\n    \"partnerDomain\": \"{{partner-domain}}\"\r\n  },\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"version\": \"string\"\r\n  }\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners/certificate/ca/upload",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners",
+								"certificate",
+								"ca",
+								"upload"
+							]
+						},
+						"description": "Here It is assumed that the Partner will provide MOSIP with the three certificates, namely ca certificate, intermediate certificate, and partner certificate ."
+					},
+					"response": []
+				},
+				{
+					"name": "upload-intermediate-ca-certificate",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upload Successfull or Certificate is already present in DB \", function ()\r",
+									" {\r",
+									"    responseText = pm.response.text();\r",
+									"     pm.expect(responseText).to.include.oneOf([\"Certificate already exists in store\", \"Upload Success.\"])\r",
+									" })\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"certificateData\": \"{{intermediate-cert}}\",\r\n    \"partnerDomain\": \"{{partner-domain}}\"\r\n  },\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"version\": \"string\"\r\n  }\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners/certificate/ca/upload",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners",
+								"certificate",
+								"ca",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload-leaf-certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = JSON.stringify(jsonData.response.signedCertificateData);\r",
+									"const unquoted = data.replace(/\"/g, \"\");\r",
+									"pm.environment.set(\"signed-leaf-certificate\",unquoted);\r",
+									"\r",
+									"pm.test(\"Certificate Upload Successfull\", function ()  {\r",
+									"    responseText = pm.response.text();\r",
+									"     pm.expect(responseText).to.include.oneOf([\"Certificate already exists in store\", \"Upload Success.\",\"BEGIN CERTIFICATE\"])\r",
+									" });"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"certificateData\": \"{{leaf-certificate}}\",\r\n    \"partnerDomain\": \"{{partner-domain}}\",\r\n    \"partnerId\": \"{{partner-kc-username}}\"\r\n  },\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"version\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners/certificate/upload",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners",
+								"certificate",
+								"upload"
+							]
+						},
+						"description": "The partner cert will be signed back and shared with the response as well ."
+					},
+					"response": []
+				},
+				{
+					"name": "upload-signed-leaf-certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"applicationId\": \"{{cert-application-id}}\",\r\n    \"certificateData\": \"{{signed-leaf-certificate}}\",\r\n    \"referenceId\": \"{{cert-reference-id}}\"\r\n  },\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"version\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/idauthentication/v1/internal/uploadCertificate",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"idauthentication",
+								"v1",
+								"internal",
+								"uploadCertificate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload-signed-leaf-certifcate-to-keymanager",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Uploading mosip-signed cert back to KeyManager \", function ()\r",
+									" {\r",
+									"    responseText = pm.response.text();\r",
+									"     pm.expect(responseText).to.include(\"Upload Success\")\r",
+									" })\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"applicationId\": \"{{cert-application-id}}\",\r\n    \"certificateData\": \"{{signed-leaf-certificate}}\",\r\n    \"referenceId\": \"{{cert-reference-id}}\"\r\n  },\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"version\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/keymanager/uploadCertificate",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"keymanager",
+								"uploadCertificate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload-other-domain-certificate-to-keymanager",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Uploading mosip-signed cert back to KeyManager \", function ()\r",
+									" {\r",
+									"    responseText = pm.response.text();\r",
+									"     pm.expect(responseText).to.include(\"Upload Success\")\r",
+									" })\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"applicationId\": \"{{cert-application-id}}\",\r\n    \"referenceId\": \"{{cert-reference-id}}\",\r\n    \"certificateData\": \"{{leaf-certificate}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/keymanager/uploadOtherDomainCertificate",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"keymanager",
+								"uploadOtherDomainCertificate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload-ida-cred-cert-to-keymanager",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Uploading mosip-signed cert back to KeyManager \", function ()\r",
+									" {\r",
+									"    responseText = pm.response.text();\r",
+									"     pm.expect(responseText).to.include(\"Upload Success\")\r",
+									" })\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"applicationId\": \"{{cert-application-id}}\",\r\n    \"referenceId\": \"PUBLIC_KEY\",\r\n    \"certificateData\": \"{{leaf-certificate}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/keymanager/uploadOtherDomainCertificate",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"keymanager",
+								"uploadOtherDomainCertificate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "activate-partner",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"string\",\n  \"version\": \"string\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"metadata\": null,\n  \"request\": {\n    \"status\": \"ACTIVE\"\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners",
+								"{{partner-kc-username}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload-signed-esignet-certificate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Certificate Upload Successfull\", function ()  {\r",
+									"    responseText = pm.response.text();\r",
+									"     pm.expect(responseText).to.include.oneOf([\"Certificate already exists in store\", \"Upload Success\"])\r",
+									" });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authtoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"request\": {\r\n    \"certificateData\": \"{{signed-leaf-certificate}}\",\r\n    \"applicationId\": \"OIDC_PARTNER\",\r\n    \"referenceId\" : \"\"\r\n  },\r\n  \"requestTime\": \"{{$isoTimestamp}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{external-url}}/v1/esignet/system-info/uploadCertificate",
+							"host": [
+								"{{external-url}}"
+							],
+							"path": [
+								"v1",
+								"esignet",
+								"system-info",
+								"uploadCertificate"
+							]
+						},
+						"description": "Here It is assumed that the Partner will provide MOSIP with the three certificates,namely CACERT,INTERCERT,PARTNERCERT.This partner cert will be signed back and shared with the response as well"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "partner_request_for_mapping_partner_to_policy",
+			"item": [
+				{
+					"name": "authenticate-as-partner_to_request_policy_mapping",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = jsonData.response.token;\r",
+									"//console.log(data);\r",
+									"pm.environment.set(\"authtoken\",data);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"userName\": \"{{partner-kc-username}}\",\r\n    \"password\": \"{{partner-kc-userpassword}}\",\r\n    \"appId\": \"{{application-id}}\",\r\n    \"clientId\": \"{{module-clientid}}\",\r\n    \"clientSecret\": \"{{module-secretkey}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"authmanager",
+								"authenticate",
+								"internal",
+								"useridPwd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "partner_request_mapping_to_policyname",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('adding apikeyrequestID',function(){\r",
+									"    const {response} =pm.response.json();\r",
+									"    pm.environment.set('partner-mapping-key',response.mappingkey);\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"policyName\": \"{{policy-name}}\",\r\n    \"useCaseDescription\": \"mapping partner to policy name\"\r\n  },\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"version\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}/policy/map",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners",
+								"{{partner-kc-username}}",
+								"policy",
+								"map"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "partner_manager_approval_activity",
+			"item": [
+				{
+					"name": "authenticate-as-partner-manager",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = jsonData.response.token;\r",
+									"//console.log(data);\r",
+									"pm.environment.set(\"authtoken\",data);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"\",\n  \"version\": \"LTS\",\n  \"requesttime\":\"{{$isoTimestamp}}\",\n  \"metadata\": {},\n  \"request\": {\n    \"userName\":\"{{partner-manager-username}}\",\n    \"password\":\"{{partner-manager-password}}\",\n    \"appId\":\"{{application-id}}\",\n    \"clientId\": \"{{module-clientid}}\",\n    \"clientSecret\": \"{{module-secretkey}}\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"authmanager",
+								"authenticate",
+								"internal",
+								"useridPwd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "adding-bioextractors-for-partner",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"id\": \"string\",\r\n\t\"metadata\": {},\r\n\t\"request\": {\r\n\t\t\"extractors\": [{\r\n\t\t\t\t\"attributeName\": \"photo\",\r\n\t\t\t\t\"biometric\": \"face\",\r\n\t\t\t\t\"extractor\": {\r\n\t\t\t\t\t\"provider\": \"t5-face-lowres\",\r\n\t\t\t\t\t\"version\": \"1.1\"\r\n\t\t\t\t}\r\n\t\t\t},\r\n\t\t\t{\r\n\t\t\t\t\"attributeName\": \"face\",\r\n\t\t\t\t\"biometric\": \"face\",\r\n\t\t\t\t\"extractor\": {\r\n\t\t\t\t\t\"provider\": \"dlib\",\r\n\t\t\t\t\t\"version\": \"3.2\"\r\n\t\t\t\t}\r\n\t\t\t}\r\n\t\t]\r\n\t},\r\n\t\"requesttime\": \"{{$isoTimestamp}}\",\r\n\t\"version\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}/bioextractors/{{policy-id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners",
+								"{{partner-kc-username}}",
+								"bioextractors",
+								"{{policy-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "approve-partner-mapping-to-policy",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"status\": \"Approved\"\r\n  },\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"version\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners/policy/{{partner-mapping-key}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners",
+								"policy",
+								"{{partner-mapping-key}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "mapping-partner-to-policy-credential-type",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Uploading mosip-signed cert back to KeyManager \", function ()\r",
+									" {\r",
+									"    responseText = pm.response.text();\r",
+									"     pm.expect(responseText).to.include(\"Partner, policy and credentialType mapping done successfully\")\r",
+									" })\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}/credentialtype/{{credential-type}}/policies/{{policy-name}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners",
+								"{{partner-kc-username}}",
+								"credentialtype",
+								"{{credential-type}}",
+								"policies",
+								"{{policy-name}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-the-MISP-license-key-for-partner",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('created',function(){\r",
+									"    const {response} =pm.response.json();\r",
+									"    pm.environment.set('mpartner-default-esignet-misp-license-key',response.licenseKey);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"providerId\": \"{{partner-kc-username}}\"\r\n  },\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"version\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/misps",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"misps"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-keyid-from-keymanager",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Secured Keyid',function(){\r",
+									"    const {response} =pm.response.json();\r",
+									"    pm.environment.set('keyid',response.allCertificates[0].keyId);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/v1/keymanager/getAllCertificates?applicationId=RESIDENT",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"keymanager",
+								"getAllCertificates"
+							],
+							"query": [
+								{
+									"key": "applicationId",
+									"value": "RESIDENT"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-jwks",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var resbody = pm.response.json();\r",
+									"pm.environment.set(\"privateandpublickeypair\", JSON.stringify(resbody.jwk));\r",
+									"\r",
+									"var resbody = pm.response.json();\r",
+									"pm.environment.set(\"publickey\", JSON.stringify(resbody.pub));\r",
+									"\r",
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var keyid = jsonData.pub.kid;\r",
+									"var key = jsonData.pub.n;\r",
+									"//console.log(keyid,key);\r",
+									"pm.environment.set (\"keyid\",keyid)\r",
+									"pm.environment.set (\"key\",key)\r",
+									"\r",
+									"//var keypair = pm.response.json();\r",
+									"//console.log (keypair.jwk);\r",
+									"//console.log (\"Take the above values and base64 encode it and use it in the deployment\");\r",
+									"//pm.environment.set (\"jwkkeypair\",keypair.jwk);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://mkjwk.org/jwk/rsa?alg=RS256&use=sig&gen=sha256&size=2048",
+							"protocol": "https",
+							"host": [
+								"mkjwk",
+								"org"
+							],
+							"path": [
+								"jwk",
+								"rsa"
+							],
+							"query": [
+								{
+									"key": "alg",
+									"value": "RS256"
+								},
+								{
+									"key": "use",
+									"value": "sig"
+								},
+								{
+									"key": "gen",
+									"value": "sha256"
+								},
+								{
+									"key": "size",
+									"value": "2048"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-oidc-client",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Pre-request script in Postman\r",
+									"let redirectUris = pm.environment.get(\"redirect-uris\");\r",
+									"\r",
+									"if (redirectUris) {\r",
+									"    redirectUris = redirectUris.split(',').map(uri => uri.trim());\r",
+									"    pm.environment.set(\"redirect_uris_array\", JSON.stringify(redirectUris));\r",
+									"} else {\r",
+									"    console.error(\"Environment variable 'redirect-uris' is not defined.\");\r",
+									"    pm.environment.set(\"redirect_uris_array\", \"[]\");\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"validating clientid\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"clientId\");",
+									"});",
+									"pm.test(\"validating clientid status\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"ACTIVE\");",
+									"});",
+									"var responseJson = pm.response.json();",
+									"var partnerKcUsername = pm.variables.get(\"partner-kc-username\");",
+									"",
+									"if (partnerKcUsername === \"mpartner-default-mock-rp-oidc\") {",
+									"    pm.environment.set(\"mpartner-default-demo-oidc-clientID\", responseJson.response.clientId);",
+									"} else if (partnerKcUsername === \"mpartner-default-resident-oidc\") {",
+									"    pm.environment.set(\"mpartner-default-resident-oidc-clientID\", responseJson.response.clientId);",
+									"} else if (partnerKcUsername === \"mpartner-default-mimotooidc\") {",
+									"    pm.environment.set(\"mpartner-default-mimotooidc-clientID\", responseJson.response.clientId);",
+									"} else if (partnerKcUsername === \"esignet-sunbird-partner\") {",
+									"    pm.environment.set(\"mpartner-default-sunbirdoidc-clientID\", responseJson.response.clientId);",
+									"} ",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authtoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "Authorization={{authtoken}}",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{authorizationToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"requestTime\": \"{{$isoTimestamp}}\",\n    \"request\": {\n        \"name\": \"{{oidc-client-name}}\",\n        \"publicKey\": {\n    \"kty\": \"RSA\",\n    \"e\": \"AQAB\",\n    \"use\": \"sig\",\n    \"kid\": \"{{keyid}}\",\n    \"alg\": \"RS256\",\n    \"n\": \"{{key}}\"\n},\n        \"policyId\" : \"{{policy-id}}\",\n        \"authPartnerId\": \"{{partner-kc-username}}\",\n        \"logoUri\": \"{{logo-uri}}\",\n        \"redirectUris\": \n           {{redirect_uris_array}}\n        ,\n        \"grantTypes\": [\n            \"authorization_code\"\n        ],\n        \"clientAuthMethods\": [\n            \"private_key_jwt\"\n        ]\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/oidc/client",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"oidc",
+								"client"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-oidc-client-through-esignet",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Pre-request script in Postman\r",
+									"let redirectUris = pm.environment.get(\"redirect-uris\");\r",
+									"\r",
+									"if (redirectUris) {\r",
+									"    redirectUris = redirectUris.split(',').map(uri => uri.trim());\r",
+									"    pm.environment.set(\"redirect_uris_array\", JSON.stringify(redirectUris));\r",
+									"} else {\r",
+									"    console.error(\"Environment variable 'redirect-uris' is not defined.\");\r",
+									"    pm.environment.set(\"redirect_uris_array\", \"[]\");\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"validating clientid\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"clientId\");\r",
+									"});\r",
+									"pm.test(\"validating clientid status\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"ACTIVE\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authtoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"requestTime\": \"{{$isoTimestamp}}\",\r\n  \"request\": {\r\n    \"clientId\": \"{{oidc-clientid}}\",\r\n    \"clientName\": \"{{oidc-client-name}}\",\r\n    \"publicKey\":\r\n      {\r\n    \"kty\": \"RSA\",\r\n    \"e\": \"AQAB\",\r\n    \"use\": \"sig\",\r\n    \"kid\": \"{{keyid}}\",\r\n    \"alg\": \"RS256\",\r\n    \"n\": \"{{key}}\"\r\n},\r\n    \"relyingPartyId\": \"{{oidc-client-name}}\",\r\n    \"userClaims\":  [\r\n            \r\n        ],\r\n    \"authContextRefs\":  [\r\n            \"mosip:idp:acr:id-token\"\r\n        ],\r\n    \"logoUri\": \"{{logo-uri}}\",\r\n    \"redirectUris\":{{redirect_uris_array}},\r\n    \"grantTypes\": [\r\n      \"authorization_code\"\r\n    ],\r\n    \"clientAuthMethods\": [\r\n      \"private_key_jwt\"\r\n    ]\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{external-url}}/v1/esignet/client-mgmt/oidc-client",
+							"host": [
+								"{{external-url}}"
+							],
+							"path": [
+								"v1",
+								"esignet",
+								"client-mgmt",
+								"oidc-client"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-oidc-client-through-esignet-sunbird",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Pre-request script in Postman\r",
+									"let redirectUris = pm.environment.get(\"redirect-uris\");\r",
+									"\r",
+									"if (redirectUris) {\r",
+									"    redirectUris = redirectUris.split(',').map(uri => uri.trim());\r",
+									"    pm.environment.set(\"redirect_uris_array\", JSON.stringify(redirectUris));\r",
+									"} else {\r",
+									"    console.error(\"Environment variable 'redirect-uris' is not defined.\");\r",
+									"    pm.environment.set(\"redirect_uris_array\", \"[]\");\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"validating clientid\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"clientId\");\r",
+									"});\r",
+									"pm.test(\"validating clientid status\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"ACTIVE\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authtoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"requestTime\": \"{{$isoTimestamp}}\",\r\n  \"request\": {\r\n    \"clientId\": \"{{oidc-clientid}}\",\r\n    \"clientName\": \"{{oidc-client-name}}\",\r\n    \"publicKey\":\r\n      {\r\n    \"kty\": \"RSA\",\r\n    \"e\": \"AQAB\",\r\n    \"use\": \"sig\",\r\n    \"kid\": \"{{keyid}}\",\r\n    \"alg\": \"RS256\",\r\n    \"n\": \"{{key}}\"\r\n},\r\n    \"relyingPartyId\": \"{{oidc-client-name}}\",\r\n    \"userClaims\":  [\r\n            \r\n        ],\r\n    \"authContextRefs\":  [\r\n            \"mosip:idp:acr:knowledge\"\r\n        ],\r\n    \"logoUri\": \"{{logo-uri}}\",\r\n    \"redirectUris\":{{redirect_uris_array}},\r\n    \"grantTypes\": [\r\n      \"authorization_code\"\r\n    ],\r\n    \"clientAuthMethods\": [\r\n      \"private_key_jwt\"\r\n    ]\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{sunbird-url}}/v1/esignet/client-mgmt/oidc-client",
+							"host": [
+								"{{sunbird-url}}"
+							],
+							"path": [
+								"v1",
+								"esignet",
+								"client-mgmt",
+								"oidc-client"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "request_for_partner_api_key",
+			"item": [
+				{
+					"name": "authenticate-as-partner-for-api-key",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var data = jsonData.response.token;\r",
+									"//console.log(data);\r",
+									"pm.environment.set(\"authtoken\",data);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"userName\": \"{{partner-kc-username}}\",\r\n    \"password\": \"{{partner-kc-userpassword}}\",\r\n    \"appId\": \"{{application-id}}\",\r\n    \"clientId\": \"{{module-clientid}}\",\r\n    \"clientSecret\": \"{{module-secretkey}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"authmanager",
+								"authenticate",
+								"internal",
+								"useridPwd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "request-for-partner-apikey",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('getting apikey',function(){\r",
+									"    const {response} =pm.response.json();\r",
+									"    pm.environment.set('mpartner-default-mimotokeybinding-apikey',response.apiKey);\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "Authorization={{authtoken}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Cookie",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"policyName\": \"{{policy-name}}\",\r\n    \"label\": \"{{partner-kc-userid}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}/generate/apikey",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"partnermanager",
+								"partners",
+								"{{partner-kc-username}}",
+								"generate",
+								"apikey"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login-to-keycloak-as-admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"//var data = JSON.stringify(jsonData);\r",
+									"console.log(jsonData.access_token);\r",
+									"pm.environment.set(\"keycloak-token\", jsonData.access_token);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "admin-cli",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "{{keycloak-admin-username}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{keycloak-admin-password}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{keycloak-url}}/auth/realms/master/protocol/openid-connect/token",
+							"host": [
+								"{{keycloak-url}}"
+							],
+							"path": [
+								"auth",
+								"realms",
+								"master",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{keycloak-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{keycloak-url}}/auth/admin/realms/mosip/users/{{partner-kc-userid}}",
+							"host": [
+								"{{keycloak-url}}"
+							],
+							"path": [
+								"auth",
+								"admin",
+								"realms",
+								"mosip",
+								"users",
+								"{{partner-kc-userid}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
