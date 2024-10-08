@@ -1,0 +1,23 @@
+{{- range $module := $.Values.onboarding.modules }}
+{{- if $module.enabled }}
+{{- if eq $.Values.onboarding.variables.push_reports_to_s3 false }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $.Values.onboarding.volumes.reports.name }}-{{ $.Release.Namespace }}-{{ $module.name }}-pvc
+  namespace: {{ $.Release.Namespace | quote }}
+spec:
+  storageClassName: {{ $.Values.onboarding.volumes.reports.storageClass }}
+  accessModes:
+    {{- range $.Values.onboarding.volumes.reports.accessModes }}
+      - {{ . }}
+    {{- end }}
+  resources:
+    requests:
+      storage: {{ $.Values.onboarding.volumes.reports.size }}
+  selector:
+    matchLabels:
+      name: {{ $.Values.onboarding.volumes.reports.name }}
+{{- end }}
+{{- end }}
+{{- end }}
