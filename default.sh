@@ -659,7 +659,7 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
   OIDC_CLIENT_NAME=mimoto-oidc
   LOGO_URI="https://$( printenv mosip-api-host )/inji/inji-home-logo.png"
-  REDIRECT_URIS="io.mosip.residentapp.inji:\/\/oauthredirect,https://inji.$( printenv installation-domain).mosip.net/redirect"
+  REDIRECT_URIS="io.mosip.residentapp.inji://oauthredirect,https://inji.$( printenv installation-domain).mosip.net/redirect"
   onboard_mimoto_oidc_partner
   echo "Updating Mimoto OIDC Partner Client ID"
   kubectl create secret generic mimoto-oidc-partner-clientid -n $ns_mimoto --from-literal=mimoto-oidc-partner-clientid=$mpartnerdefaultmimotooidcclientID --dry-run=client -o yaml | kubectl apply -f -
