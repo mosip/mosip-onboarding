@@ -633,7 +633,7 @@ elif [ "$MODULE" = "mock-rp-oidc" ]; then
     if [ "$choice" = "n" ] || [ "$choice" = "N" ]; then
     with_mosip=0
     elif [ "$choice" = "y" ] || [ "$choice" = "Y" ]; then
-    exit 0
+    with_mosip=1
     else
     echo "Invalid input! Please enter 'y' or 'n'."
     exit 0
