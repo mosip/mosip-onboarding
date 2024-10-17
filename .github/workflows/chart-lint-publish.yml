@@ -38,6 +38,7 @@ on:
       - 0.*
       - develop
       - release*
+      - MOSIP-35987
     paths:
       - 'helm/**'
 
