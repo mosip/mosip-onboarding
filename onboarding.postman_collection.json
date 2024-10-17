@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "aac9a17f-14fc-43cf-a894-693c7f28c9ed",
+		"_postman_id": "2ea11a70-816b-4631-8929-6ec2d4b5fdb0",
 		"name": "onboarding Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "12620596"
@@ -379,16 +379,20 @@
 									"})\r",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						},
 						{
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									""
+									"if (pm.environment.get(\"mosip-id\") == 'true' ){\r",
+									"    pm.execution.skipRequest()\r",
+									"}"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -450,9 +454,13 @@
 									"const policydata = pm.iterationData.toObject();\r",
 									"console.log(JSON.stringify(policydata));\r",
 									"pm.environment.set('policy-data', JSON.stringify(policydata));\r",
+									"if (pm.environment.get(\"mosip-id\") == 'true' ){\r",
+									"    pm.execution.skipRequest()\r",
+									"}\r",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						},
 						{
@@ -468,7 +476,8 @@
 									"    pm.environment.set('policy-name',response.name);\r",
 									"})"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -525,9 +534,12 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									""
+									"if (pm.environment.get(\"mosip-id\") == 'true' ){\r",
+									"    pm.execution.skipRequest()\r",
+									"}"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -638,9 +650,12 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									""
+									"if (pm.environment.get(\"mosip-id\") == 'true' ){\r",
+									"    pm.execution.skipRequest()\r",
+									"}"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						},
 						{
@@ -649,7 +664,8 @@
 								"exec": [
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -1353,9 +1369,12 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									""
+									"if (pm.environment.get(\"mosip-id\") == 'true' ){\r",
+									"    pm.execution.skipRequest()\r",
+									"}"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						},
 						{
@@ -1369,7 +1388,8 @@
 									" })\r",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -1516,16 +1536,20 @@
 									"     pm.expect(responseText).to.include.oneOf([\"Certificate already exists in store\", \"Upload Success.\",\"BEGIN CERTIFICATE\"])\r",
 									" });"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						},
 						{
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									""
+									"if (pm.environment.get(\"mosip-id\") == 'true' ){\r",
+									"    pm.execution.skipRequest()\r",
+									"}"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -1828,6 +1852,20 @@
 				},
 				{
 					"name": "activate-partner",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if (pm.environment.get(\"mosip-id\") == 'true' ){\r",
+									"    pm.execution.skipRequest()\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "apikey",
@@ -2020,16 +2058,20 @@
 									"})\r",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						},
 						{
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									""
+									"if (pm.environment.get(\"mosip-id\") == 'true' ){\r",
+									"    pm.execution.skipRequest()\r",
+									"}"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -2210,9 +2252,12 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									""
+									"if (pm.environment.get(\"mosip-id\") == 'true' ){\r",
+									"    pm.execution.skipRequest()\r",
+									"}"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						},
 						{
@@ -2221,7 +2266,8 @@
 								"exec": [
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -2477,7 +2523,18 @@
 									"//console.log (\"Take the above values and base64 encode it and use it in the deployment\");\r",
 									"//pm.environment.set (\"jwkkeypair\",keypair.jwk);"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],

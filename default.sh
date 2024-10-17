@@ -287,6 +287,7 @@ onboard_mock_relying_party_with_mock_rp_oidc_client(){
 	--env-var logo-uri=$LOGO_URI \
 	--env-var redirect-uris=$REDIRECT_URIS\
 	--env-var keycloak-url=$KEYCLOAK_URL \
+	--env-var mosip-id="$mosipid" \
 	--env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
 	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
 	--env-var cert-manager-username="$KEYCLOAK_CLIENT" \
