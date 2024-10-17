@@ -287,7 +287,7 @@ onboard_mock_relying_party_with_mock_rp_oidc_client(){
 	--env-var logo-uri=$LOGO_URI \
 	--env-var redirect-uris=$REDIRECT_URIS\
 	--env-var keycloak-url=$KEYCLOAK_URL \
-	--env-var withmosip="$with_mosip" \
+	--env-var mosip-id="$mosipid" \
 	--env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
 	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
 	--env-var cert-manager-username="$KEYCLOAK_CLIENT" \
@@ -626,19 +626,6 @@ elif [ "$MODULE" = "esignet" ]; then
   onboard_esignet_partner
   kubectl create secret generic esignet-misp-onboarder-key -n $ns_esignet --from-literal=mosip-esignet-misp-key=$MISP_LICENSE_KEY --dry-run=client -o yaml | kubectl apply -f -
 elif [ "$MODULE" = "mock-rp-oidc" ]; then
-
-   read -p "Do you want to use mock-replying-party with mosip ? (y/n): " choice
-
-
-    if [ "$choice" = "n" ] || [ "$choice" = "N" ]; then
-    with_mosip=0
-    elif [ "$choice" = "y" ] || [ "$choice" = "Y" ]; then
-    exit 0
-    else
-    echo "Invalid input! Please enter 'y' or 'n'."
-    exit 0
-    fi
-
   APPLICATION_ID=partner
   MODULE_CLIENTID=mosip-pms-client
   MODULE_SECRETKEY=$mosip_pms_client_secret

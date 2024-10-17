@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "75999666-39ef-4287-bc61-d3c8a991e429",
+		"_postman_id": "2ea11a70-816b-4631-8929-6ec2d4b5fdb0",
 		"name": "onboarding Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "12620596"
@@ -387,7 +387,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"if (pm.environment.get(\"withmosip\") == 0 ){\r",
+									"if (pm.environment.get(\"mosip-id\") == 'true' ){\r",
 									"    pm.execution.skipRequest()\r",
 									"}"
 								],
@@ -454,7 +454,7 @@
 									"const policydata = pm.iterationData.toObject();\r",
 									"console.log(JSON.stringify(policydata));\r",
 									"pm.environment.set('policy-data', JSON.stringify(policydata));\r",
-									"if (pm.environment.get(\"withmosip\") == 0 ){\r",
+									"if (pm.environment.get(\"mosip-id\") == 'true' ){\r",
 									"    pm.execution.skipRequest()\r",
 									"}\r",
 									""
@@ -534,7 +534,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"if (pm.environment.get(\"withmosip\") == 0 ){\r",
+									"if (pm.environment.get(\"mosip-id\") == 'true' ){\r",
 									"    pm.execution.skipRequest()\r",
 									"}"
 								],
@@ -650,7 +650,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"if (pm.environment.get(\"withmosip\") == 0 ){\r",
+									"if (pm.environment.get(\"mosip-id\") == 'true' ){\r",
 									"    pm.execution.skipRequest()\r",
 									"}"
 								],
@@ -1369,7 +1369,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"if (pm.environment.get(\"withmosip\") == 0 ){\r",
+									"if (pm.environment.get(\"mosip-id\") == 'true' ){\r",
 									"    pm.execution.skipRequest()\r",
 									"}"
 								],
@@ -1544,7 +1544,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"if (pm.environment.get(\"withmosip\") == 0 ){\r",
+									"if (pm.environment.get(\"mosip-id\") == 'true' ){\r",
 									"    pm.execution.skipRequest()\r",
 									"}"
 								],
@@ -1857,7 +1857,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"if (pm.environment.get(\"withmosip\") == 0 ){\r",
+									"if (pm.environment.get(\"mosip-id\") == 'true' ){\r",
 									"    pm.execution.skipRequest()\r",
 									"}"
 								],
@@ -2066,7 +2066,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"if (pm.environment.get(\"withmosip\") == 0 ){\r",
+									"if (pm.environment.get(\"mosip-id\") == 'true' ){\r",
 									"    pm.execution.skipRequest()\r",
 									"}"
 								],
@@ -2252,7 +2252,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"if (pm.environment.get(\"withmosip\") == 0 ){\r",
+									"if (pm.environment.get(\"mosip-id\") == 'true' ){\r",
 									"    pm.execution.skipRequest()\r",
 									"}"
 								],
