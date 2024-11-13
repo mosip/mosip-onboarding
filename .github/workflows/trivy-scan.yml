@@ -25,8 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SERVICE_NAME: partner-onboarder
-      VERSION: ${{ github.event.number || 'latest' }}  # Use PR number for uniqueness, fallback to 'latest'
-      SERVICE_LOCATION: '.'  # Set your service location if not root directory
+      VERSION: ${{ github.event.number || 'latest' }}
+      SERVICE_LOCATION: '.'  
 
     steps:
       - name: Checkout code
@@ -43,6 +43,9 @@ jobs:
           image-ref: '${{ env.SERVICE_NAME }}:${{ env.VERSION }}'
           format: 'sarif'
           output: 'trivy-results.sarif'
+          severity: 'HIGH,CRITICAL'
+          ignore-unfixed: true  # Optional: Ignores vulnerabilities without a fix
+          exit-code: 1          # Fails the job if vulnerabilities are found at specified severities
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
