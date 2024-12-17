@@ -53,8 +53,8 @@ service:
 
 image:
   registry: docker.io
-  repository: mosipqa/partner-onboarder
-  tag: develop
+  repository: mosipdev/partner-onboarder
+  tag: MOSIP-35987
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
   ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -262,7 +262,6 @@ extraEnvVarsCM:
 ## Secret with extra environment variables
 ##
 extraEnvVarsSecret:
-  - s3
   - keycloak
   - keycloak-client-secrets
 
@@ -428,30 +427,29 @@ metrics:
 onboarding:
   modules:
     - name: ida
-      enabled: true
+      enabled: false
     - name: print
-      enabled: true
+      enabled: false
     - name: abis
-      enabled: true
+      enabled: false
     - name: resident
-      enabled: true
+      enabled: false
     - name: mimoto
-      enabled: true
+      enabled: false
     - name: digitalcard
-      enabled: true
+      enabled: false
     - name: esignet
       enabled: false
-    - name: demo-oidc
+    - name: mock-rp-oidc
       enabled: false
     - name: resident-oidc
       enabled: false
     - name: mimoto-keybinding
-      enabled: true
+      enabled: false
     - name: mimoto-oidc
       enabled: false
     - name: signup-oidc
       enabled: false
-
   configmaps:
     s3:
       s3-host: 'http://minio.minio:9000'
@@ -462,3 +460,21 @@ onboarding:
       ns_esignet: esignet
       ns_signup: signup
   secrets:
+    s3:
+      s3-user-secret: 'password'
+  volumes:
+    reports:
+      name: onboarder-reports
+      storageClass: nfs-client
+      accessModes:
+        - ReadWriteMany
+      size: 10Mi
+      existingClaim:
+      # Dir where config and keys are written inside container
+      mountDir: /home/mosip/reports
+      nfs:
+        path: "/srv/nfs/sandbox/onboarding"  # Dir within the nfs server where config repo is cloned/maintained locally.
+        server: "nfs-server"  # Ip address of nfs server.
+  variables:
+    push_reports_to_s3: true
+    mosipid: false
