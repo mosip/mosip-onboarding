@@ -1,6 +1,7 @@
-{{- range $module := $.Values.onboarding.modules }}
-{{- if $module.enabled }}
 {{- if eq $.Values.onboarding.variables.push_reports_to_s3 false }}
+{{- range $module := $.Values.onboarding.modules }}
+---
+{{- if $module.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -15,9 +16,9 @@ spec:
   resources:
     requests:
       storage: {{ $.Values.onboarding.volumes.reports.size }}
-  selector:
-    matchLabels:
-      name: {{ $.Values.onboarding.volumes.reports.name }}
+#  selector:
+#    matchLabels:
+#      name: {{ $.Values.onboarding.volumes.reports.name }}-{{ $.Release.Namespace }}-{{ $module.name }}-pvc
 {{- end }}
 {{- end }}
 {{- end }}

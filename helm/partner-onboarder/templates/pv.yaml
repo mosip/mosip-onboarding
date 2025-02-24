@@ -1,12 +1,13 @@
-{{- range $module := $.Values.onboarding.modules }}
-{{- if $module.enabled }}
 {{- if eq $.Values.onboarding.variables.push_reports_to_s3 false }}
+{{- range $module := $.Values.onboarding.modules }}
+---
+{{- if $module.enabled }}
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: {{ $.Values.onboarding.volumes.reports.name }}-{{ $.Release.Namespace }}-{{ $module.name }}-pvc
   labels:
-    name: {{ $.Values.onboarding.volumes.reports.name }}
+    name: {{ $.Values.onboarding.volumes.reports.name }}-{{ $.Release.Namespace }}-{{ $module.name }}-pvc
 spec:
   storageClassName: {{ $.Values.onboarding.volumes.reports.storageClass }}
   capacity:
