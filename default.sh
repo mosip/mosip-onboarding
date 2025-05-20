@@ -22,7 +22,7 @@ upload_ida_root_cert() {
     --folder download-ida-certificate \
     --folder upload-ca-certificate \
     $ADD_SSL_NEWMAN \
-	  -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/ida-root.html"
+	  -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/ida-root.html" --reporter-htmlextra-logs
 
 }
 
@@ -42,7 +42,7 @@ upload_ida_cert() {
     --folder download-ida-certificate \
     --folder upload-ca-certificate \
     $ADD_SSL_NEWMAN \
-    -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/ida.html"
+    -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/ida.html" --reporter-htmlextra-logs
 }
 
 upload_ida_partner_cert () {
@@ -65,7 +65,7 @@ upload_ida_partner_cert () {
     --folder upload-leaf-certificate \
     --folder upload-signed-leaf-certificate \
     $ADD_SSL_NEWMAN \
-    -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/ida-partner.html" --reporter-htmlextra-showEnvironmentData
+    -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/ida-partner.html" --reporter-htmlextra-showEnvironmentData --reporter-htmlextra-logs
 }
 
 upload_ida_cred_cert () {
@@ -85,7 +85,7 @@ upload_ida_cred_cert () {
     --folder download-ida-certificate \
     --folder upload-ida-cred-cert-to-keymanager \
     $ADD_SSL_NEWMAN \
-    -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/ida-cred.html" --reporter-htmlextra-showEnvironmentData
+    -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/ida-cred.html" --reporter-htmlextra-showEnvironmentData --reporter-htmlextra-logs
 }
 
 upload_resident_cert() {
@@ -110,7 +110,7 @@ upload_resident_cert() {
     --folder upload-leaf-certificate \
     --folder upload-signed-leaf-certifcate-to-keymanager \
     $ADD_SSL_NEWMAN \
-    -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/resident.html" --reporter-htmlextra-showEnvironmentData
+    -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/resident.html" --reporter-htmlextra-showEnvironmentData --reporter-htmlextra-logs
 }
 upload_print_cert() {
     echo "Uploading mpartner-default-print cert"
@@ -134,7 +134,7 @@ upload_print_cert() {
     --folder upload-ca-certificate \
     --folder upload-leaf-certificate \
     $ADD_SSL_NEWMAN \
-    -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/print.html" --reporter-htmlextra-showEnvironmentData
+    -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/print.html" --reporter-htmlextra-showEnvironmentData --reporter-htmlextra-logs
 }
 
 upload_abis_cert () {
@@ -159,7 +159,7 @@ upload_abis_cert () {
     --folder upload-ca-certificate \
     --folder upload-leaf-certificate \
     $ADD_SSL_NEWMAN \
-    -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/abis.html" --reporter-htmlextra-showEnvironmentData
+    -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/abis.html" --reporter-htmlextra-showEnvironmentData --reporter-htmlextra-logs
 }
 upload_mpartner_default_mobile_cert() {
     echo "Uploading mpartner-default-mobile cert"
@@ -186,7 +186,7 @@ upload_mpartner_default_mobile_cert() {
     --folder upload-leaf-certificate \
     --folder mapping-partner-to-policy-credential-type \
     $ADD_SSL_NEWMAN \
-    -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/mpartner-default-mobile.html" --reporter-htmlextra-showEnvironmentData
+    -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/mpartner-default-mobile.html" --reporter-htmlextra-showEnvironmentData --reporter-htmlextra-logs
 }
 upload_mpartner_default_digitalcard_cert() {
     echo "Uploading mpartner-default-digitalcard cert"
@@ -210,7 +210,7 @@ upload_mpartner_default_digitalcard_cert() {
     --folder upload-leaf-certificate \
     --folder upload-signed-leaf-certifcate-to-keymanager \
     $ADD_SSL_NEWMAN \
-    -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/mpartner-default-digitalcard.html" --reporter-htmlextra-showEnvironmentData
+    -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/mpartner-default-digitalcard.html" --reporter-htmlextra-showEnvironmentData --reporter-htmlextra-logs
 }
 
 onboard_esignet_partner() {
@@ -253,7 +253,7 @@ onboard_esignet_partner() {
 	--folder login-to-keycloak-as-admin \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
-    --export-environment ./config-secrets.json -d ./default-esignet-misp-policy.json -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/esignet.html" --reporter-htmlextra-showEnvironmentData
+    --export-environment ./config-secrets.json -d ./default-esignet-misp-policy.json -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/esignet.html" --reporter-htmlextra-showEnvironmentData --reporter-htmlextra-logs
     MISP_LICENSE_KEY=$(jq -r '.values[] | select(.key == "mpartner-default-esignet-misp-license-key") | .value' config-secrets.json)
 
 if [ -z "$MISP_LICENSE_KEY" ]; then
@@ -313,7 +313,7 @@ onboard_mock_relying_party_with_mock_rp_oidc_client(){
 	--folder create-oidc-client-through-esignet \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
-    --export-environment ./config-secrets.json -d ./default-mock-rp-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/mock-rp-oidc.html" --reporter-htmlextra-showEnvironmentData
+    --export-environment ./config-secrets.json -d ./default-mock-rp-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/mock-rp-oidc.html" --reporter-htmlextra-showEnvironmentData --reporter-htmlextra-logs
 privateandpublickeypair=$(jq -r '.values[] | select(.key == "privateandpublickeypair") | .value' config-secrets.json)
 privateandpublickeypair=$(echo -n "$privateandpublickeypair" | base64)
 mpartnerdefaultdemooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-demo-oidc-clientID") | .value' "config-secrets.json")
@@ -373,7 +373,7 @@ reports_dir="./reports/RESIDENT_OIDC/$current_datetime"
 	--folder create-oidc-client \
 	--folder delete-user \
 	$ADD_SSL_NEWMAN \
-    --export-environment ./config-secrets.json -d ./default-resident-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/resident-oidc.html" --reporter-htmlextra-showEnvironmentData
+    --export-environment ./config-secrets.json -d ./default-resident-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/resident-oidc.html" --reporter-htmlextra-showEnvironmentData --reporter-htmlextra-logs
 mpartnerdefaultresidentoidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-resident-oidc-clientID") | .value' "config-secrets.json")
 }
 onboard_mimoto_keybinding_partner(){
@@ -479,7 +479,7 @@ onboard_mimoto_oidc_partner(){
 	--folder create-oidc-client \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
-  --export-environment ./config-secrets.json -d ./default-mimoto-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/mimoto-oidc.html" --reporter-htmlextra-showEnvironmentData
+  --export-environment ./config-secrets.json -d ./default-mimoto-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/mimoto-oidc.html" --reporter-htmlextra-showEnvironmentData --reporter-htmlextra-logs
 mpartnerdefaultmimotooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-mimotooidc-clientID") | .value' "config-secrets.json")
 }
 onboard_esignet_signup_oidc_partner(){
@@ -525,7 +525,7 @@ onboard_esignet_signup_oidc_partner(){
 	--folder create-oidc-client-through-esignet-signup \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
-  --export-environment ./config-secrets.json  -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/signup-oidc.html" --reporter-htmlextra-showEnvironmentData
+  --export-environment ./config-secrets.json  -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/signup-oidc.html" --reporter-htmlextra-showEnvironmentData --reporter-htmlextra-logs
 }
 onboard_esignet_sunbird_partner(){
  echo "Onboarding Sunbird partner"
@@ -569,7 +569,7 @@ onboard_esignet_sunbird_partner(){
 	--folder create-oidc-client-through-esignet-sunbird \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
-  --export-environment ./config-secrets.json  -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/sunbird-oidc.html" --reporter-htmlextra-showEnvironmentData
+  --export-environment ./config-secrets.json  -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/sunbird-oidc.html" --reporter-htmlextra-showEnvironmentData --reporter-htmlextra-logs
 }
 ## Script starts from here
 export MYDIR=$(pwd)

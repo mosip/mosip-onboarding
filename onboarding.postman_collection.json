@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "dc923303-c17a-4537-9399-56c0082de90e",
+		"_postman_id": "972f457a-0b38-4810-b295-779345be5860",
 		"name": "onboarding Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "12620596"
@@ -16,13 +16,20 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var jsonData = JSON.parse(responseBody);\r",
-									"//var data = JSON.stringify(jsonData);\r",
-									"console.log(jsonData.access_token);\r",
-									"pm.environment.set(\"keycloak-token\", jsonData.access_token);\r",
-									""
+									"pm.test(\"Keycloak Authentication Check\", function () {\r",
+									"    const response = pm.response.text();\r",
+									"   if (response.includes(\"access_token\")) {\r",
+									"    console.log(\"Keycloak Authentication Successful\");\r",
+									"    const responseJSON = pm.response.json();\r",
+									"   pm.environment.set('keycloak-token', responseJSON.access_token);\r",
+									"}else {\r",
+									"    console.log(\"Keycloak Authentication Failed\");\r",
+									"    pm.expect.fail(\"Response did not contain Authentication Token . Please check the html reports for more details\");\r",
+									"}\r",
+									"})"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						},
 						{
@@ -31,7 +38,8 @@
 								"exec": [
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -95,7 +103,26 @@
 								"exec": [
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Mock User Creation \", function () {\r",
+									"    const responseCode = pm.response.code;\r",
+									"   if (responseCode=='201') {\r",
+									"    console.log(\"Mock User Creation Successful\");\r",
+									"}else {\r",
+									"    console.log(\"Mock User Creation Failed\");\r",
+									"    pm.expect.fail(\"Mock User Creation was unsuccessful, please check the HTML report for more details.\");\r",
+									"}\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -144,13 +171,21 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var jsonData = JSON.parse(responseBody);\r",
-									"//\r",
-									"var userid = jsonData[0].id;\r",
-									"console.log(userid);\r",
-									"pm.environment.set(\"partner-kc-userid\",userid);"
+									"pm.test(\"Mock user details access\", function () {\r",
+									"    const response = pm.response.text();\r",
+									"   if (response.includes(\"access\")) {\r",
+									"    console.log(\"mock user detail access successful\");\r",
+									"    const responseJSON = pm.response.json();\r",
+									"   pm.environment.set('partner-kc-userid', responseJSON[0].id);\r",
+									"   \r",
+									"}else {\r",
+									"    console.log(\"mock user detail access failed\");\r",
+									"    pm.expect.fail(\"mock user details not accessible . Please check the HTML reports for more details\");\r",
+									"}\r",
+									"})"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						},
 						{
@@ -159,7 +194,8 @@
 								"exec": [
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -211,27 +247,37 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var jsonData = JSON.parse(responseBody);\r",
-									"var count =jsonData.length;\r",
+									"pm.test(\"Roles details access\", function () {\r",
+									"    const response = pm.response.text();\r",
+									"   if (response.includes(\"PARTNER_ADMIN\")) {\r",
+									"    console.log(\"Roles details access successful\");\r",
+									"    const responseJSON = pm.response.json();\r",
+									"   var count =responseJSON.length;\r",
 									"//console.log (count);\r",
 									"for(var i=0;i<count;i++){\r",
-									"var val=jsonData[i].name;\r",
+									"var val=responseJSON[i].name;\r",
 									" if (val === \"PARTNER_ADMIN\")\r",
 									"{\r",
-									"var any=jsonData[i].id\r",
-									"console.log(any,val);\r",
+									"var any=responseJSON[i].id\r",
+									"//console.log(any,val);\r",
 									"var role=pm.environment.set(\"PARTNER_ADMIN_roleid\",any);\r",
 									"}\r",
 									"if (val === \"AUTH_PARTNER\")\r",
 									"{\r",
-									"var any=jsonData[i].id\r",
-									"console.log(any,val);\r",
+									"var any=responseJSON[i].id\r",
+									"//console.log(any,val);\r",
 									"var role=pm.environment.set(\"AUTH_PARTNER_roleid\",any);\r",
 									"}\r",
 									"\r",
-									"}"
+									"}\r",
+									"}else {\r",
+									"    console.log(\"Roles detail access failed\");\r",
+									"    pm.expect.fail(\"Response did not contain required roles and role ids . Please check the HTML reports for more details\");\r",
+									"}\r",
+									"})"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -266,6 +312,26 @@
 				},
 				{
 					"name": "assign-role-to-user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Mock user and roles mapping \", function () {\r",
+									"    const responseCode = pm.response.code;\r",
+									"   if (responseCode=='204') {\r",
+									"    console.log(\"Mock user and roles mapping  Successful\");\r",
+									"}else {\r",
+									"       console.log(\"Mock user and roles mapping  Failed\");\r",
+									"    pm.expect.fail(\"Mock user and roles mapping was unsuccessful, please check the HTML report for more details.\");\r",
+									"}\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -354,10 +420,18 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var jsonData = JSON.parse(responseBody);\r",
-									"var data = jsonData.response.token;\r",
-									"//console.log(data);\r",
-									"pm.environment.set(\"authtoken\",data);"
+									"pm.test(\"Partner Admin Authentication Test\", function () {\r",
+									"    const response = pm.response.text();\r",
+									"   if (response.includes(\"token\")) {\r",
+									"    console.log(\"Partner Admin Authentication Successful\");\r",
+									"    const responseJSON = pm.response.json();\r",
+									"   pm.environment.set('authtoken', responseJSON.response.token);\r",
+									"   //console.log(responseJSON.response.token);\r",
+									"}else {\r",
+									"    console.log(\"Partner Admin Authentication Failed\");\r",
+									"    pm.expect.fail(\"Response did not contain Authentication Token . Please check the HTML reports for more details\");\r",
+									"}\r",
+									"})"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -375,7 +449,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"id\": \"\",\n  \"version\": \"LTS\",\n  \"requesttime\":\"{{$isoTimestamp}}\",\n  \"metadata\": {},\n  \"request\": {\n    \"userName\":\"{{partner-manager-username}}\",\n    \"password\":\"{{partner-manager-password}}\",\n    \"appId\":\"{{application-id}}\",\n    \"clientId\": \"{{module-clientid}}\",\n    \"clientSecret\": \"{{module-secretkey}}\"\n  }\n}"
+							"raw": "{\n    \"id\": \"\",\n    \"version\": \"LTS\",\n    \"requesttime\": \"{{$isoTimestamp}}\",\n    \"metadata\": {},\n    \"request\": {\n        \"userName\": \"{{partner-manager-username}}\",\n        \"password\": \"{{partner-manager-password}}\",\n        \"appId\": \"{{application-id}}\",\n        \"clientId\": \"{{module-clientid}}\",\n        \"clientSecret\": \"{{module-secretkey}}\"\n    }\n}"
 						},
 						"url": {
 							"raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
@@ -400,10 +474,22 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test('set policy id',function(){\r",
-									"    const {response} =pm.response.json();\r",
-									"    pm.environment.set('policy-group-id',response.id);\r",
-									"})\r",
+									"pm.test(\"PolicyGroup Creation Check\", function () {\r",
+									"    const response = pm.response.text();\r",
+									"\r",
+									"    if (response.includes(\"true\")) {\r",
+									"        console.log(\"Policy Group Creation Successful\");\r",
+									"        const responseJSON = pm.response.json();\r",
+									"        pm.environment.set('policy-group-id', responseJSON.response.id);\r",
+									"    } else if (response.includes(\"exists\")) {\r",
+									"        console.log(\"Policy Group already Exists. NOTE :Each partner should be onboarded only once.\");\r",
+									"        pm.environment.set(\"skip_followups\", \"true\");\r",
+									"       \r",
+									"    } else {\r",
+									"        console.log(\"Policy Group Creation Failed\");\r",
+									"        pm.expect.fail(\"PolicygGroup Creation Unsuccessful. Please check the HTML reports for more details\");\r",
+									"    }\r",
+									"});\r",
 									""
 								],
 								"type": "text/javascript",
@@ -477,8 +563,12 @@
 							"script": {
 								"exec": [
 									"const policydata = pm.iterationData.toObject();\r",
-									"console.log(JSON.stringify(policydata));\r",
-									"pm.environment.set('policy-data', JSON.stringify(policydata));"
+									"//console.log(JSON.stringify(policydata));\r",
+									"pm.environment.set('policy-data', JSON.stringify(policydata));\r",
+									"if (pm.environment.get(\"skip_followups\") === \"true\") {\r",
+									"    console.log(\"⏩ Skipping this request because Policy Group already exists and it is assumed that Policy and PolicyGroup have been created and published while onboarding the partner for the first time.If that is not the case, please make sure correct Policy and PolicyGroup are created and published correctly before onboarding again.\");\r",
+									"    pm.execution.skipRequest();\r",
+									"}"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -488,14 +578,24 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test('set policy id',function(){\r",
-									"    const {response} =pm.response.json();\r",
-									"    pm.environment.set('policy-id',response.id);\r",
-									"})\r",
-									"pm.test('set policy name',function(){\r",
-									"    const {response} =pm.response.json();\r",
-									"    pm.environment.set('policy-name',response.name);\r",
-									"})"
+									"\r",
+									"pm.test(\"Policy Creation Check\", function () {\r",
+									"    const response = pm.response.text();\r",
+									"\r",
+									"    if (response.includes(\"policyGroupName\")) {\r",
+									"        console.log(\"Policy Creation Successful\");\r",
+									"        const responseJSON = pm.response.json();\r",
+									"        pm.environment.set('policy-id', responseJSON.response.id);\r",
+									"        pm.environment.set('policy-name',responseJSON.response.name);\r",
+									"    } else if (response.includes(\"exists\")) {\r",
+									"        console.log(\"Policy already Exists.NOTE:Each partner should be onboarded only once.\");\r",
+									"       \r",
+									"    } else {\r",
+									"        console.log(\"Policy Creation Failed\");\r",
+									"        pm.expect.fail(\"Policy Creation Unsuccessful. Please check the HTML reports for more details\");\r",
+									"    }\r",
+									"});\r",
+									""
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -556,6 +656,24 @@
 							"script": {
 								"exec": [
 									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"PolicyGroup and Policy Publication Check\", function () {\r",
+									"    const response = pm.response.text();\r",
+									"   if (response.includes(\"PUBLISHED\")) {\r",
+									"    console.log(\"PolicyGroup and Policy Publication Successful\");\r",
+									"}else {\r",
+									"    console.log(\"PolicyGroup and Policy Publication Failed\");\r",
+									"    pm.expect.fail(\"PolicyGroup and Policy Publication Failed . Please check the HTML reports for more details\");\r",
+									"}\r",
+									"})"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -653,10 +771,18 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var jsonData = JSON.parse(responseBody);\r",
-									"var data = jsonData.response.token;\r",
-									"//console.log(data);\r",
-									"pm.environment.set(\"authtoken\",data);"
+									"pm.test(\"Partner Admin Authentication Test\", function () {\r",
+									"    const response = pm.response.text();\r",
+									"   if (response.includes(\"token\")) {\r",
+									"    console.log(\"Partner Admin Authentication Successful\");\r",
+									"    const responseJSON = pm.response.json();\r",
+									"   pm.environment.set('authtoken', responseJSON.response.token);\r",
+									"   //console.log(responseJSON.response.token);\r",
+									"}else {\r",
+									"    console.log(\"Partner Admin Authentication Failed\");\r",
+									"    pm.expect.fail(\"Response did not contain Authentication Token . Please check the HTML reports for more details\");\r",
+									"}\r",
+									"})"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -712,6 +838,20 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"pm.test(\"Partner Creation Check\", function () {\r",
+									"    const response = pm.response.text();\r",
+									"\r",
+									"    if (response.includes(\"InProgress\")) {\r",
+									"        console.log(\"Partner Creation Request Successful\");\r",
+									"    } else if (response.includes(\"registered\")) {\r",
+									"        console.log(\"Partner already Exists. NOTE :Each partner should be onboarded only once.\");\r",
+									"        pm.environment.set(\"skip_followups\", \"true\");\r",
+									"       \r",
+									"    } else {\r",
+									"        console.log(\"Partner Creation Request Failed\");\r",
+									"        pm.expect.fail(\"Partner Creation Unsuccessful. Please check the HTML reports for more details\");\r",
+									"    }\r",
+									"});\r",
 									""
 								],
 								"type": "text/javascript",
@@ -797,9 +937,15 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Auth Successfull\", function () {\r",
-									"    pm.expect(pm.response.text()).to.include(\"Clientid and Token combination had been validated successfully\");\r",
-									"});"
+									"pm.test(\"Keycloak Authentication Test\", function () {\r",
+									"    const response = pm.response.text();\r",
+									"   if (response.includes(\"Success\")) {\r",
+									"    console.log(\"Keycloak Authentication Successful\");\r",
+									"}else {\r",
+									"    console.log(\"Keycloak Authentication Failed\");\r",
+									"    pm.expect.fail(\"Response did not contain Authentication Token . Please check the HTML reports for more details\");\r",
+									"}\r",
+									"})"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -850,9 +996,15 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Auth Successfull\", function () {\r",
-									"    pm.expect(pm.response.text()).to.include(\"Clientid and Token combination had been validated successfully\");\r",
-									"});"
+									"pm.test(\"Keycloak Authentication Test\", function () {\r",
+									"    const response = pm.response.text();\r",
+									"   if (response.includes(\"Success\")) {\r",
+									"    console.log(\"Keycloak Authentication Successful\");\r",
+									"}else {\r",
+									"    console.log(\"Keycloak Authentication Failed\");\r",
+									"    pm.expect.fail(\"Response did not contain Authentication Token . Please check the HTML reports for more details\");\r",
+									"}\r",
+									"})"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -3245,13 +3397,20 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var jsonData = JSON.parse(responseBody);\r",
-									"//var data = JSON.stringify(jsonData);\r",
-									"console.log(jsonData.access_token);\r",
-									"pm.environment.set(\"keycloak-token\", jsonData.access_token);\r",
-									""
+									"pm.test(\"Keycloak Authentication Check\", function () {\r",
+									"    const response = pm.response.text();\r",
+									"   if (response.includes(\"access_token\")) {\r",
+									"    console.log(\"Keycloak Authentication Successful\");\r",
+									"    const responseJSON = pm.response.json();\r",
+									"   pm.environment.set('keycloak-token', responseJSON.access_token);\r",
+									"}else {\r",
+									"    console.log(\"Keycloak Authentication Failed\");\r",
+									"    pm.expect.fail(\"Response did not contain Authentication Token . Please check the html reports for more details\");\r",
+									"}\r",
+									"})"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						},
 						{
@@ -3260,7 +3419,8 @@
 								"exec": [
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
