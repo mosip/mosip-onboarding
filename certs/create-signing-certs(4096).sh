@@ -56,13 +56,13 @@ else
   mkdir -p $cert_path
   ## certificate authority
   echo "==================== Creating CA certificate"
-  openssl genrsa -out $cert_path/RootCA.key 2048
+  openssl genrsa -out $cert_path/RootCA.key 4096
   openssl req -x509 -new -key $cert_path/RootCA.key -sha256 -days 1825 -out $cert_path/RootCA.pem -config $path/certs/root-openssl.cnf
 
 
 ##Partner certificate
   echo "==================== Creating partner certificate"
-  openssl genrsa -out $cert_path/Client.key 2048
+  openssl genrsa -out $cert_path/Client.key 4096
   openssl req -new -key $cert_path/Client.key -out $cert_path/Client.csr -config $path/certs/client-openssl.cnf
   openssl x509 -req -days 1825 -extensions v3_req -extfile $path/certs/client-openssl.cnf -in $cert_path/Client.csr -CA $cert_path/RootCA.pem -CAkey $cert_path/RootCA.key -CAcreateserial -out $cert_path/Client.pem
 
