@@ -1,0 +1,28 @@
+ NOTICES
+
+This project includes third-party components whose licenses require attribution.
+Only components with NOTICE obligations are listed below.
+
+=====================================================
+Apache License 2.0
+
+• Spring Framework & Spring Boot
+(Spring Boot Starter Web, Starter Security, Starter Data JPA,
+Starter Validation, Starter Test, Spring Boot Maven Plugin)
+
+• Spring Security
+
+• Spring Cloud Config
+
+• SpringDoc OpenAPI
+(springdoc-openapi-starter-webmvc-ui, springdoc-openapi-maven-plugin)
+
+=====================================================
+BSD 2-Clause License
+
+• PostgreSQL JDBC Driver
+
+=====================================================
+
+Full license texts for the above components are available in the license/
+directory of this repository.
