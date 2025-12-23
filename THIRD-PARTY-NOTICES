@@ -1,0 +1,48 @@
+THIRD-PARTY-NOTICES
+
+This project includes third-party packages that are distributed under various open-source licenses. Below is a list of packages and their associated licenses.
+
+================================================================================
+Package: Spring Framework & Spring Boot
+         (Spring Boot Starter Web, Starter Security, Starter Data JPA,
+          Starter Validation, Starter Test, Spring Boot Maven Plugin)
+Version: 3.x family
+License: Apache License 2.0
+         (Inferred from project’s official repository)
+Homepage: https://spring.io/projects/spring-boot
+================================================================================
+
+================================================================================
+Package: Spring Security
+Version: 6.x family
+License: Apache License 2.0
+         (Inferred from project’s official repository)
+Homepage: https://spring.io/projects/spring-security
+================================================================================
+
+================================================================================
+Package: Spring Cloud Config
+Version: BOM-managed
+License: Apache License 2.0
+         (Inferred from project’s official repository)
+Homepage: https://spring.io/projects/spring-cloud-config
+================================================================================
+
+================================================================================
+Package: SpringDoc OpenAPI
+         (springdoc-openapi-starter-webmvc-ui, springdoc-openapi-maven-plugin)
+Version: 2.x family
+License: Apache License 2.0
+         (Inferred from project’s official repository)
+Homepage: https://springdoc.org
+================================================================================
+
+================================================================================
+Package: PostgreSQL JDBC Driver
+Version: 42.x family
+License: BSD 2-Clause License
+         (Inferred from project’s official repository)
+Homepage: https://jdbc.postgresql.org/
+================================================================================
+
+Full license texts and additional details for each of the above packages are available in the license/ directory of this repository. Please refer to those files or the original source of each package for complete legal terms and conditions.
