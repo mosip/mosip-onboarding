@@ -6,7 +6,7 @@
 			"name": "{{policy-name}}",
 			"desc": "{{policy-name}} Policy",
 			"policies": {
-				"authTokenType": "policy",
+				"authTokenType": "partner",
 				"allowedKycAttributes": [
 					{
 						"attributeName": "fullName"

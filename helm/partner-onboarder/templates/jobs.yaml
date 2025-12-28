@@ -42,6 +42,10 @@ spec:
               value: {{ quote $.Values.onboarding.variables.push_reports_to_s3 }}
             - name: mosipid
               value: {{ quote $.Values.onboarding.variables.mosipid }}
+            {{- if $.Values.extraEnvVars }}
+            {{- include "common.tplvalues.render" (dict "value" $.Values.extraEnvVars "context" $) | nindent 12 }}
+            {{- end }}
+
           envFrom:
             {{- if $.Values.onboarding.configmaps }}
             {{- range $cm_name, $cm_value := $.Values.onboarding.configmaps }}

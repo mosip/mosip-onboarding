@@ -308,6 +308,7 @@ onboard_mock_relying_party_with_mock_rp_oidc_client(){
 	--folder partner_request_mapping_to_policyname \
 	--folder approve-partner-mapping-to-policy \
 	--folder get-jwks \
+	--folder keycloak-authentication-for-mock-plugin \
 	--folder create-oidc-client \
 	--folder create-oidc-client-through-esignet \
 	--folder delete-user \
@@ -431,7 +432,7 @@ onboard_mimoto_oidc_partner(){
 	sh $MYDIR/certs/convert.sh $MYDIR
 	mv $MYDIR/certs/$PARTNER_KC_USERNAME/keystore.p12 $MYDIR/certs/$PARTNER_KC_USERNAME/oidckeystore.p12
 
-	kubectl -n $ns_mimoto create secret generic mimotooidc --from-file=$MYDIR/certs/$PARTNER_KC_USERNAME/oidckeystore.p12 --dry-run=client -o yaml | kubectl apply -f -
+	kubectl -n $custom_ns create secret generic mimotooidc --from-file=$MYDIR/certs/$PARTNER_KC_USERNAME/oidckeystore.p12 --dry-run=client -o yaml | kubectl apply -f -
 
 	if [ $? -gt 0 ]; then
       echo "JWK Key generation failed; EXITING";
@@ -520,6 +521,7 @@ onboard_esignet_signup_oidc_partner(){
 	--env-var oidc-clientid="$OIDC_CLIENTID" \
 	--folder 'create_keycloak_user' \
 	--folder authenticate-to-upload-certs \
+	--folder keycloak-authentication-for-mock-plugin \
 	--folder create-oidc-client-through-esignet-signup \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
@@ -671,10 +673,11 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   PARTNER_KC_USERPASSWORD=mimotokeybinding-kc-mockuserpassword
   PARTNER_ORGANIZATION_NAME=IITB
   PARTNER_TYPE=Auth_Partner
+  custom_ns=$( printenv customnamespace )
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
   onboard_mimoto_keybinding_partner
-  kubectl create secret generic mimoto-wallet-binding-partner-api-key -n $ns_mimoto --from-literal=mimoto-wallet-binding-partner-api-key=$mpartnerdefaultmimotokeybindingapikey --dry-run=client -o yaml | kubectl apply -f -
+  kubectl create secret generic mimoto-wallet-binding-partner-api-key -n $custom_ns --from-literal=mimoto-wallet-binding-partner-api-key=$mpartnerdefaultmimotokeybindingapikey --dry-run=client -o yaml | kubectl apply -f -
   elif [ "$MODULE" = "mimoto-oidc" ]; then
   APPLICATION_ID=partner
   MODULE_CLIENTID=mosip-pms-client
@@ -688,10 +691,11 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
   OIDC_CLIENT_NAME=mimoto-oidc
+  custom_ns=$( printenv customnamespace )
   LOGO_URI="https://$( printenv mosip-api-host )/inji/inji-home-logo.png"
   REDIRECT_URIS="io.mosip.residentapp.inji://oauthredirect,https://inji.$( printenv installation-domain).mosip.net/redirect"
   onboard_mimoto_oidc_partner
-  kubectl create secret generic mimoto-oidc-partner-clientid -n $ns_mimoto --from-literal=mimoto-oidc-partner-clientid=$mpartnerdefaultmimotooidcclientID --dry-run=client -o yaml | kubectl apply -f -
+  kubectl create secret generic mimoto-oidc-partner-clientid -n $custom_ns --from-literal=mimoto-oidc-partner-clientid=$mpartnerdefaultmimotooidcclientID --dry-run=client -o yaml | kubectl apply -f -
   elif [ "$MODULE" = "signup-oidc" ]; then
   APPLICATION_ID=partner
   MODULE_CLIENTID=mosip-pms-client

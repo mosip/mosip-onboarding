@@ -27,6 +27,7 @@ jobs:
         include:
           - SERVICE_LOCATION: './'
             SERVICE_NAME: 'partner-onboarder'
+            SQUASH_LAYERS: '20'
       fail-fast: false
     name: ${{ matrix.SERVICE_NAME }}  
     uses: mosip/kattu/.github/workflows/docker-build.yml@master
@@ -35,6 +36,7 @@ jobs:
       SERVICE_NAME: ${{ matrix.SERVICE_NAME }}
       BUILD_ARTIFACT: ${{ matrix.BUILD_ARTIFACT || false }}
       ONLY_DOCKER: ${{ matrix.ONLY_DOCKER || false }}
+      SQUASH_LAYERS: ${{ matrix.SQUASH_LAYERS }}
     secrets:
       DEV_NAMESPACE_DOCKER_HUB: ${{ secrets.DEV_NAMESPACE_DOCKER_HUB }}
       ACTOR_DOCKER_HUB: ${{ secrets.ACTOR_DOCKER_HUB }}

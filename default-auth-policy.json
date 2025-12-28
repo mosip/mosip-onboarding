@@ -61,7 +61,7 @@
           "attributeName": "photo"
         }
       ],
-     "authTokenType": "policy"      
+     "authTokenType": "partner"      
     },
     "policyGroupName": "{{policy-group-name}}",
     "policyType": "Auth"
