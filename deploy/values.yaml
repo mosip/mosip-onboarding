@@ -14,7 +14,7 @@ onboarding:
       enabled: false
     - name: esignet
       enabled: false
-    - name: demo-oidc
+    - name: mock-rp-oidc
       enabled: false
     - name: resident-oidc
       enabled: false
