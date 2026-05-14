@@ -13,15 +13,16 @@ RUN npm install -g npm@10.2.3 && \
 RUN apk add curl && \
     apk add openssl && \
     apk add jq && \
-    curl https://dl.min.io/client/mc/release/linux-amd64/mc -o /bin/mc && \
-    chmod +x /bin/mc
+    curl -fsSL https://dl.min.io/client/mc/release/linux-amd64/mc -o /bin/mc && \
+    chmod +x /bin/mc && \
+    mc --version
 
 ARG container_user=mosip
 ARG container_user_group=mosip
 ARG container_user_uid=1001
 ARG container_user_gid=1001
 
-# Install required packages using 'apk'
+## Install required packages using 'apk'
 RUN apk update && apk add --no-cache curl bash
 
 # Install kubectl binary
