@@ -8,15 +8,23 @@ onboarding:
       enabled: true
     - name: resident
       enabled: true
-    - name: mobileid
-      enabled: true
+    - name: mimoto
+      enabled: false
     - name: digitalcard
       enabled: false
     - name: esignet
       enabled: false
-    - name: demo-oidc
+    - name: mock-rp-oidc
       enabled: false
     - name: resident-oidc
       enabled: false
     - name: mimoto-keybinding
       enabled: false
+    - name: mimoto-oidc
+      enabled: false
+    - name: signup-oidc
+      enabled: false
+  variables:
+    push_reports_to_s3: true
+    mosipid: false
+    
