@@ -20,3 +20,10 @@ onboarding:
       enabled: false
     - name: mimoto-keybinding
       enabled: false
+    - name: mimoto-oidc
+      enabled: false
+    - name: signup-oidc
+      enabled: false
+  variables:
+    push_reports_to_s3: true
+    mosipid: false
