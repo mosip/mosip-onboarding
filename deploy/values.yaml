@@ -8,8 +8,8 @@ onboarding:
       enabled: true
     - name: resident
       enabled: true
-    - name: mimoto
-      enabled: false
+    - name: mobileid
+      enabled: true
     - name: digitalcard
       enabled: false
     - name: esignet
