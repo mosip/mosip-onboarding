@@ -57,6 +57,10 @@
         "authSubType": "",
         "authType": "vciexchange",
         "mandatory": false
+      },{
+        "authSubType": "",
+        "authType": "pwd",
+        "mandatory": false
       }]
     },
     "policyGroupName": "{{policy-group-name}}",
