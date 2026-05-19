@@ -464,7 +464,7 @@ onboarding:
       ns_signup: signup
   secrets:
     s3:
-      s3-user-secret: 'password'
+      s3-user-secret: ''
   volumes:
     reports:
       name: onboarder-reports
