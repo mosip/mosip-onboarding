@@ -13,7 +13,7 @@ RUN npm install -g npm@10.2.3 && \
 RUN apk add curl && \
     apk add openssl && \
     apk add jq && \
-    curl https://dl.min.io/client/mc/release/linux-amd64/mc -o /bin/mc && \
+    curl -fsSL https://dl.min.io/client/mc/release/linux-amd64/mc -o /bin/mc && \
     chmod +x /bin/mc
 
 ARG container_user=mosip
