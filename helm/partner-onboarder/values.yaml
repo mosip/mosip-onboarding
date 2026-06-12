@@ -416,16 +416,13 @@ onboarding:
   volumes:
     reports:
       name: onboarder-reports
-      storageClass: nfs-client
+      storageClass: nfs-csi
       accessModes:
         - ReadWriteMany
       size: 10Mi
       existingClaim:
       # Dir where config and keys are written inside container
       mountDir: /home/mosip/reports
-      nfs:
-        path: "/srv/nfs/sandbox/onboarding"
-        server: "nfs-server"
   variables:
     push_reports_to_s3: true
     mosipid: false

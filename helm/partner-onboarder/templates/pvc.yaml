@@ -15,9 +15,6 @@ spec:
   resources:
     requests:
       storage: {{ $.Values.onboarding.volumes.reports.size }}
-  selector:
-    matchLabels:
-      name: {{ $.Values.onboarding.volumes.reports.name }}
 {{- end }}
 {{- end }}
 {{- end }}
