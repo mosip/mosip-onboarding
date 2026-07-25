@@ -2897,15 +2897,14 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/oidc/client",
+              "raw": "{{url}}/v1/partnermanager/oidc-clients",
               "host": [
                 "{{url}}"
               ],
               "path": [
                 "v1",
                 "partnermanager",
-                "oidc",
-                "client"
+                "oidc-clients"
               ]
             }
           },
@@ -2982,7 +2981,7 @@
               }
             },
             "url": {
-              "raw": "{{external-url}}/v1/esignet/client-mgmt/oidc-client",
+              "raw": "{{external-url}}/v1/esignet/client-mgmt/client",
               "host": [
                 "{{external-url}}"
               ],
@@ -2990,7 +2989,7 @@
                 "v1",
                 "esignet",
                 "client-mgmt",
-                "oidc-client"
+                "client"
               ]
             }
           },
@@ -3079,7 +3078,7 @@
               }
             },
             "url": {
-              "raw": "{{external-url}}/v1/esignet/client-mgmt/oidc-client",
+              "raw": "{{external-url}}/v1/esignet/client-mgmt/client",
               "host": [
                 "{{external-url}}"
               ],
@@ -3087,7 +3086,7 @@
                 "v1",
                 "esignet",
                 "client-mgmt",
-                "oidc-client"
+                "client"
               ]
             }
           },
@@ -3168,7 +3167,7 @@
               }
             },
             "url": {
-              "raw": "{{sunbird-url}}/v1/esignet/client-mgmt/oidc-client",
+              "raw": "{{sunbird-url}}/v1/esignet/client-mgmt/client",
               "host": [
                 "{{sunbird-url}}"
               ],
@@ -3176,7 +3175,7 @@
                 "v1",
                 "esignet",
                 "client-mgmt",
-                "oidc-client"
+                "client"
               ]
             }
           },
