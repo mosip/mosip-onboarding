@@ -102,13 +102,9 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "if (pm.response.code === 409) {",
-                  "    console.warn('Duplicate data already exists, you may be overwriting existing data');",
-                  "} else {",
-                  "    pm.test('user created', function () {",
-                  "        pm.response.to.have.status(201);",
-                  "    });",
-                  "}"
+                  "pm.test('user created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});"
                 ],
                 "type": "text/javascript"
               }
@@ -332,7 +328,7 @@
             "exec": [
               "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
               "\r",
-              "    pm.execution.skipRequest()\r",
+              "\u00a0 \u00a0 pm.execution.skipRequest()\r",
               "}"
             ]
           }
@@ -417,30 +413,9 @@
                 "exec": [
                   "const jsonData = pm.response.json();",
                   "const err = jsonData.errors && jsonData.errors[0];",
-                  "if (err && err.errorCode === 'PMS_POL_014') {",
-                  "    console.warn('Duplicate data already exists, you may be overwriting existing data');",
-                  "    pm.test('lookup existing policy group id', async function () {",
-                  "        const searchBody = {",
-                  "            id: 'string', version: 'LTS', requesttime: new Date().toISOString(),",
-                  "            request: { filters: [{ columnName: 'name', type: 'equals', value: pm.environment.get('policy-group-name') }] }",
-                  "        };",
-                  "        const res = await new Promise((resolve, reject) => {",
-                  "            pm.sendRequest({",
-                  "                url: pm.environment.get('url') + '/v1/policymanager/policies/group/search',",
-                  "                method: 'POST',",
-                  "                header: { 'Content-Type': 'application/json', Cookie: 'Authorization=' + pm.environment.get('authtoken') },",
-                  "                body: { mode: 'raw', raw: JSON.stringify(searchBody) }",
-                  "            }, (err, response) => {",
-                  "                if (err) return reject(err);",
-                  "                resolve(response);",
-                  "            });",
-                  "        });",
-                  "        const body = JSON.parse(res.text());",
-                  "        const match = body.response && body.response.data && body.response.data[0];",
-                  "        if (!match) {",
-                  "            throw new Error('Policy group search returned no match for name ' + pm.environment.get('policy-group-name') + ' after a duplicate-exists error - cannot recover policy-group-id.');",
-                  "        }",
-                  "        pm.environment.set('policy-group-id', match.id);",
+                  "if (err) {",
+                  "    pm.test('create-policy-group failed: ' + err.errorCode, function () {",
+                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
                   "    });",
                   "} else {",
                   "    pm.test('set policy id', function () {",
@@ -533,29 +508,9 @@
                 "exec": [
                   "const jsonData = pm.response.json();",
                   "const err = jsonData.errors && jsonData.errors[0];",
-                  "if (err && err.errorCode === 'PMS_POL_009') {",
-                  "    console.warn('Duplicate data already exists, you may be overwriting existing data');",
-                  "    pm.test('lookup existing policy id', async function () {",
-                  "        const policyGroupName = pm.environment.get('policy-group-name');",
-                  "        const policyName = pm.environment.get('policy-name');",
-                  "        const url = pm.environment.get('url') + '/v1/policymanager/policies/v2?policyName=' + encodeURIComponent(policyName) + '&policyGroupName=' + encodeURIComponent(policyGroupName) + '&pageNo=0&pageSize=10';",
-                  "        const res = await new Promise((resolve, reject) => {",
-                  "            pm.sendRequest({",
-                  "                url,",
-                  "                method: 'GET',",
-                  "                header: { Cookie: 'Authorization=' + pm.environment.get('authtoken') }",
-                  "            }, (err, response) => {",
-                  "                if (err) return reject(err);",
-                  "                resolve(response);",
-                  "            });",
-                  "        });",
-                  "        const body = JSON.parse(res.text());",
-                  "        const match = body.response && body.response.data && body.response.data[0];",
-                  "        if (!match) {",
-                  "            throw new Error('Policy search (v2) returned no match for ' + policyGroupName + '/' + policyName + ' after a duplicate-exists error - cannot recover policy-id.');",
-                  "        }",
-                  "        pm.environment.set('policy-id', match.policyId);",
-                  "        pm.environment.set('policy-name', match.policyName);",
+                  "if (err) {",
+                  "    pm.test('create-policy failed: ' + err.errorCode, function () {",
+                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
                   "    });",
                   "} else {",
                   "    pm.test('set policy id', function () {",
@@ -684,7 +639,7 @@
             "exec": [
               "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
               "\r",
-              "    pm.execution.skipRequest()\r",
+              "\u00a0 \u00a0 pm.execution.skipRequest()\r",
               "}"
             ]
           }
@@ -713,7 +668,7 @@
                 "exec": [
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -772,7 +727,7 @@
                 "exec": [
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -785,8 +740,10 @@
                 "exec": [
                   "const jsonData = pm.response.json();",
                   "const err = jsonData.errors && jsonData.errors[0];",
-                  "if (err && err.errorCode === 'PMS_PRT_051') {",
-                  "    console.warn('Duplicate data already exists, you may be overwriting existing data');",
+                  "if (err) {",
+                  "    pm.test('partner-self-registration failed: ' + err.errorCode, function () {",
+                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
+                  "    });",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -1460,7 +1417,7 @@
                 "exec": [
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -1572,7 +1529,7 @@
                 "exec": [
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -1748,7 +1705,7 @@
                 "exec": [
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -2062,7 +2019,7 @@
                 "exec": [
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -2258,12 +2215,10 @@
                 "exec": [
                   "const jsonData = pm.response.json();",
                   "const err = jsonData.errors && jsonData.errors[0];",
-                  "if (err && (err.errorCode === 'PMS_PRT_053' || err.errorCode === 'PMS_PRT_060')) {",
-                  "    console.warn('Duplicate data already exists, you may be overwriting existing data');",
-                  "    const existing = jsonData.metadata && jsonData.metadata.existing;",
-                  "    if (existing) {",
-                  "        pm.environment.set('partner-mapping-key', existing.mappingkey);",
-                  "    }",
+                  "if (err) {",
+                  "    pm.test('partner_request_mapping_to_policyname failed: ' + err.errorCode, function () {",
+                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
+                  "    });",
                   "} else {",
                   "    pm.test('adding apikeyrequestID', function () {",
                   "        const { response } = pm.response.json();",
@@ -2281,7 +2236,7 @@
                 "exec": [
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -2468,7 +2423,7 @@
                 "exec": [
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -2865,7 +2820,7 @@
                   "}\r",
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}\r",
                   ""
                 ],
@@ -2881,19 +2836,10 @@
                   "var err = responseJson.errors && responseJson.errors[0];",
                   "var partnerKcUsername = pm.variables.get(\"partner-kc-username\");",
                   "",
-                  "if (err && err.errorCode === \"PMS_ESI_001\") {",
-                  "    console.warn(\"Duplicate data already exists, you may be overwriting existing data\");",
-                  "    var existing = responseJson.metadata && responseJson.metadata.existing;",
-                  "    var clientId = existing ? existing.clientId : undefined;",
-                  "    if (partnerKcUsername === \"mpartner-default-mock-rp-oidc\") {",
-                  "        pm.environment.set(\"mpartner-default-demo-oidc-clientID\", clientId);",
-                  "    } else if (partnerKcUsername === \"mpartner-default-resident-oidc\") {",
-                  "        pm.environment.set(\"mpartner-default-resident-oidc-clientID\", clientId);",
-                  "    } else if (partnerKcUsername === \"mpartner-default-mimotooidc\") {",
-                  "        pm.environment.set(\"mpartner-default-mimotooidc-clientID\", clientId);",
-                  "    } else if (partnerKcUsername === \"esignet-sunbird-partner\") {",
-                  "        pm.environment.set(\"mpartner-default-sunbirdoidc-clientID\", clientId);",
-                  "    }",
+                  "if (err) {",
+                  "    pm.test('create-oidc-client failed: ' + err.errorCode, function () {",
+                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
+                  "    });",
                   "} else {",
                   "    pm.test(\"validating clientid\", function () {",
                   "        pm.expect(pm.response.text()).to.include(\"clientId\");",
@@ -2995,8 +2941,10 @@
                   "var responseJson = pm.response.json();",
                   "var err = responseJson.errors && responseJson.errors[0];",
                   "",
-                  "if (err && err.errorCode === \"PMS_ESI_001\") {",
-                  "    console.warn(\"Duplicate data already exists, you may be overwriting existing data\");",
+                  "if (err) {",
+                  "    pm.test('create-oidc-client-through-esignet-signup failed: ' + err.errorCode, function () {",
+                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
+                  "    });",
                   "} else {",
                   "    pm.test(\"validating clientid\", function () {",
                   "        pm.expect(pm.response.text()).to.include(\"clientId\");",
@@ -3080,12 +3028,10 @@
                   "var err = responseJson.errors && responseJson.errors[0];",
                   "var partnerKcUsername = pm.variables.get(\"partner-kc-username\");",
                   "",
-                  "if (err && err.errorCode === \"PMS_ESI_001\") {",
-                  "    console.warn(\"Duplicate data already exists, you may be overwriting existing data\");",
-                  "    var existing = responseJson.metadata && responseJson.metadata.existing;",
-                  "    if (partnerKcUsername === \"mpartner-default-mock-rp-oidc\" && existing) {",
-                  "        pm.environment.set(\"mpartner-default-demo-oidc-clientID\", existing.clientId);",
-                  "    }",
+                  "if (err) {",
+                  "    pm.test('create-oidc-client-through-esignet failed: ' + err.errorCode, function () {",
+                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
+                  "    });",
                   "} else {",
                   "    pm.test(\"validating clientid\", function () {",
                   "        pm.expect(pm.response.text()).to.include(\"clientId\");",
@@ -3178,12 +3124,10 @@
                   "var err = responseJson.errors && responseJson.errors[0];",
                   "var partnerKcUsername = pm.variables.get(\"partner-kc-username\");",
                   "",
-                  "if (err && err.errorCode === \"PMS_ESI_001\") {",
-                  "    console.warn(\"Duplicate data already exists, you may be overwriting existing data\");",
-                  "    var existing = responseJson.metadata && responseJson.metadata.existing;",
-                  "    if (partnerKcUsername === \"esignet-sunbird-partner\" && existing) {",
-                  "        pm.environment.set(\"mpartner-default-sunbirdoidc-clientID\", existing.clientId);",
-                  "    }",
+                  "if (err) {",
+                  "    pm.test('create-oidc-client-through-esignet-sunbird failed: ' + err.errorCode, function () {",
+                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
+                  "    });",
                   "} else {",
                   "    pm.test(\"validating clientid\", function () {",
                   "        pm.expect(pm.response.text()).to.include(\"clientId\");",
@@ -3305,11 +3249,9 @@
                 "exec": [
                   "const jsonData = pm.response.json();",
                   "const err = jsonData.errors && jsonData.errors[0];",
-                  "if (err && err.errorCode === 'PMS_PRT_110') {",
-                  "    console.warn('Duplicate data already exists, you may be overwriting existing data');",
-                  "    console.warn('The generated API key value cannot be recovered from PMS after the fact - no endpoint re-exposes it once issued. This label (partner-kc-userid) already has a key provisioned. In the normal flow this label changes every run because the Keycloak user is deleted and recreated - if you are hitting this, either the prior delete-user step failed, or this partner/policy/label combination was provisioned outside this run. Resolve manually (clear the stale api-key mapping in PMS, or delete the leftover Keycloak user) and rerun.');",
-                  "    pm.test('api key label already exists - value not recoverable, failing run intentionally', function () {",
-                  "        throw new Error('PMS_PRT_110: API key label already exists and its value cannot be recovered - see console warning above.');",
+                  "if (err) {",
+                  "    pm.test('request-for-partner-apikey failed: ' + err.errorCode, function () {",
+                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
                   "    });",
                   "} else {",
                   "    pm.test('getting apikey', function () {",
@@ -3466,7 +3408,7 @@
                 "exec": [
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}"
                 ],
                 "type": "text/javascript",

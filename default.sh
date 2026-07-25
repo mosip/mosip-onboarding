@@ -220,8 +220,8 @@ onboard_esignet_partner() {
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
     --env-var request-time="$DATE" \
-	--env-var partner-manager-username=esignet-kc-mockusername \
-	--env-var partner-manager-password=esignet-kc-mockpassword \
+	--env-var partner-manager-username=$PARTNER_MANAGER_USERNAME \
+	--env-var partner-manager-password=$PARTNER_MANAGER_PASSWORD \
 	--env-var application-id=$APPLICATION_ID \
 	--env-var module-clientid=$MODULE_CLIENTID \
 	--env-var module-secretkey=$MODULE_SECRETKEY \
@@ -234,7 +234,7 @@ onboard_esignet_partner() {
 	--env-var keycloak-url=$KEYCLOAK_URL \
 	--env-var keycloak-admin-password="$KEYCLOAK_ADMIN_PASSWORD" \
 	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USER \
-	--env-var partner-domain=MISP \
+	--env-var partner-domain=$PARTNER_DOMAIN \
 	--folder 'create_keycloak_user' \
 	--folder 'create/publish_policy_group_and_policy' \
 	--folder partner-self-registration \
@@ -253,7 +253,7 @@ onboard_esignet_partner() {
 	--folder login-to-keycloak-as-admin \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
-    --export-environment ./config-secrets.json -d ./default-esignet-misp-policy.json -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/esignet.html" --reporter-htmlextra-showEnvironmentData
+    --export-environment ./config-secrets.json -d "$POLICY_DATA_FILE" -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/esignet.html" --reporter-htmlextra-showEnvironmentData
     MISP_LICENSE_KEY=$(jq -r '.values[] | select(.key == "mpartner-default-esignet-misp-license-key") | .value' config-secrets.json)
 
 if [ -z "$MISP_LICENSE_KEY" ]; then
@@ -273,8 +273,8 @@ onboard_mock_relying_party_with_mock_rp_oidc_client(){
 	newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
     --env-var request-time="$DATE" \
-	--env-var partner-manager-username=mock-rp-oidc-kc-mockusername \
-	--env-var partner-manager-password=mock-rp-oidc-kc-mockuserpassword \
+	--env-var partner-manager-username=$PARTNER_MANAGER_USERNAME \
+	--env-var partner-manager-password=$PARTNER_MANAGER_PASSWORD \
 	--env-var application-id=$APPLICATION_ID \
 	--env-var module-clientid=$MODULE_CLIENTID \
 	--env-var module-secretkey=$MODULE_SECRETKEY \
@@ -287,12 +287,12 @@ onboard_mock_relying_party_with_mock_rp_oidc_client(){
 	--env-var logo-uri=$LOGO_URI \
 	--env-var redirect-uris=$REDIRECT_URIS\
 	--env-var keycloak-url=$KEYCLOAK_URL \
-	--env-var mosip-id="$mosipid" \
+	--env-var mosip-id="$MOSIP_ID" \
 	--env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
 	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
 	--env-var cert-manager-username="$KEYCLOAK_CLIENT" \
     --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
-	--env-var partner-domain=Auth \
+	--env-var partner-domain=$PARTNER_DOMAIN \
 	--env-var ca-certificate="$root_ca_cert" \
 	--env-var leaf-certificate="$partner_cert" \
 	--env-var oidc-client-name="$OIDC_CLIENT_NAME" \
@@ -313,7 +313,7 @@ onboard_mock_relying_party_with_mock_rp_oidc_client(){
 	--folder create-oidc-client-through-esignet \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
-    --export-environment ./config-secrets.json -d ./default-mock-rp-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/mock-rp-oidc.html" --reporter-htmlextra-showEnvironmentData
+    --export-environment ./config-secrets.json -d "$POLICY_DATA_FILE" -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/mock-rp-oidc.html" --reporter-htmlextra-showEnvironmentData
 privateandpublickeypair=$(jq -r '.values[] | select(.key == "privateandpublickeypair") | .value' config-secrets.json)
 privateandpublickeypair=$(echo -n "$privateandpublickeypair" | base64)
 mpartnerdefaultdemooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-demo-oidc-clientID") | .value' "config-secrets.json")
@@ -332,8 +332,8 @@ reports_dir="./reports/RESIDENT_OIDC/$current_datetime"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url=$URL \
     --env-var request-time=$DATE \
-	--env-var partner-manager-username=residentoidc-kc-mockusername \
-	--env-var partner-manager-password=residentoidc-kc-mockuserpassword \
+	--env-var partner-manager-username=$PARTNER_MANAGER_USERNAME \
+	--env-var partner-manager-password=$PARTNER_MANAGER_PASSWORD \
 	--env-var application-id=$APPLICATION_ID \
 	--env-var module-clientid=$MODULE_CLIENTID \
 	--env-var module-secretkey=$MODULE_SECRETKEY \
@@ -341,7 +341,7 @@ reports_dir="./reports/RESIDENT_OIDC/$current_datetime"
 	--env-var partner-kc-username=$PARTNER_KC_USERNAME \
 	--env-var partner-organization-name=$PARTNER_ORGANIZATION_NAME \
     --env-var partner-type=$PARTNER_TYPE \
-	--env-var partner-domain=Auth \
+	--env-var partner-domain=$PARTNER_DOMAIN \
     --env-var external-url=$EXTERNAL_URL \
 	--env-var policy-name=$POLICY_NAME \
 	--env-var keycloak-url=$KEYCLOAK_URL \
@@ -349,8 +349,8 @@ reports_dir="./reports/RESIDENT_OIDC/$current_datetime"
 	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
 	--env-var cert-manager-username="$KEYCLOAK_CLIENT" \
     --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
-	--env-var cert-application-id=RESIDENT \
-    --env-var cert-reference-id=ESIGNET_USER_INFO \
+	--env-var cert-application-id=$CERT_APPLICATION_ID \
+    --env-var cert-reference-id=$CERT_REFERENCE_ID \
 	--env-var key="$jwk_key" \
 	--env-var oidc-client-name=$OIDC_CLIENT_NAME \
 	--env-var logo-uri=$LOGO_URI \
@@ -373,7 +373,7 @@ reports_dir="./reports/RESIDENT_OIDC/$current_datetime"
 	--folder create-oidc-client \
 	--folder delete-user \
 	$ADD_SSL_NEWMAN \
-    --export-environment ./config-secrets.json -d ./default-resident-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/resident-oidc.html" --reporter-htmlextra-showEnvironmentData
+    --export-environment ./config-secrets.json -d "$POLICY_DATA_FILE" -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/resident-oidc.html" --reporter-htmlextra-showEnvironmentData
 mpartnerdefaultresidentoidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-resident-oidc-clientID") | .value' "config-secrets.json")
 }
 onboard_mimoto_keybinding_partner(){
@@ -404,7 +404,7 @@ onboard_mimoto_keybinding_partner(){
 	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
 	--env-var cert-manager-username="$KEYCLOAK_CLIENT" \
   --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
-	--env-var partner-domain=Auth \
+	--env-var partner-domain=$PARTNER_DOMAIN \
 	--env-var ca-certificate="$root_ca_cert" \
 	--env-var leaf-certificate="$partner_cert" \
 	--folder 'create_keycloak_user' \
@@ -419,7 +419,7 @@ onboard_mimoto_keybinding_partner(){
 	--folder request-for-partner-apikey \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
-    --export-environment ./config-secrets.json -d ./default-mimoto-keybinding-policy.json -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/mimoto-keybinding.html" --reporter-htmlextra-showEnvironmentData
+    --export-environment ./config-secrets.json -d "$POLICY_DATA_FILE" -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/mimoto-keybinding.html" --reporter-htmlextra-showEnvironmentData
 mpartnerdefaultmimotokeybindingapikey=$(jq -r '.values[] | select(.key == "mpartner-default-mimotokeybinding-apikey") | .value' "config-secrets.json")
 }
 onboard_mimoto_oidc_partner(){
@@ -464,7 +464,7 @@ onboard_mimoto_oidc_partner(){
 	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
 	--env-var cert-manager-username="$KEYCLOAK_CLIENT" \
   --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
-	--env-var partner-domain=Auth \
+	--env-var partner-domain=$PARTNER_DOMAIN \
 	--env-var oidc-client-name="$OIDC_CLIENT_NAME" \
 	--env-var ca-certificate="$root_ca_cert" \
 	--env-var leaf-certificate="$partner_cert" \
@@ -479,7 +479,7 @@ onboard_mimoto_oidc_partner(){
 	--folder create-oidc-client \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
-  --export-environment ./config-secrets.json -d ./default-mimoto-oidc-policy.json -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/mimoto-oidc.html" --reporter-htmlextra-showEnvironmentData
+  --export-environment ./config-secrets.json -d "$POLICY_DATA_FILE" -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/mimoto-oidc.html" --reporter-htmlextra-showEnvironmentData
 mpartnerdefaultmimotooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-mimotooidc-clientID") | .value' "config-secrets.json")
 }
 onboard_esignet_signup_oidc_partner(){
@@ -512,8 +512,8 @@ onboard_esignet_signup_oidc_partner(){
 	--env-var partner-kc-username=$PARTNER_KC_USERNAME \
 	--env-var key="$jwk_key" \
 	--env-var keyid="" \
-	--env-var partner-manager-username=signup-oidc-kc-mockusername \
-	--env-var partner-manager-password=signup-oidc-kc-mockuserpassword \
+	--env-var partner-manager-username=$PARTNER_MANAGER_USERNAME \
+	--env-var partner-manager-password=$PARTNER_MANAGER_PASSWORD \
 	--env-var keycloak-url=$KEYCLOAK_URL \
 	--env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
 	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
@@ -557,8 +557,8 @@ onboard_esignet_sunbird_partner(){
 	--env-var partner-kc-username=$PARTNER_KC_USERNAME \
 	--env-var key="$jwk_key" \
 	--env-var keyid="" \
-	--env-var partner-manager-username=sunbird-oidc-kc-mockusername \
-	--env-var partner-manager-password=sunbird-oidc-kc-mockuserpassword \
+	--env-var partner-manager-username=$PARTNER_MANAGER_USERNAME \
+	--env-var partner-manager-password=$PARTNER_MANAGER_PASSWORD \
 	--env-var keycloak-url=$KEYCLOAK_URL \
 	--env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
 	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
@@ -604,6 +604,34 @@ if [ "$ENABLE_INSECURE" = "true" ]; then
   export ADD_SSL_NEWMAN="--ssl-extra-ca-certs $MYDIR/$HOST.cer"
 fi
 
+# esignet-and-onward modules (esignet, mock-rp-oidc, resident-oidc, mimoto-keybinding,
+# mimoto-oidc, signup-oidc, sunbird-oidc) take every partner/policy/OIDC-client value from
+# properties/<MODULE>.properties instead of a hardcoded shell variable below. On a
+# duplicate/network/cert error, edit that file (or the override below) and rerun - nothing
+# here tries to recover from a bad value automatically. Modules before esignet (ida, print,
+# resident, abis, mobileid, digitalcard) have no properties file and are configured inline
+# below, unchanged.
+PROPERTIES_DIR="${PROPERTIES_DIR:-$MYDIR/properties}"
+PROPS_FILE="$PROPERTIES_DIR/${MODULE}.properties"
+if [ -f "$PROPS_FILE" ]; then
+  echo "Loading properties for module '$MODULE' from $PROPS_FILE"
+  set -a
+  . "$PROPS_FILE"
+  set +a
+fi
+
+# Optional per-deployment override, e.g. a ConfigMap mounted here by the
+# partner-onboarder chart's onboarding.propertiesOverride value - only the keys present
+# in this file take effect, everything else keeps the baked-in default above.
+PROPERTIES_OVERRIDE_DIR="${PROPERTIES_OVERRIDE_DIR:-$MYDIR/properties/overrides}"
+PROPS_OVERRIDE_FILE="$PROPERTIES_OVERRIDE_DIR/${MODULE}.properties"
+if [ -f "$PROPS_OVERRIDE_FILE" ]; then
+  echo "Loading property overrides for module '$MODULE' from $PROPS_OVERRIDE_FILE"
+  set -a
+  . "$PROPS_OVERRIDE_FILE"
+  set +a
+fi
+
 if [ "$MODULE" = "ida" ]; then
   upload_ida_root_cert
   upload_ida_cert
@@ -620,29 +648,13 @@ elif [ "$MODULE" = "mobileid" ]; then
 elif [ "$MODULE" = "digitalcard" ]; then
   upload_mpartner_default_digitalcard_cert
 elif [ "$MODULE" = "esignet" ]; then
-  APPLICATION_ID=partner
-  MODULE_CLIENTID=mosip-pms-client
   MODULE_SECRETKEY=$mosip_pms_client_secret
-  POLICY_NAME=mpolicy-default-esignet
-  POLICY_GROUP_NAME=mpolicygroup-default-esignet
-  PARTNER_KC_USERNAME=mpartner-default-esignet
-  PARTNER_ORGANIZATION_NAME=IITB
-  PARTNER_TYPE=Misp_Partner
   onboard_esignet_partner
   kubectl create secret generic esignet-misp-onboarder-key -n $ns_esignet --from-literal=mosip-esignet-misp-key=$MISP_LICENSE_KEY --dry-run=client -o yaml | kubectl apply -f -
 elif [ "$MODULE" = "mock-rp-oidc" ]; then
-  APPLICATION_ID=partner
-  MODULE_CLIENTID=mosip-pms-client
   MODULE_SECRETKEY=$mosip_pms_client_secret
-  POLICY_NAME=mpolicy-default-mock-rp-oidc
-  POLICY_GROUP_NAME=mpolicygroup-default-mock-rp-oidc
-  export PARTNER_KC_USERNAME=mpartner-default-mock-rp-oidc
-  PARTNER_ORGANIZATION_NAME=IITB
-  PARTNER_TYPE=Auth_Partner
-  OIDC_CLIENT_NAME='Health service OIDC Client'
-  OIDC_CLIENTID='default-non-mosipid-oidc-client'
-  LOGO_URI=https://healthservices.$( printenv installation-domain)/logo.png
-  REDIRECT_URIS=https://healthservices.$( printenv installation-domain)/userprofile
+  LOGO_URI="${LOGO_URI:-https://healthservices.$( printenv installation-domain)/logo.png}"
+  REDIRECT_URIS="${REDIRECT_URIS:-https://healthservices.$( printenv installation-domain)/userprofile}"
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
   onboard_mock_relying_party_with_mock_rp_oidc_client
@@ -650,75 +662,40 @@ elif [ "$MODULE" = "mock-rp-oidc" ]; then
   kubectl rollout restart deployment -n $ns_esignet mock-relying-party-service
   kubectl -n $ns_esignet set env deployment/mock-relying-party-ui CLIENT_ID=$mpartnerdefaultdemooidcclientID
 elif [ "$MODULE" = "resident-oidc" ]; then
-  APPLICATION_ID=partner
-  MODULE_CLIENTID=mosip-pms-client
   MODULE_SECRETKEY=$mosip_pms_client_secret
-  POLICY_NAME=mpolicy-default-resident-oidc
-  POLICY_GROUP_NAME=mpolicygroup-default-resident-oidc
-  PARTNER_KC_USERNAME=mpartner-default-resident-oidc
-  PARTNER_ORGANIZATION_NAME=IITB
-  PARTNER_TYPE=Auth_Partner
-  OIDC_CLIENT_NAME=Resident-Portal
-  LOGO_URI="https://$( printenv mosip-resident-host )/assets/MOSIP%20Vertical%20Black.png"
-  REDIRECT_URIS="https://$( printenv mosip-api-internal-host )/resident/v1/login-redirect/**"
+  LOGO_URI="${LOGO_URI:-https://$( printenv mosip-resident-host )/assets/MOSIP%20Vertical%20Black.png}"
+  REDIRECT_URIS="${REDIRECT_URIS:-https://$( printenv mosip-api-internal-host )/resident/v1/login-redirect/**}"
   onboard_resident_oidc_client
   kubectl create secret generic resident-oidc-onboarder-key -n $ns_esignet --from-literal=resident-oidc-clientid=$mpartnerdefaultresidentoidcclientID --dry-run=client -o yaml | kubectl apply -f -
   elif [ "$MODULE" = "mimoto-keybinding" ]; then
-  APPLICATION_ID=partner
-  MODULE_CLIENTID=mosip-pms-client
   MODULE_SECRETKEY=$mosip_pms_client_secret
-  POLICY_NAME=mpolicy-default-mimotokeybinding
-  POLICY_GROUP_NAME=mpolicygroup-default-mimotokeybinding
-  export PARTNER_KC_USERNAME=mpartner-default-mimotokeybinding
-  PARTNER_KC_USERPASSWORD=mimotokeybinding-kc-mockuserpassword
-  PARTNER_ORGANIZATION_NAME=IITB
-  PARTNER_TYPE=Auth_Partner
   custom_ns=$( printenv customnamespace )
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
   onboard_mimoto_keybinding_partner
   kubectl create secret generic mimoto-wallet-binding-partner-api-key -n $custom_ns --from-literal=mimoto-wallet-binding-partner-api-key=$mpartnerdefaultmimotokeybindingapikey --dry-run=client -o yaml | kubectl apply -f -
   elif [ "$MODULE" = "mimoto-oidc" ]; then
-  APPLICATION_ID=partner
-  MODULE_CLIENTID=mosip-pms-client
   MODULE_SECRETKEY=$mosip_pms_client_secret
-  POLICY_NAME=mpolicy-default-mimotooidc
-  POLICY_GROUP_NAME=mpolicygroup-default-mimotooidc
-  export PARTNER_KC_USERNAME=mpartner-default-mimotooidc
-  PARTNER_KC_USERPASSWORD=mimotooidc-kc-mockuserpassword
-  PARTNER_ORGANIZATION_NAME=IITB
-  PARTNER_TYPE=Auth_Partner
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
-  OIDC_CLIENT_NAME=mimoto-oidc
   custom_ns=$( printenv customnamespace )
-  LOGO_URI="https://$( printenv mosip-api-host )/inji/inji-home-logo.png"
-  REDIRECT_URIS="io.mosip.residentapp.inji://oauthredirect,https://inji.$( printenv installation-domain).mosip.net/redirect"
+  LOGO_URI="${LOGO_URI:-https://$( printenv mosip-api-host )/inji/inji-home-logo.png}"
+  REDIRECT_URIS="${REDIRECT_URIS:-io.mosip.residentapp.inji://oauthredirect,https://inji.$( printenv installation-domain).mosip.net/redirect}"
   onboard_mimoto_oidc_partner
   kubectl create secret generic mimoto-oidc-partner-clientid -n $custom_ns --from-literal=mimoto-oidc-partner-clientid=$mpartnerdefaultmimotooidcclientID --dry-run=client -o yaml | kubectl apply -f -
   elif [ "$MODULE" = "signup-oidc" ]; then
-  APPLICATION_ID=partner
-  MODULE_CLIENTID=mosip-pms-client
   MODULE_SECRETKEY=$mosip_pms_client_secret
-  OIDC_CLIENT_NAME='mosip-signup-oauth-client'
-  OIDC_CLIENTID='mosip-signup-oauth-client'
-  export PARTNER_KC_USERNAME=mosip-signup-oauth-client
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
-  LOGO_URI="https://healthservices.$( printenv installation-domain)/images/brand_logo.png"
-  REDIRECT_URIS="https://signup.$( printenv installation-domain)/identity-verification"
+  LOGO_URI="${LOGO_URI:-https://healthservices.$( printenv installation-domain)/images/brand_logo.png}"
+  REDIRECT_URIS="${REDIRECT_URIS:-https://signup.$( printenv installation-domain)/identity-verification}"
   onboard_esignet_signup_oidc_partner
   elif [ "$MODULE" = "sunbird-oidc" ]; then
-  APPLICATION_ID=partner
-  MODULE_CLIENTID=mosip-pms-client
   MODULE_SECRETKEY=$mosip_pms_client_secret
-  OIDC_CLIENT_NAME='esignet-sunbird-partner'
-  OIDC_CLIENTID='esignet-sunbird-partner'
-  export PARTNER_KC_USERNAME=esignet-sunbird-partner
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
-  LOGO_URI="https://sunbird.org/images/sunbird-logo-new.png"
-  REDIRECT_URIS="io.mosip.residentapp.inji:\/\/oauthredirect,https://inji.$( printenv installation-domain)/redirect"
+  LOGO_URI="${LOGO_URI:-https://sunbird.org/images/sunbird-logo-new.png}"
+  REDIRECT_URIS="${REDIRECT_URIS:-io.mosip.residentapp.inji:\/\/oauthredirect,https://inji.$( printenv installation-domain)/redirect}"
   onboard_esignet_sunbird_partner
   kubectl create secret generic sunbird-oidc-partner-clientid -n $ns_mimoto --from-literal=sunbird-oidc-partner-clientid=$mpartnerdefaultsunbirdoidcclientID --dry-run=client -o yaml | kubectl apply -f -
 fi

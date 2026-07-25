@@ -35,6 +35,7 @@ RUN addgroup -g ${container_user_gid} ${container_user_group} \
 
 WORKDIR  /home/${container_user}
 COPY --chown=${container_user}:${container_user} certs/ ./certs/
+COPY --chown=${container_user}:${container_user} properties/ ./properties/
 COPY *.json ./
 COPY *.sh ./
 
@@ -51,6 +52,9 @@ ENV MYDIR=`pwd`
 ENV DATE="$(date --utc +%FT%T.%3NZ)"
 ENV ENABLE_INSECURE=false
 ENV MODULE=
+# Empty = use the properties/ baked into this image (see default.sh). Set to mount an
+# overriding ConfigMap elsewhere instead, e.g. /etc/onboarder-properties.
+ENV PROPERTIES_DIR=
 
 ENV s3-host=
 ENV s3-region=
