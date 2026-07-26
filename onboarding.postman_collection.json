@@ -3002,6 +3002,11 @@
               "listen": "prerequest",
               "script": {
                 "exec": [
+                  "if (pm.environment.get(\"mosip-id\") == 'true') {",
+                  "    console.log(\"This request is skipped as eSignet is deployed against MosipID\");",
+                  "    pm.execution.skipRequest();",
+                  "}",
+                  "",
                   "// Pre-request script in Postman\r",
                   "let redirectUris = pm.environment.get(\"redirect-uris\");\r",
                   "\r",
@@ -3041,12 +3046,6 @@
                   "    if (partnerKcUsername === \"mpartner-default-mock-rp-oidc\") {",
                   "        pm.environment.set(\"mpartner-default-demo-oidc-clientID\", responseJson.response.clientId);",
                   "    }",
-                  "}",
-                  "",
-                  "if (pm.environment.get(\"mosip-id\") == 'true') {",
-                  "    console.log(\"This request is skipped as eSignet is deployed against MosipID\");",
-                  "",
-                  "    pm.execution.skipRequest()",
                   "}"
                 ],
                 "type": "text/javascript",
