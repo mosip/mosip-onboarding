@@ -6,6 +6,63 @@
 # Usage: ./default.sh
 # See HTML reports under ./reports folder
 
+# Standalone (no newman/postman dependency) cleanup for the throwaway Keycloak user this
+# script creates to approve/onboard things. Deliberately independent of the main newman
+# run: the esignet-onward flows also delete this user as their own last folder
+# (login-to-keycloak-as-admin/delete-user) when everything succeeds, but --bail means
+# newman never reaches that folder if an EARLIER request fails - which would otherwise
+# leave a privileged, unattended Keycloak user behind indefinitely. This function is
+# registered via `trap ... EXIT` right after the user's name is known, so it always runs
+# when the script exits, regardless of why - success, an API/network failure partway
+# through, or an explicit `exit` call. (It cannot survive a SIGKILL - nothing can trap
+# that - but covers every other exit path.)
+delete_keycloak_user_if_exists() {
+    username="$1"
+    kc_url="$2"
+    admin_user="$3"
+    admin_pass="$4"
+
+    if [ -z "$username" ] || [ -z "$kc_url" ]; then
+        return 0
+    fi
+
+    echo "Cleanup: checking for leftover Keycloak user '$username' at $kc_url ..."
+
+    token=$(curl -s --max-time 15 -X POST "$kc_url/auth/realms/master/protocol/openid-connect/token" \
+        -H "Content-Type: application/x-www-form-urlencoded" \
+        --data-urlencode "username=$admin_user" \
+        --data-urlencode "password=$admin_pass" \
+        -d "grant_type=password" -d "client_id=admin-cli" \
+        | jq -r '.access_token // empty' 2>/dev/null)
+
+    if [ -z "$token" ]; then
+        echo "Cleanup: could not obtain a Keycloak admin token - cannot verify/delete user '$username'. Check and delete it manually if the run failed."
+        return 1
+    fi
+
+    user_id=$(curl -s --max-time 15 "$kc_url/auth/admin/realms/mosip/users?username=$username" \
+        -H "Authorization: Bearer $token" \
+        | jq -r '.[0].id // empty' 2>/dev/null)
+
+    if [ -z "$user_id" ]; then
+        echo "Cleanup: no Keycloak user named '$username' found - nothing to delete."
+        return 0
+    fi
+
+    http_code=$(curl -s --max-time 15 -o /dev/null -w "%{http_code}" -X DELETE \
+        "$kc_url/auth/admin/realms/mosip/users/$user_id" \
+        -H "Authorization: Bearer $token")
+
+    case "$http_code" in
+        200|204|404)
+            echo "Cleanup: deleted (or already absent) Keycloak user '$username' (id $user_id)."
+            ;;
+        *)
+            echo "Cleanup: FAILED to delete Keycloak user '$username' (id $user_id) - HTTP $http_code. This user may still have roles assigned - check and delete it manually."
+            ;;
+    esac
+}
+
 upload_ida_root_cert() {
     echo "Uploading ida root cert"
     reports_dir="./reports/IDA/$current_datetime"
@@ -682,6 +739,16 @@ if [ -f "$PROPS_OVERRIDE_FILE" ]; then
   set -a
   . "$PROPS_OVERRIDE_FILE"
   set +a
+fi
+
+# esignet-onward modules create a throwaway Keycloak user (PARTNER_MANAGER_USERNAME, or
+# for mimoto-keybinding/mimoto-oidc the partner itself, PARTNER_KC_USERNAME, acting as its
+# own manager) that normally gets deleted as the last step of a successful run. Register
+# an EXIT trap now, before that user gets created, so it's always cleaned up even if the
+# run fails/bails partway through - see delete_keycloak_user_if_exists() above.
+KC_MOCK_USER_TO_CLEANUP="${PARTNER_MANAGER_USERNAME:-$PARTNER_KC_USERNAME}"
+if [ -n "$KC_MOCK_USER_TO_CLEANUP" ]; then
+  trap 'delete_keycloak_user_if_exists "$KC_MOCK_USER_TO_CLEANUP" "$KEYCLOAK_URL" "$KEYCLOAK_ADMIN_USERNAME" "$KEYCLOAK_ADMIN_PASSWORD"' EXIT
 fi
 
 if [ "$MODULE" = "ida" ]; then
