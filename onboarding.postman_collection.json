@@ -389,9 +389,9 @@
               "raw": "{\n  \"id\": \"\",\n  \"version\": \"LTS\",\n  \"requesttime\":\"{{$isoTimestamp}}\",\n  \"metadata\": {},\n  \"request\": {\n    \"userName\":\"{{partner-manager-username}}\",\n    \"password\":\"{{partner-manager-password}}\",\n    \"appId\":\"{{application-id}}\",\n    \"clientId\": \"{{module-clientid}}\",\n    \"clientSecret\": \"{{module-secretkey}}\"\n  }\n}"
             },
             "url": {
-              "raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+              "raw": "{{authmanager-url}}/v1/authmanager/authenticate/internal/useridPwd",
               "host": [
-                "{{url}}"
+                "{{authmanager-url}}"
               ],
               "path": [
                 "v1",
@@ -472,9 +472,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/policymanager/policies/group/new",
+              "raw": "{{pms-url}}/v1/policymanager/policies/group/new",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -561,9 +561,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/policymanager/policies",
+              "raw": "{{pms-url}}/v1/policymanager/policies",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -612,9 +612,9 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{url}}/v1/policymanager/policies/{{policy-id}}/group/{{policy-group-id}}/publish",
+              "raw": "{{pms-url}}/v1/policymanager/policies/{{policy-id}}/group/{{policy-group-id}}/publish",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -703,9 +703,9 @@
               "raw": "{\n  \"id\": \"\",\n  \"version\": \"LTS\",\n  \"requesttime\":\"{{$isoTimestamp}}\",\n  \"metadata\": {},\n  \"request\": {\n    \"userName\":\"{{partner-manager-username}}\",\n    \"password\":\"{{partner-manager-password}}\",\n    \"appId\":\"{{application-id}}\",\n    \"clientId\": \"{{module-clientid}}\",\n    \"clientSecret\": \"{{module-secretkey}}\"\n  }\n}"
             },
             "url": {
-              "raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+              "raw": "{{authmanager-url}}/v1/authmanager/authenticate/internal/useridPwd",
               "host": [
-                "{{url}}"
+                "{{authmanager-url}}"
               ],
               "path": [
                 "v1",
@@ -784,9 +784,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners",
+              "raw": "{{pms-url}}/v1/partnermanager/partners",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -861,9 +861,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/authmanager/authenticate/clientidsecretkey",
+              "raw": "{{authmanager-url}}/v1/authmanager/authenticate/clientidsecretkey",
               "host": [
-                "{{url}}"
+                "{{authmanager-url}}"
               ],
               "path": [
                 "v1",
@@ -914,9 +914,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/authmanager/authenticate/clientidsecretkey",
+              "raw": "{{authmanager-url}}/v1/authmanager/authenticate/clientidsecretkey",
               "host": [
-                "{{url}}"
+                "{{authmanager-url}}"
               ],
               "path": [
                 "v1",
@@ -1438,9 +1438,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+              "raw": "{{authmanager-url}}/v1/authmanager/authenticate/internal/useridPwd",
               "host": [
-                "{{url}}"
+                "{{authmanager-url}}"
               ],
               "path": [
                 "v1",
@@ -1585,9 +1585,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners/certificate/ca/upload",
+              "raw": "{{pms-url}}/v1/partnermanager/partners/certificate/ca/upload",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -1662,9 +1662,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners/certificate/ca/upload",
+              "raw": "{{pms-url}}/v1/partnermanager/partners/certificate/ca/upload",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -1746,9 +1746,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners/certificate/upload",
+              "raw": "{{pms-url}}/v1/partnermanager/partners/certificate/upload",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -2060,9 +2060,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}",
+              "raw": "{{pms-url}}/v1/partnermanager/partners/{{partner-kc-username}}",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -2191,9 +2191,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+              "raw": "{{authmanager-url}}/v1/authmanager/authenticate/internal/useridPwd",
               "host": [
-                "{{url}}"
+                "{{authmanager-url}}"
               ],
               "path": [
                 "v1",
@@ -2277,9 +2277,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}/policy/map",
+              "raw": "{{pms-url}}/v1/partnermanager/partners/{{partner-kc-username}}/policy/map",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -2337,9 +2337,9 @@
               "raw": "{\n  \"id\": \"\",\n  \"version\": \"LTS\",\n  \"requesttime\":\"{{$isoTimestamp}}\",\n  \"metadata\": {},\n  \"request\": {\n    \"userName\":\"{{partner-manager-username}}\",\n    \"password\":\"{{partner-manager-password}}\",\n    \"appId\":\"{{application-id}}\",\n    \"clientId\": \"{{module-clientid}}\",\n    \"clientSecret\": \"{{module-secretkey}}\"\n  }\n}"
             },
             "url": {
-              "raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+              "raw": "{{authmanager-url}}/v1/authmanager/authenticate/internal/useridPwd",
               "host": [
-                "{{url}}"
+                "{{authmanager-url}}"
               ],
               "path": [
                 "v1",
@@ -2398,9 +2398,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}/bioextractors/{{policy-id}}",
+              "raw": "{{pms-url}}/v1/partnermanager/partners/{{partner-kc-username}}/bioextractors/{{policy-id}}",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -2474,9 +2474,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners/policy/{{partner-mapping-key}}",
+              "raw": "{{pms-url}}/v1/partnermanager/partners/policy/{{partner-mapping-key}}",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -2540,9 +2540,9 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}/credentialtype/{{credential-type}}/policies/{{policy-name}}",
+              "raw": "{{pms-url}}/v1/partnermanager/partners/{{partner-kc-username}}/credentialtype/{{credential-type}}/policies/{{policy-name}}",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -2616,9 +2616,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/misps",
+              "raw": "{{pms-url}}/v1/partnermanager/misps",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -2897,9 +2897,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/oidc-clients",
+              "raw": "{{pms-url}}/v1/partnermanager/oidc-clients",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -3224,9 +3224,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+              "raw": "{{authmanager-url}}/v1/authmanager/authenticate/internal/useridPwd",
               "host": [
-                "{{url}}"
+                "{{authmanager-url}}"
               ],
               "path": [
                 "v1",
@@ -3305,9 +3305,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}/generate/apikey",
+              "raw": "{{pms-url}}/v1/partnermanager/partners/{{partner-kc-username}}/generate/apikey",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",

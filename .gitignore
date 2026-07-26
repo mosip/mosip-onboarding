@@ -2,3 +2,15 @@
 tmp
 reports
 .idea
+
+# Local/manual test-only infra values (URLs, admin creds, client secrets) - never commit.
+properties/local-test.properties
+
+# Local test-only per-module overrides (e.g. avoiding a name collision on a real env
+# while testing by hand) - never commit; the real override mechanism for deployments is
+# the Helm chart's onboarding.propertiesOverride value, not this directory.
+properties/overrides/
+
+# newman --export-environment output from a local test run - can contain tokens/secrets
+# captured mid-run, regenerated every run, never commit.
+config-secrets.json

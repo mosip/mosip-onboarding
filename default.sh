@@ -12,6 +12,8 @@ upload_ida_root_cert() {
     mkdir -p "$reports_dir"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
+    --env-var authmanager-url=$AUTHMANAGER_URL \
+    --env-var pms-url=$PMS_URL \
     --env-var cert-application-id=ROOT \
     --env-var cert-reference-id=  \
     --env-var request-time="$DATE" \
@@ -32,6 +34,8 @@ upload_ida_cert() {
     mkdir -p "$reports_dir"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
+    --env-var authmanager-url=$AUTHMANAGER_URL \
+    --env-var pms-url=$PMS_URL \
     --env-var cert-application-id=IDA \
     --env-var cert-reference-id=  \
     --env-var request-time="$DATE" \
@@ -51,6 +55,8 @@ upload_ida_partner_cert () {
     mkdir -p "$reports_dir"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
+    --env-var authmanager-url=$AUTHMANAGER_URL \
+    --env-var pms-url=$PMS_URL \
     --env-var request-time="$DATE" \
     --env-var cert-application-id=IDA \
     --env-var cert-reference-id=mpartner-default-auth \
@@ -74,6 +80,7 @@ upload_ida_cred_cert () {
     mkdir -p "$reports_dir"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
+    --env-var authmanager-url=$AUTHMANAGER_URL \
     --env-var request-time="$DATE" \
     --env-var cert-application-id=IDA \
     --env-var cert-reference-id=CRED_SERVICE \
@@ -94,6 +101,8 @@ upload_resident_cert() {
     mkdir -p "$reports_dir"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
+    --env-var authmanager-url=$AUTHMANAGER_URL \
+    --env-var pms-url=$PMS_URL \
     --env-var request-time="$DATE" \
     --env-var cert-application-id=RESIDENT \
     --env-var cert-reference-id=mpartner-default-resident \
@@ -122,6 +131,8 @@ upload_print_cert() {
     partner_cert=`awk '{ print $0 }' $partner_cert_path`
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
+    --env-var authmanager-url=$AUTHMANAGER_URL \
+    --env-var pms-url=$PMS_URL \
     --env-var request-time="$DATE" \
     --env-var cert-manager-username="$KEYCLOAK_CLIENT" \
     --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
@@ -147,6 +158,8 @@ upload_abis_cert () {
     partner_cert=`awk '{ print $0 }' $partner_cert_path`
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
+    --env-var authmanager-url=$AUTHMANAGER_URL \
+    --env-var pms-url=$PMS_URL \
     --env-var request-time="$DATE" \
     --env-var cert-manager-username="$KEYCLOAK_CLIENT" \
     --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
@@ -171,6 +184,8 @@ upload_mpartner_default_mobile_cert() {
     partner_cert=`awk '{ print $0 }' $partner_cert_path`
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
+    --env-var authmanager-url=$AUTHMANAGER_URL \
+    --env-var pms-url=$PMS_URL \
     --env-var request-time="$DATE" \
     --env-var cert-manager-username="$KEYCLOAK_CLIENT" \
     --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
@@ -194,6 +209,8 @@ upload_mpartner_default_digitalcard_cert() {
     mkdir -p "$reports_dir"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
+    --env-var authmanager-url=$AUTHMANAGER_URL \
+    --env-var pms-url=$PMS_URL \
     --env-var request-time="$DATE" \
     --env-var cert-application-id=DIGITAL_CARD \
     --env-var cert-reference-id=mpartner-default-digitalcard \
@@ -219,6 +236,8 @@ onboard_esignet_partner() {
     mkdir -p "$reports_dir"
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
+    --env-var authmanager-url=$AUTHMANAGER_URL \
+    --env-var pms-url=$PMS_URL \
     --env-var request-time="$DATE" \
 	--env-var partner-manager-username=$PARTNER_MANAGER_USERNAME \
 	--env-var partner-manager-password=$PARTNER_MANAGER_PASSWORD \
@@ -233,7 +252,7 @@ onboard_esignet_partner() {
 	--env-var policy-name=$POLICY_NAME \
 	--env-var keycloak-url=$KEYCLOAK_URL \
 	--env-var keycloak-admin-password="$KEYCLOAK_ADMIN_PASSWORD" \
-	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USER \
+	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
 	--env-var partner-domain=$PARTNER_DOMAIN \
 	--folder 'create_keycloak_user' \
 	--folder 'create/publish_policy_group_and_policy' \
@@ -272,6 +291,8 @@ onboard_mock_relying_party_with_mock_rp_oidc_client(){
 	echo $partner_cert
 	newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
+    --env-var authmanager-url=$AUTHMANAGER_URL \
+    --env-var pms-url=$PMS_URL \
     --env-var request-time="$DATE" \
 	--env-var partner-manager-username=$PARTNER_MANAGER_USERNAME \
 	--env-var partner-manager-password=$PARTNER_MANAGER_PASSWORD \
@@ -331,6 +352,8 @@ reports_dir="./reports/RESIDENT_OIDC/$current_datetime"
     jwk_key=$(awk -F'"' '/"n"/ {print $8}' pubkey.jwk)
     newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url=$URL \
+    --env-var authmanager-url=$AUTHMANAGER_URL \
+    --env-var pms-url=$PMS_URL \
     --env-var request-time=$DATE \
 	--env-var partner-manager-username=$PARTNER_MANAGER_USERNAME \
 	--env-var partner-manager-password=$PARTNER_MANAGER_PASSWORD \
@@ -387,6 +410,8 @@ onboard_mimoto_keybinding_partner(){
 	echo $partner_cert
 	newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
   --env-var url="$URL" \
+  --env-var authmanager-url=$AUTHMANAGER_URL \
+  --env-var pms-url=$PMS_URL \
   --env-var request-time="$DATE" \
 	--env-var partner-manager-username=$PARTNER_KC_USERNAME \
 	--env-var partner-manager-password=$PARTNER_KC_USERPASSWORD \
@@ -443,6 +468,8 @@ onboard_mimoto_oidc_partner(){
 	echo $jwk_key
 	newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
   --env-var url="$URL" \
+  --env-var authmanager-url=$AUTHMANAGER_URL \
+  --env-var pms-url=$PMS_URL \
   --env-var request-time="$DATE" \
 	--env-var partner-manager-username=$PARTNER_KC_USERNAME \
 	--env-var partner-manager-password=$PARTNER_KC_USERPASSWORD \
@@ -502,6 +529,7 @@ onboard_esignet_signup_oidc_partner(){
 
 	newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
+    --env-var authmanager-url=$AUTHMANAGER_URL \
     --env-var external-url=$EXTERNAL_URL \
     --env-var request-time="$DATE" \
 	--env-var logo-uri=$LOGO_URI \
@@ -547,6 +575,7 @@ onboard_esignet_sunbird_partner(){
 
 	newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
     --env-var url="$URL" \
+    --env-var authmanager-url=$AUTHMANAGER_URL \
     --env-var sunbird-url=$SUNBIRD_URL \
     --env-var request-time="$DATE" \
 	--env-var logo-uri=$LOGO_URI \
@@ -575,20 +604,43 @@ onboard_esignet_sunbird_partner(){
 export MYDIR=$(pwd)
 DATE=$(date -u +%FT%T.%3NZ)
 current_datetime=$(date -u +"%d-%m-%y-%H-%M"-UTC)
-KEYCLOAK_URL=$(printenv keycloak-external-url)
+
+# Local/manual test runs only (outside a k8s Job, e.g. testing against a real env by hand):
+# properties/local-test.properties can supply URL/KEYCLOAK_URL/EXTERNAL_URL/SUNBIRD_URL/
+# KEYCLOAK_ADMIN_USERNAME/KEYCLOAK_ADMIN_PASSWORD/KEYCLOAK_CLIENT_SECRET/
+# mosip_pms_client_secret/mosip_deployment_client_secret directly, instead of the
+# printenv-derived values below. This file is gitignored and never baked into the image -
+# a real k8s Job never has it, so this is a no-op there and every value below computes
+# exactly as before.
+LOCAL_TEST_PROPS="${LOCAL_TEST_PROPS:-$MYDIR/properties/local-test.properties}"
+if [ -f "$LOCAL_TEST_PROPS" ]; then
+  echo "Loading local test properties from $LOCAL_TEST_PROPS"
+  set -a
+  . "$LOCAL_TEST_PROPS"
+  set +a
+fi
+
+KEYCLOAK_URL="${KEYCLOAK_URL:-$(printenv keycloak-external-url)}"
 KEYCLOAK_CLIENT="mosip-deployment-client"
-KEYCLOAK_CLIENT_SECRET="$mosip_deployment_client_secret"
+KEYCLOAK_CLIENT_SECRET="${KEYCLOAK_CLIENT_SECRET:-$mosip_deployment_client_secret}"
 echo "KEYCLOAK_CLIENT = $KEYCLOAK_CLIENT"
 #echo "KEYCLOAK_CLIENT_SECRET = $KEYCLOAK_CLIENT_SECRET"
-KEYCLOAK_ADMIN_USERNAME="$( printenv KEYCLOAK_ADMIN_USER)"
-KEYCLOAK_ADMIN_PASSWORD=$( printenv admin-password )
-echo " KEYCLOAK ADMIN USER : $KEYCLOAK_ADMIN_USER"
+KEYCLOAK_ADMIN_USERNAME="${KEYCLOAK_ADMIN_USERNAME:-$(printenv KEYCLOAK_ADMIN_USER)}"
+KEYCLOAK_ADMIN_PASSWORD="${KEYCLOAK_ADMIN_PASSWORD:-$(printenv admin-password)}"
+echo " KEYCLOAK ADMIN USER : $KEYCLOAK_ADMIN_USERNAME"
 #echo " KEYCLOAK ADMIN PASSWORD : $KEYCLOAK_ADMIN_PASSWORD"
-URL="https://$(printenv mosip-api-internal-host)"
-EXTERNAL_URL="https://$(printenv mosip-esignet-host)"
-SUNBIRD_URL="https://$(printenv mosip-esignet-insurance-host)"
+URL="${URL:-https://$(printenv mosip-api-internal-host)}"
+# idauthentication/keymanager live behind $URL. authmanager and partnermanager+policymanager
+# (PMS) may each be on their own separate instance/host in more complex or cross-env setups -
+# both default to the same host as $URL (single-domain deployments need no extra config),
+# override AUTHMANAGER_URL/PMS_URL (properties/local-test.properties for a local run, or
+# the equivalent env var for a real deployment) when either is actually on a different host.
+AUTHMANAGER_URL="${AUTHMANAGER_URL:-$URL}"
+PMS_URL="${PMS_URL:-$URL}"
+EXTERNAL_URL="${EXTERNAL_URL:-https://$(printenv mosip-esignet-host)}"
+SUNBIRD_URL="${SUNBIRD_URL:-https://$(printenv mosip-esignet-insurance-host)}"
 
-echo "URL : $URL and $EXTERNAL_URL"
+echo "URL : $URL | AUTHMANAGER_URL : $AUTHMANAGER_URL | PMS_URL : $PMS_URL | EXTERNAL_URL : $EXTERNAL_URL"
 
 if [ "$ENABLE_INSECURE" = "true" ]; then
   export HOST=$(printenv mosip-api-internal-host)
