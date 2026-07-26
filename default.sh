@@ -388,7 +388,6 @@ onboard_mock_relying_party_with_mock_rp_oidc_client(){
 	--folder partner_request_mapping_to_policyname \
 	--folder approve-partner-mapping-to-policy \
 	--folder get-jwks \
-	--folder keycloak-authentication-for-mock-plugin \
 	--folder create-oidc-client \
 	--folder create-oidc-client-through-esignet \
 	--folder delete-user \
