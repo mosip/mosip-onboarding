@@ -757,11 +757,23 @@ if [ -n "$KC_MOCK_USER_TO_CLEANUP" ]; then
 fi
 
 # create-oidc-client's clientNameLangMap/additionalConfig (PMS's V3 OIDC-client fields) -
-# raw JSON provided as-is via CLIENT_NAME_LANG_MAP/ADDITIONAL_CONFIG in properties/<MODULE>.properties,
-# defaulting to null (both fields are optional on PMS's side - a null additionalConfig/
-# clientNameLangMap is exactly today's behavior for any module that doesn't set these).
-CLIENT_NAME_LANG_MAP_JSON="${CLIENT_NAME_LANG_MAP:-null}"
-ADDITIONAL_CONFIG_JSON="${ADDITIONAL_CONFIG:-null}"
+# raw JSON provided as-is via CLIENT_NAME_LANG_MAP/ADDITIONAL_CONFIG in properties/<MODULE>.properties.
+# Default to {} (empty object), not null: dev2's PMS (ClientManagementServiceImpl.createOIDCClientV2)
+# NPEs on a null clientNameLangMap ("Cannot invoke Map.put because clientNameMap is null") -
+# the DTO has no @NotNull on this field, but the real implementation doesn't null-check it
+# before using it, so null isn't actually safe there despite what the DTO alone suggests.
+# additionalConfig IS properly null-guarded server-side, but {} is a no-op for it too, so
+# defaulting both the same way is simpler and avoids relying on that distinction holding.
+if [ -z "$CLIENT_NAME_LANG_MAP" ]; then
+  CLIENT_NAME_LANG_MAP_JSON='{}'
+else
+  CLIENT_NAME_LANG_MAP_JSON="$CLIENT_NAME_LANG_MAP"
+fi
+if [ -z "$ADDITIONAL_CONFIG" ]; then
+  ADDITIONAL_CONFIG_JSON='{}'
+else
+  ADDITIONAL_CONFIG_JSON="$ADDITIONAL_CONFIG"
+fi
 
 if [ "$MODULE" = "ida" ]; then
   upload_ida_root_cert
