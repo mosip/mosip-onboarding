@@ -374,6 +374,8 @@ onboard_mock_relying_party_with_mock_rp_oidc_client(){
 	--env-var ca-certificate="$root_ca_cert" \
 	--env-var leaf-certificate="$partner_cert" \
 	--env-var oidc-client-name="$OIDC_CLIENT_NAME" \
+	--env-var client-name-lang-map-json="$CLIENT_NAME_LANG_MAP_JSON" \
+	--env-var additional-config-json="$ADDITIONAL_CONFIG_JSON" \
 	--env-var oidc-clientid="$OIDC_CLIENTID" \
 	--folder 'create_keycloak_user' \
 	--folder 'create/publish_policy_group_and_policy' \
@@ -433,6 +435,8 @@ reports_dir="./reports/RESIDENT_OIDC/$current_datetime"
     --env-var cert-reference-id=$CERT_REFERENCE_ID \
 	--env-var key="$jwk_key" \
 	--env-var oidc-client-name=$OIDC_CLIENT_NAME \
+	--env-var client-name-lang-map-json="$CLIENT_NAME_LANG_MAP_JSON" \
+	--env-var additional-config-json="$ADDITIONAL_CONFIG_JSON" \
 	--env-var logo-uri=$LOGO_URI \
 	--env-var redirect-uris=$REDIRECT_URIS \
 	--folder 'create_keycloak_user' \
@@ -550,6 +554,8 @@ onboard_mimoto_oidc_partner(){
   --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
 	--env-var partner-domain=$PARTNER_DOMAIN \
 	--env-var oidc-client-name="$OIDC_CLIENT_NAME" \
+	--env-var client-name-lang-map-json="$CLIENT_NAME_LANG_MAP_JSON" \
+	--env-var additional-config-json="$ADDITIONAL_CONFIG_JSON" \
 	--env-var ca-certificate="$root_ca_cert" \
 	--env-var leaf-certificate="$partner_cert" \
 	--folder 'create_keycloak_user' \
@@ -750,6 +756,13 @@ KC_MOCK_USER_TO_CLEANUP="${PARTNER_MANAGER_USERNAME:-$PARTNER_KC_USERNAME}"
 if [ -n "$KC_MOCK_USER_TO_CLEANUP" ]; then
   trap 'delete_keycloak_user_if_exists "$KC_MOCK_USER_TO_CLEANUP" "$KEYCLOAK_URL" "$KEYCLOAK_ADMIN_USERNAME" "$KEYCLOAK_ADMIN_PASSWORD"' EXIT
 fi
+
+# create-oidc-client's clientNameLangMap/additionalConfig (PMS's V3 OIDC-client fields) -
+# raw JSON provided as-is via CLIENT_NAME_LANG_MAP/ADDITIONAL_CONFIG in properties/<MODULE>.properties,
+# defaulting to null (both fields are optional on PMS's side - a null additionalConfig/
+# clientNameLangMap is exactly today's behavior for any module that doesn't set these).
+CLIENT_NAME_LANG_MAP_JSON="${CLIENT_NAME_LANG_MAP:-null}"
+ADDITIONAL_CONFIG_JSON="${ADDITIONAL_CONFIG:-null}"
 
 if [ "$MODULE" = "ida" ]; then
   upload_ida_root_cert

@@ -32,6 +32,24 @@ there change - everything else keeps its baked-in default. This works identicall
 of which repo installs the chart (mosip-infra, esignet's `partner-onboarder/`, mimoto's
 `partner-onboarder/`) since they all install the same chart.
 
+## File format
+
+These are `sh`-sourced (`. properties/<MODULE>.properties`), so they're plain shell
+assignments, not a generic key=value format:
+
+- **Quote any value containing spaces**, e.g. `OIDC_CLIENT_NAME="Health service OIDC Client"`.
+  An unquoted value with spaces only assigns the first word - everything after the first
+  space gets executed as a separate shell command, which normally just fails loudly with
+  "command not found" (harmless, since `sh` doesn't abort on that), but silently truncates
+  the variable's actual value. If a value looks like it "didn't take" after editing a
+  properties file, check for this first.
+- **Wrap raw JSON values in single quotes**, e.g.
+  `ADDITIONAL_CONFIG='{"consent_expire_in_mins":"20160"}'` (used for `CLIENT_NAME_LANG_MAP`/
+  `ADDITIONAL_CONFIG` on the OIDC-client-creation modules). Left unquoted or wrapped in
+  double quotes, the shell's own quote-removal strips the inner `"` characters, silently
+  turning valid JSON into invalid JSON (`{"a":"b"}` becomes `{a:b}`) - verified this exact
+  failure mode directly before settling on single-quoting as the fix.
+
 ## Values intentionally NOT in these files
 
 URLs (`url`, `keycloak-url`, `external-url`, `sunbird-url`), Keycloak admin credentials, and
