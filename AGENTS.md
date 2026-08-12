@@ -57,7 +57,7 @@ placeholder value before running):
 CERT_MANAGER_PASSWORD="your-mosip-deployment-client-password"
 docker run --rm --name partner-onboarder -p 8080:8080 \
   -v "$PWD/reports:/home/mosip/reports" \
-  -e URL=https://api-internal.soil.mosip.net \
+  -e URL="https://api-internal.example.mosip.net" \
   -e CERT_MANAGER_PASSWORD="$CERT_MANAGER_PASSWORD" \
   mosipdev/partner-onboarder:develop
 ```
