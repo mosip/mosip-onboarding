@@ -56,10 +56,17 @@ placeholder value before running):
 ```shell
 CERT_MANAGER_PASSWORD="your-mosip-deployment-client-password"
 docker run --rm --name partner-onboarder -p 8080:8080 \
+  -v "$PWD/reports:/home/mosip/reports" \
   -e URL=https://api-internal.soil.mosip.net \
   -e CERT_MANAGER_PASSWORD="$CERT_MANAGER_PASSWORD" \
   mosipdev/partner-onboarder:develop
 ```
+
+Mounting `./reports` is required — `default.sh` writes reports to a
+relative `./reports/...` path (i.e. under the Dockerfile's
+`WORKDIR /home/${container_user}`, `mosip` by default), and `--rm`
+deletes the container (and anything not mounted out of it) once it
+exits.
 
 Run onboarding directly with the shell script (outside Docker), after
 exporting the required environment variables:
@@ -99,10 +106,17 @@ environment and inspecting the generated HTML reports under `./reports`.
   the `s3-*` variables (S3/MinIO host, region, key, secret, bucket) and
   `ns_mimoto` / `ns_esignet` (see `Dockerfile` `ENV` block).
 - `deploy/copy_cm.sh` and `deploy/copy_secrets.sh` download a helper script
-  (`copy_cm_func.sh`) from `mosip-infra` at runtime and use it to copy
-  Kubernetes ConfigMaps/Secrets (`s3`, `keycloak`, `keycloak-client-secrets`,
-  `global`, `keycloak-env-vars`, `keycloak-host`) into the `onboarder`
-  namespace — do not hand-copy these values into files in this repo.
+  (`copy_cm_func.sh`) from the **mutable `master` branch** of
+  `mosip-infra` at runtime, with no checksum/signature verification, and
+  execute it to copy Kubernetes ConfigMaps/Secrets (`s3`, `keycloak`,
+  `keycloak-client-secrets`, `global`, `keycloak-env-vars`,
+  `keycloak-host`) into the `onboarder` namespace. This is a real
+  supply-chain risk, not just a reliability concern: a compromised or
+  rewritten `mosip-infra` `master` would have its script executed
+  against the target cluster's Secrets/ConfigMaps on the next run,
+  unpinned and unverified. Do not hand-copy these values into files in
+  this repo, and don't propagate the same fetch-and-exec-from-mutable-
+  branch pattern into any new script.
 - `certs/` holds sample/default root and client certificates per module
   (`abis`, `mpartner-default-mobile`, `print`); each `*-inline.pem` is the
   same certificate as its sibling `.pem` but flattened to a single line —
@@ -136,8 +150,11 @@ directories; this root file is the single source of truth for agents.
 
 ## Development Workflow
 
-1. Fork and clone the repo, then create a feature branch off `develop`
-   (this repo develops on `develop`, not the reported default branch).
+1. Fork and clone the repo, add `upstream` pointing at
+   `mosip/mosip-onboarding`, fetch `upstream/develop`, then create a
+   feature branch from `upstream/develop` — not a stale local `develop`
+   or your fork's `develop` (this repo develops on `develop`, not the
+   reported default branch).
 2. Make changes to the shell scripts, Postman collection, policy JSON
    files, or Helm chart as needed.
 3. If you change `onboarding.postman_collection.json`, validate it opens
@@ -148,8 +165,11 @@ directories; this root file is the single source of truth for agents.
    scripts and a rename will silently break onboarding.
 4. If you change the Helm chart under `helm/partner-onboarder/`, keep
    `Chart.yaml`'s version in sync with expectations of
-   `.github/workflows/chart-lint-publish.yml`, which lints/publishes charts
-   under `helm/**` on PRs and pushes to `develop`/`release*`/`1.*`/`0.*`.
+   `.github/workflows/chart-lint-publish.yml`. It **lints** charts under
+   `helm/**` on PRs; actual publishing to the `gh-pages` branch only
+   happens via a manual `workflow_dispatch` run with
+   `CHART_PUBLISH=YES` (or on a published release), not automatically
+   on every PR or push.
 5. Test locally by building the Docker image (`./docker-build.sh`) and
    running it against a sandbox MOSIP environment, or by exporting `URL`
    and `CERT_MANAGER_PASSWORD` and running `./default.sh` directly, then
@@ -164,12 +184,18 @@ directories; this root file is the single source of truth for agents.
   `develop`).
 - Keep commits scoped to one logical change (a module's onboarding flow,
   the Helm chart, the Docker image, etc.).
-- CI (`.github/workflows/push-trigger.yml`) builds and publishes the
-  `partner-onboarder` Docker image on pushes to `develop`, `release*`,
-  `1.*`, `master`, `MOSIP*` branches and on PR open/reopen/sync — make sure
-  the Docker build (`docker-build.sh`/`Dockerfile`) still succeeds.
+- CI (`.github/workflows/push-trigger.yml`) **builds** the
+  `partner-onboarder` Docker image (via the shared `mosip/kattu`
+  reusable workflow) on pushes to `develop`, `release*`, `1.*`,
+  `master`, `MOSIP*` branches and on PR open/reopen/sync — make sure
+  the Docker build (`docker-build.sh`/`Dockerfile`) still succeeds. Do
+  not assume a PR also **publishes** the image; that reusable workflow
+  is not documented in this repo, so don't state its publish behavior
+  without checking `mosip/kattu` directly.
 - If you touch anything under `helm/`, expect
-  `.github/workflows/chart-lint-publish.yml` to lint the chart on your PR.
+  `.github/workflows/chart-lint-publish.yml` to **lint** the chart on
+  your PR — it does not publish from a PR (see Development Workflow
+  above).
 - Reference the tracking issue number in the PR title/description when one
   exists.
 
@@ -182,9 +208,10 @@ directories; this root file is the single source of truth for agents.
   mv tmp <file>` pattern is preserved when editing `run-onboarding.sh` or
   `default.sh`.
 - `deploy/copy_cm.sh` and `deploy/copy_secrets.sh` fetch
-  `copy_cm_func.sh` from the `master` branch of `mosip/mosip-infra` at
-  runtime — changes to that external script can affect this repo's install
-  flow without any change here.
+  `copy_cm_func.sh` from the mutable `master` branch of
+  `mosip/mosip-infra` at runtime with no integrity check — see the
+  Configuration section above for why this is a supply-chain risk, not
+  just a reliability one.
 - `deploy/install.sh` and `default.sh`/`run-onboarding.sh` are interactive
   (they use `read -p` prompts) — they are not meant to run unattended in
   CI; only the Docker image path (`entrypoint.sh` → `default.sh` →
@@ -213,10 +240,13 @@ directories; this root file is the single source of truth for agents.
    free of real credentials in any commit.
 5. Update `certs/*-inline.pem` alongside its corresponding `certs/*.pem`
    whenever you change a certificate (per `certs/README.md`).
-6. Run `docker-build.sh` (or otherwise validate the `Dockerfile`) after
-   changing any `*.sh` or `*.json` file copied into the image, since the
-   `Dockerfile` copies scripts and JSON files explicitly (`COPY *.json`,
-   `COPY *.sh`).
+6. Run `./docker-build.sh` (an actual build, not just a static read of
+   the `Dockerfile`) after changing any `*.sh` or `*.json` file copied
+   into the image, since the `Dockerfile` copies scripts and JSON files
+   explicitly (`COPY *.json`, `COPY *.sh`) — static inspection won't
+   catch a missing copied file, a dependency-install failure, or an
+   entrypoint error. Validate the actual onboarding flow too where
+   practical, since it depends on the target environment.
 
 ### Do not
 
