@@ -137,16 +137,18 @@ environment and inspecting the generated HTML reports under `./reports`.
 ├── onboarding.postman_environment.json  # Postman environment (patched at runtime)
 ├── onboarding.properties           # blank template of per-environment/partner values
 ├── default-*-policy.json           # default auth/datashare/oidc/misp policy documents
-├── certs/                          # default root/client certs per module + cert helper scripts
-├── deploy/                         # cluster install helpers (install.sh, copy_cm.sh, copy_secrets.sh, values.yaml)
-├── helm/partner-onboarder/         # Helm chart that runs onboarding as a Kubernetes Job
+├── certs/                          # default root/client certs per module + cert helper scripts — certs/AGENTS.md
+├── deploy/                         # cluster install helpers (install.sh, copy_cm.sh, copy_secrets.sh, values.yaml) — deploy/AGENTS.md
+├── helm/partner-onboarder/         # Helm chart that runs onboarding as a Kubernetes Job — helm/AGENTS.md
 └── .github/workflows/              # CI: docker build, chart lint/publish, tag/release
 ```
 
 This is a flat, single-purpose repo — there is no separate frontend/backend
-split and no module that warrants its own `AGENTS.md`. `deploy/README.md`
-and `helm/partner-onboarder/README.md` already document their own
-directories; this root file is the single source of truth for agents.
+split. `certs/`, `deploy/`, and `helm/` each have their own `AGENTS.md`
+with subfolder-specific detail; `licenses/` holds only static license
+text and doesn't need one. `deploy/README.md` and
+`helm/partner-onboarder/README.md` document their own directories too —
+this root file is the shared source of truth across all of them.
 
 ## Development Workflow
 
