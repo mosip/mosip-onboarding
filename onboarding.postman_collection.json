@@ -1370,7 +1370,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{external-url}}/v1/esignet/system-info/certificate?applicationId=OIDC_PARTNER",
+              "raw": "{{external-url}}/v1/esignet/system-info/certificate?applicationId=OIDC_PARTNER&referenceId=RSA_2048",
               "host": [
                 "{{external-url}}"
               ],
@@ -1384,6 +1384,10 @@
                 {
                   "key": "applicationId",
                   "value": "OIDC_PARTNER"
+                },
+                {
+                  "key": "referenceId",
+                  "value": "RSA_2048"
                 }
               ]
             }
