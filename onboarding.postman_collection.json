@@ -2109,7 +2109,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"request\": {\r\n    \"certificateData\": \"{{signed-leaf-certificate}}\",\r\n    \"applicationId\": \"OIDC_PARTNER\",\r\n    \"referenceId\" : \"\"\r\n  },\r\n  \"requestTime\": \"{{$isoTimestamp}}\"\r\n}",
+              "raw": "{\r\n  \"request\": {\r\n    \"certificateData\": \"{{signed-leaf-certificate}}\",\r\n    \"applicationId\": \"OIDC_PARTNER\",\r\n    \"referenceId\" : \"RSA_2048\"\r\n  },\r\n  \"requestTime\": \"{{$isoTimestamp}}\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
