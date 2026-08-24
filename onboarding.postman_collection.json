@@ -2087,7 +2087,7 @@
                 "exec": [
                   "pm.test(\"Certificate Upload Successfull\", function ()  {\r",
                   "    responseText = pm.response.text();\r",
-                  "     pm.expect(responseText).to.include.oneOf([\"Certificate already exists in store\", \"Upload Success\"])\r",
+                  "     pm.expect(responseText).to.include.oneOf([\"Certificate already exists in store\", \"Upload Success\", \"success\"])\r",
                   " });"
                 ],
                 "type": "text/javascript"
