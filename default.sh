@@ -736,6 +736,15 @@ fi
 # Defaults to true (unchanged behavior) so existing real deployments aren't affected.
 SYNC_LIVE_DEPLOYMENT="${SYNC_LIVE_DEPLOYMENT:-true}"
 
+# mock-rp-oidc's live-sync step (see SYNC_LIVE_DEPLOYMENT above) targets the mock relying
+# party's real k8s resources - names should come from wherever the actual deployment/service
+# names are defined (esignet-mock-services' install.sh already has
+# MOCK_REPLYING_PARTY_SERVICE_NAME for its own restart), not be re-hardcoded here. Falls back
+# to the historical literal names if not supplied.
+MOCK_RELYING_PARTY_SERVICE_NAME="${MOCK_RELYING_PARTY_SERVICE_NAME:-mock-relying-party-service}"
+MOCK_RELYING_PARTY_UI_NAME="${MOCK_RELYING_PARTY_UI_NAME:-mock-relying-party-ui}"
+MOCK_RELYING_PARTY_PRIVATE_KEY_SECRET_NAME="${MOCK_RELYING_PARTY_PRIVATE_KEY_SECRET_NAME:-mock-relying-party-private-key-jwk}"
+
 if [ "$MODULE" = "ida" ]; then
   upload_ida_root_cert
   upload_ida_cert
@@ -765,9 +774,9 @@ elif [ "$MODULE" = "mock-rp-oidc" ]; then
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
   onboard_mock_relying_party_with_mock_rp_oidc_client
   if [ "$SYNC_LIVE_DEPLOYMENT" != "false" ]; then
-    kubectl patch secret mock-relying-party-private-key-jwk -n $ns_esignet -p '{"data":{"client-private-key":"'$(echo -n "$privateandpublickeypair" | base64 | tr -d '\n')'"}}'
-    kubectl rollout restart deployment -n $ns_esignet mock-relying-party-service
-    kubectl -n $ns_esignet set env deployment/mock-relying-party-ui CLIENT_ID=$mpartnerdefaultdemooidcclientID
+    kubectl patch secret "$MOCK_RELYING_PARTY_PRIVATE_KEY_SECRET_NAME" -n $ns_esignet -p '{"data":{"client-private-key":"'$(echo -n "$privateandpublickeypair" | base64 | tr -d '\n')'"}}'
+    kubectl rollout restart deployment -n $ns_esignet "$MOCK_RELYING_PARTY_SERVICE_NAME"
+    kubectl -n $ns_esignet set env deployment/"$MOCK_RELYING_PARTY_UI_NAME" CLIENT_ID=$mpartnerdefaultdemooidcclientID
   fi
 elif [ "$MODULE" = "resident-oidc" ]; then
   MODULE_SECRETKEY=$mosip_pms_client_secret
