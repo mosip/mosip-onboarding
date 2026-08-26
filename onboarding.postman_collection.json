@@ -2857,8 +2857,6 @@
                   "        pm.environment.set(\"mpartner-default-resident-oidc-clientID\", responseJson.response.clientId);",
                   "    } else if (partnerKcUsername === \"mpartner-default-mimotooidc\") {",
                   "        pm.environment.set(\"mpartner-default-mimotooidc-clientID\", responseJson.response.clientId);",
-                  "    } else if (partnerKcUsername === \"esignet-sunbird-partner\") {",
-                  "        pm.environment.set(\"mpartner-default-sunbirdoidc-clientID\", responseJson.response.clientId);",
                   "    }",
                   "}"
                 ],
@@ -3084,95 +3082,6 @@
               "raw": "{{external-url}}/v1/esignet/client-mgmt/client",
               "host": [
                 "{{external-url}}"
-              ],
-              "path": [
-                "v1",
-                "esignet",
-                "client-mgmt",
-                "client"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "create-oidc-client-through-esignet-sunbird",
-          "event": [
-            {
-              "listen": "prerequest",
-              "script": {
-                "exec": [
-                  "// Pre-request script in Postman\r",
-                  "let redirectUris = pm.environment.get(\"redirect-uris\");\r",
-                  "\r",
-                  "if (redirectUris) {\r",
-                  "    redirectUris = redirectUris.split(',').map(uri => uri.trim());\r",
-                  "    pm.environment.set(\"redirect_uris_array\", JSON.stringify(redirectUris));\r",
-                  "} else {\r",
-                  "    console.error(\"Environment variable 'redirect-uris' is not defined.\");\r",
-                  "    pm.environment.set(\"redirect_uris_array\", \"[]\");\r",
-                  "}\r",
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {}
-              }
-            },
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "var responseJson = pm.response.json();",
-                  "var err = responseJson.errors && responseJson.errors[0];",
-                  "var partnerKcUsername = pm.variables.get(\"partner-kc-username\");",
-                  "",
-                  "if (err) {",
-                  "    pm.test('create-oidc-client-through-esignet-sunbird failed: ' + err.errorCode, function () {",
-                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
-                  "    });",
-                  "} else {",
-                  "    pm.test(\"validating clientid\", function () {",
-                  "        pm.expect(pm.response.text()).to.include(\"clientId\");",
-                  "    });",
-                  "    pm.test(\"validating client status\", function () {",
-                  "        pm.expect(pm.response.text()).to.include(\"ACTIVE\");",
-                  "    });",
-                  "    if (partnerKcUsername === \"esignet-sunbird-partner\") {",
-                  "        pm.environment.set(\"mpartner-default-sunbirdoidc-clientID\", responseJson.response.clientId);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript",
-                "packages": {}
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{authtoken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"requestTime\": \"{{$isoTimestamp}}\",\r\n  \"request\": {\r\n    \"clientId\": \"{{oidc-clientid}}\",\r\n    \"clientName\": \"{{oidc-client-name}}\",\r\n    \"publicKey\":\r\n      {\r\n    \"kty\": \"RSA\",\r\n    \"e\": \"AQAB\",\r\n    \"use\": \"sig\",\r\n    \"kid\": \"{{keyid}}\",\r\n    \"alg\": \"RS256\",\r\n    \"n\": \"{{key}}\"\r\n},\r\n    \"relyingPartyId\": \"{{oidc-client-name}}\",\r\n    \"userClaims\":  [\r\n            \r\n        ],\r\n    \"authContextRefs\":  [\r\n            \"mosip:idp:acr:knowledge\"\r\n        ],\r\n    \"logoUri\": \"{{logo-uri}}\",\r\n    \"redirectUris\":{{redirect_uris_array}},\r\n    \"grantTypes\": [\r\n      \"authorization_code\"\r\n    ],\r\n    \"clientAuthMethods\": [\r\n      \"private_key_jwt\"\r\n    ],\r\n    \"clientNameLangMap\": null,\r\n    \"additionalConfig\": null\r\n  }\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{sunbird-url}}/v1/esignet/client-mgmt/client",
-              "host": [
-                "{{sunbird-url}}"
               ],
               "path": [
                 "v1",

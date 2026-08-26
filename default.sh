@@ -615,58 +615,13 @@ onboard_esignet_signup_oidc_partner(){
     $ADD_SSL_NEWMAN \
   --export-environment ./config-secrets.json  -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/signup-oidc.html" --reporter-htmlextra-showEnvironmentData
 }
-onboard_esignet_sunbird_partner(){
- echo "Onboarding Sunbird partner"
- reports_dir="./reports/SUNBIRD/$current_datetime"
-  mkdir -p "$reports_dir"
-  sh $MYDIR/certs/create-signing-certs.sh $MYDIR
-	root_ca_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $root_cert_path)
-	partner_cert=$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' $client_cert_path)
-	sh $MYDIR/certs/convert.sh $MYDIR
-  mv $MYDIR/certs/$PARTNER_KC_USERNAME/keystore.p12 $MYDIR/certs/$PARTNER_KC_USERNAME/oidckeystore.p12
-	kubectl -n $ns_mimoto create secret generic sunbirdoidc --from-file=$MYDIR/certs/$PARTNER_KC_USERNAME/oidckeystore.p12 --dry-run=client -o yaml | kubectl apply -f -
-
-	if [ $? -gt 0 ]; then
-      echo "JWK Key generation failed; EXITING";
-      exit 1;
-    fi
-    echo "JWK Keys generated successfully"
-    jwk_key=$(awk -F'"' '/"n"/ {print $8}' $MYDIR/certs/$PARTNER_KC_USERNAME/publickey.jwk)
-
-	newman run onboarding.postman_collection.json --delay-request 2000 -e onboarding.postman_environment.json --bail \
-    --env-var url="$URL" \
-    --env-var authmanager-url=$AUTHMANAGER_URL \
-    --env-var sunbird-url=$SUNBIRD_URL \
-    --env-var request-time="$DATE" \
-	--env-var logo-uri=$LOGO_URI \
-	--env-var redirect-uris=$REDIRECT_URIS \
-	--env-var application-id=$APPLICATION_ID \
-	--env-var module-clientid=$MODULE_CLIENTID \
-	--env-var module-secretkey=$MODULE_SECRETKEY \
-	--env-var partner-kc-username=$PARTNER_KC_USERNAME \
-	--env-var key="$jwk_key" \
-	--env-var keyid="" \
-	--env-var partner-manager-username=$PARTNER_MANAGER_USERNAME \
-	--env-var partner-manager-password=$PARTNER_MANAGER_PASSWORD \
-	--env-var keycloak-url=$KEYCLOAK_URL \
-	--env-var keycloak-admin-password=$KEYCLOAK_ADMIN_PASSWORD \
-	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
-	--env-var oidc-client-name="$OIDC_CLIENT_NAME" \
-	--env-var oidc-clientid="$OIDC_CLIENTID" \
-	--folder 'create_keycloak_user' \
-	--folder authenticate-to-upload-certs \
-	--folder create-oidc-client-through-esignet-sunbird \
-	--folder delete-user \
-    $ADD_SSL_NEWMAN \
-  --export-environment ./config-secrets.json  -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/sunbird-oidc.html" --reporter-htmlextra-showEnvironmentData
-}
 ## Script starts from here
 export MYDIR=$(pwd)
 DATE=$(date -u +%FT%T.%3NZ)
 current_datetime=$(date -u +"%d-%m-%y-%H-%M"-UTC)
 
 # Local/manual test runs only (outside a k8s Job, e.g. testing against a real env by hand):
-# properties/local-test.properties can supply URL/KEYCLOAK_URL/EXTERNAL_URL/SUNBIRD_URL/
+# properties/local-test.properties can supply URL/KEYCLOAK_URL/EXTERNAL_URL/
 # KEYCLOAK_ADMIN_USERNAME/KEYCLOAK_ADMIN_PASSWORD/KEYCLOAK_CLIENT_SECRET/
 # mosip_pms_client_secret/mosip_deployment_client_secret directly, instead of the
 # printenv-derived values below. This file is gitignored and never baked into the image -
@@ -698,7 +653,6 @@ URL="${URL:-https://$(printenv mosip-api-internal-host)}"
 AUTHMANAGER_URL="${AUTHMANAGER_URL:-$URL}"
 PMS_URL="${PMS_URL:-$URL}"
 EXTERNAL_URL="${EXTERNAL_URL:-https://$(printenv mosip-esignet-host)}"
-SUNBIRD_URL="${SUNBIRD_URL:-https://$(printenv mosip-esignet-insurance-host)}"
 
 echo "URL : $URL | AUTHMANAGER_URL : $AUTHMANAGER_URL | PMS_URL : $PMS_URL | EXTERNAL_URL : $EXTERNAL_URL"
 
@@ -717,7 +671,7 @@ if [ "$ENABLE_INSECURE" = "true" ]; then
 fi
 
 # esignet-and-onward modules (esignet, mock-rp-oidc, resident-oidc, mimoto-keybinding,
-# mimoto-oidc, signup-oidc, sunbird-oidc) take every partner/policy/OIDC-client value from
+# mimoto-oidc, signup-oidc) take every partner/policy/OIDC-client value from
 # properties/<MODULE>.properties instead of a hardcoded shell variable below. On a
 # duplicate/network/cert error, edit that file (or the override below) and rerun - nothing
 # here tries to recover from a bad value automatically. Modules before esignet (ida, print,
@@ -831,12 +785,4 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   LOGO_URI="${LOGO_URI:-https://healthservices.$( printenv installation-domain)/images/brand_logo.png}"
   REDIRECT_URIS="${REDIRECT_URIS:-https://signup.$( printenv installation-domain)/identity-verification}"
   onboard_esignet_signup_oidc_partner
-  elif [ "$MODULE" = "sunbird-oidc" ]; then
-  MODULE_SECRETKEY=$mosip_pms_client_secret
-  root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
-  client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
-  LOGO_URI="${LOGO_URI:-https://sunbird.org/images/sunbird-logo-new.png}"
-  REDIRECT_URIS="${REDIRECT_URIS:-io.mosip.residentapp.inji:\/\/oauthredirect,https://inji.$( printenv installation-domain)/redirect}"
-  onboard_esignet_sunbird_partner
-  kubectl create secret generic sunbird-oidc-partner-clientid -n $ns_mimoto --from-literal=sunbird-oidc-partner-clientid=$mpartnerdefaultsunbirdoidcclientID --dry-run=client -o yaml | kubectl apply -f -
 fi

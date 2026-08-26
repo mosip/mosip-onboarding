@@ -2,7 +2,7 @@
 
 `default.sh` sources `properties/<MODULE>.properties` (this directory) for the "esignet and
 onward" modules: `esignet`, `mock-rp-oidc`, `resident-oidc`, `mimoto-keybinding`,
-`mimoto-oidc`, `signup-oidc`, `sunbird-oidc`. Everything that used to be a hardcoded shell
+`mimoto-oidc`, `signup-oidc`. Everything that used to be a hardcoded shell
 variable for these modules (partner name, org name, partner type, policy name/group name,
 OIDC client name/id, logo/redirect URIs, credential-type, policy data file, etc.) now comes
 from these files instead.
@@ -52,7 +52,7 @@ assignments, not a generic key=value format:
 
 ## Values intentionally NOT in these files
 
-URLs (`url`, `keycloak-url`, `external-url`, `sunbird-url`), Keycloak admin credentials, and
+URLs (`url`, `keycloak-url`, `external-url`), Keycloak admin credentials, and
 client secrets (`mosip_pms_client_secret`, `mosip_deployment_client_secret`) stay sourced
 from Kubernetes env vars/secrets exactly as before - they're cluster/environment-specific
 and shouldn't live in a properties file that ships with the repo.
