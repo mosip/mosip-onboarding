@@ -393,7 +393,7 @@ onboard_mock_relying_party_with_mock_rp_oidc_client(){
     --export-environment ./config-secrets.json -d "$POLICY_DATA_FILE" -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/mock-rp-oidc.html" --reporter-htmlextra-showEnvironmentData
 privateandpublickeypair=$(jq -r '.values[] | select(.key == "privateandpublickeypair") | .value' config-secrets.json)
 privateandpublickeypair=$(echo -n "$privateandpublickeypair" | base64)
-mpartnerdefaultdemooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-demo-oidc-clientID") | .value' "config-secrets.json")
+mpartnerdefaultdemooidcclientID=$(jq -r '.values[] | select(.key == "oidc-client-id") | .value' "config-secrets.json")
 }
 onboard_resident_oidc_client() {
 echo "Onboarding resident oidc client"
@@ -455,7 +455,7 @@ reports_dir="./reports/RESIDENT_OIDC/$current_datetime"
 	--folder delete-user \
 	$ADD_SSL_NEWMAN \
     --export-environment ./config-secrets.json -d "$POLICY_DATA_FILE" -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/resident-oidc.html" --reporter-htmlextra-showEnvironmentData
-mpartnerdefaultresidentoidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-resident-oidc-clientID") | .value' "config-secrets.json")
+mpartnerdefaultresidentoidcclientID=$(jq -r '.values[] | select(.key == "oidc-client-id") | .value' "config-secrets.json")
 }
 onboard_mimoto_keybinding_partner(){
     echo "Onboarding Mimoto Keybinding partner"
@@ -567,7 +567,7 @@ onboard_mimoto_oidc_partner(){
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
   --export-environment ./config-secrets.json -d "$POLICY_DATA_FILE" -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/mimoto-oidc.html" --reporter-htmlextra-showEnvironmentData
-mpartnerdefaultmimotooidcclientID=$(jq -r '.values[] | select(.key == "mpartner-default-mimotooidc-clientID") | .value' "config-secrets.json")
+mpartnerdefaultmimotooidcclientID=$(jq -r '.values[] | select(.key == "oidc-client-id") | .value' "config-secrets.json")
 }
 onboard_esignet_signup_oidc_partner(){
     echo "Onboarding Esignet-signup OIDC partner"
@@ -727,6 +727,15 @@ else
   ADDITIONAL_CONFIG_JSON="$ADDITIONAL_CONFIG"
 fi
 
+# esignet/mock-rp-oidc/resident-oidc/mimoto-keybinding/mimoto-oidc all write their onboarding
+# result (client ID, keys, API key) into the live cluster afterward - creating/patching a
+# secret the real service reads, and for mock-rp-oidc, restarting that service so it picks
+# up the new client. Set SYNC_LIVE_DEPLOYMENT=false (in properties/<MODULE>.properties or an
+# override) to skip that for a one-off/local/test run that shouldn't touch anything already
+# running - the onboarding result still lands in config-secrets.json and the html report.
+# Defaults to true (unchanged behavior) so existing real deployments aren't affected.
+SYNC_LIVE_DEPLOYMENT="${SYNC_LIVE_DEPLOYMENT:-true}"
+
 if [ "$MODULE" = "ida" ]; then
   upload_ida_root_cert
   upload_ida_cert
@@ -745,7 +754,9 @@ elif [ "$MODULE" = "digitalcard" ]; then
 elif [ "$MODULE" = "esignet" ]; then
   MODULE_SECRETKEY=$mosip_pms_client_secret
   onboard_esignet_partner
-  kubectl create secret generic esignet-misp-onboarder-key -n $ns_esignet --from-literal=mosip-esignet-misp-key=$MISP_LICENSE_KEY --dry-run=client -o yaml | kubectl apply -f -
+  if [ "$SYNC_LIVE_DEPLOYMENT" != "false" ]; then
+    kubectl create secret generic esignet-misp-onboarder-key -n $ns_esignet --from-literal=mosip-esignet-misp-key=$MISP_LICENSE_KEY --dry-run=client -o yaml | kubectl apply -f -
+  fi
 elif [ "$MODULE" = "mock-rp-oidc" ]; then
   MODULE_SECRETKEY=$mosip_pms_client_secret
   LOGO_URI="${LOGO_URI:-https://healthservices.$( printenv installation-domain)/logo.png}"
@@ -753,22 +764,28 @@ elif [ "$MODULE" = "mock-rp-oidc" ]; then
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
   onboard_mock_relying_party_with_mock_rp_oidc_client
-  kubectl patch secret mock-relying-party-private-key-jwk -n $ns_esignet -p '{"data":{"client-private-key":"'$(echo -n "$privateandpublickeypair" | base64 | tr -d '\n')'"}}'
-  kubectl rollout restart deployment -n $ns_esignet mock-relying-party-service
-  kubectl -n $ns_esignet set env deployment/mock-relying-party-ui CLIENT_ID=$mpartnerdefaultdemooidcclientID
+  if [ "$SYNC_LIVE_DEPLOYMENT" != "false" ]; then
+    kubectl patch secret mock-relying-party-private-key-jwk -n $ns_esignet -p '{"data":{"client-private-key":"'$(echo -n "$privateandpublickeypair" | base64 | tr -d '\n')'"}}'
+    kubectl rollout restart deployment -n $ns_esignet mock-relying-party-service
+    kubectl -n $ns_esignet set env deployment/mock-relying-party-ui CLIENT_ID=$mpartnerdefaultdemooidcclientID
+  fi
 elif [ "$MODULE" = "resident-oidc" ]; then
   MODULE_SECRETKEY=$mosip_pms_client_secret
   LOGO_URI="${LOGO_URI:-https://$( printenv mosip-resident-host )/assets/MOSIP%20Vertical%20Black.png}"
   REDIRECT_URIS="${REDIRECT_URIS:-https://$( printenv mosip-api-internal-host )/resident/v1/login-redirect/**}"
   onboard_resident_oidc_client
-  kubectl create secret generic resident-oidc-onboarder-key -n $ns_esignet --from-literal=resident-oidc-clientid=$mpartnerdefaultresidentoidcclientID --dry-run=client -o yaml | kubectl apply -f -
+  if [ "$SYNC_LIVE_DEPLOYMENT" != "false" ]; then
+    kubectl create secret generic resident-oidc-onboarder-key -n $ns_esignet --from-literal=resident-oidc-clientid=$mpartnerdefaultresidentoidcclientID --dry-run=client -o yaml | kubectl apply -f -
+  fi
   elif [ "$MODULE" = "mimoto-keybinding" ]; then
   MODULE_SECRETKEY=$mosip_pms_client_secret
   custom_ns=$( printenv customnamespace )
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
   client_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/Client.pem"
   onboard_mimoto_keybinding_partner
-  kubectl create secret generic mimoto-wallet-binding-partner-api-key -n $custom_ns --from-literal=mimoto-wallet-binding-partner-api-key=$mpartnerdefaultmimotokeybindingapikey --dry-run=client -o yaml | kubectl apply -f -
+  if [ "$SYNC_LIVE_DEPLOYMENT" != "false" ]; then
+    kubectl create secret generic mimoto-wallet-binding-partner-api-key -n $custom_ns --from-literal=mimoto-wallet-binding-partner-api-key=$mpartnerdefaultmimotokeybindingapikey --dry-run=client -o yaml | kubectl apply -f -
+  fi
   elif [ "$MODULE" = "mimoto-oidc" ]; then
   MODULE_SECRETKEY=$mosip_pms_client_secret
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"
@@ -777,7 +794,9 @@ elif [ "$MODULE" = "resident-oidc" ]; then
   LOGO_URI="${LOGO_URI:-https://$( printenv mosip-api-host )/inji/inji-home-logo.png}"
   REDIRECT_URIS="${REDIRECT_URIS:-io.mosip.residentapp.inji://oauthredirect,https://inji.$( printenv installation-domain).mosip.net/redirect}"
   onboard_mimoto_oidc_partner
-  kubectl create secret generic mimoto-oidc-partner-clientid -n $custom_ns --from-literal=mimoto-oidc-partner-clientid=$mpartnerdefaultmimotooidcclientID --dry-run=client -o yaml | kubectl apply -f -
+  if [ "$SYNC_LIVE_DEPLOYMENT" != "false" ]; then
+    kubectl create secret generic mimoto-oidc-partner-clientid -n $custom_ns --from-literal=mimoto-oidc-partner-clientid=$mpartnerdefaultmimotooidcclientID --dry-run=client -o yaml | kubectl apply -f -
+  fi
   elif [ "$MODULE" = "signup-oidc" ]; then
   MODULE_SECRETKEY=$mosip_pms_client_secret
   root_cert_path="$MYDIR/certs/$PARTNER_KC_USERNAME/RootCA.pem"

@@ -2838,7 +2838,6 @@
                 "exec": [
                   "var responseJson = pm.response.json();",
                   "var err = responseJson.errors && responseJson.errors[0];",
-                  "var partnerKcUsername = pm.variables.get(\"partner-kc-username\");",
                   "",
                   "if (err) {",
                   "    pm.test('create-oidc-client failed: ' + err.errorCode, function () {",
@@ -2851,13 +2850,7 @@
                   "    pm.test(\"validating client status\", function () {",
                   "        pm.expect(pm.response.text()).to.include(\"ACTIVE\");",
                   "    });",
-                  "    if (partnerKcUsername === \"mpartner-default-mock-rp-oidc\") {",
-                  "        pm.environment.set(\"mpartner-default-demo-oidc-clientID\", responseJson.response.clientId);",
-                  "    } else if (partnerKcUsername === \"mpartner-default-resident-oidc\") {",
-                  "        pm.environment.set(\"mpartner-default-resident-oidc-clientID\", responseJson.response.clientId);",
-                  "    } else if (partnerKcUsername === \"mpartner-default-mimotooidc\") {",
-                  "        pm.environment.set(\"mpartner-default-mimotooidc-clientID\", responseJson.response.clientId);",
-                  "    }",
+                  "    pm.environment.set(\"oidc-client-id\", responseJson.response.clientId);",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -3032,7 +3025,6 @@
                 "exec": [
                   "var responseJson = pm.response.json();",
                   "var err = responseJson.errors && responseJson.errors[0];",
-                  "var partnerKcUsername = pm.variables.get(\"partner-kc-username\");",
                   "",
                   "if (err) {",
                   "    pm.test('create-oidc-client-through-esignet failed: ' + err.errorCode, function () {",
@@ -3045,9 +3037,7 @@
                   "    pm.test(\"validating client status\", function () {",
                   "        pm.expect(pm.response.text()).to.include(\"ACTIVE\");",
                   "    });",
-                  "    if (partnerKcUsername === \"mpartner-default-mock-rp-oidc\") {",
-                  "        pm.environment.set(\"mpartner-default-demo-oidc-clientID\", responseJson.response.clientId);",
-                  "    }",
+                  "    pm.environment.set(\"oidc-client-id\", responseJson.response.clientId);",
                   "}"
                 ],
                 "type": "text/javascript",
