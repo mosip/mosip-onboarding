@@ -16,7 +16,7 @@ metadata:
 data:
   {{ $module_name }}.properties: |
     {{- range $key, $value := $overrides }}
-    {{ $key }}='{{ $value | replace "'" "'\\''" }}'
+    {{ $key }}='{{ $value | toString | replace "'" "'\\''" }}'
     {{- end }}
 {{- end }}
 {{- end }}
