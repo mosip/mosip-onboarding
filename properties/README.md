@@ -44,7 +44,7 @@ assignments, not a generic key=value format:
   the variable's actual value. If a value looks like it "didn't take" after editing a
   properties file, check for this first.
 - **Wrap raw JSON values in single quotes**, e.g.
-  `ADDITIONAL_CONFIG='{"consent_expire_in_mins":"20160"}'` (used for `CLIENT_NAME_LANG_MAP`/
+  `ADDITIONAL_CONFIG='{"consent_expire_in_mins":20160}'` (used for `CLIENT_NAME_LANG_MAP`/
   `ADDITIONAL_CONFIG` on the OIDC-client-creation modules). Left unquoted or wrapped in
   double quotes, the shell's own quote-removal strips the inner `"` characters, silently
   turning valid JSON into invalid JSON (`{"a":"b"}` becomes `{a:b}`) - verified this exact
