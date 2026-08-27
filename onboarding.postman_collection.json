@@ -2922,6 +2922,24 @@
                   "    console.error(\"Environment variable 'redirect-uris' is not defined.\");\r",
                   "    pm.environment.set(\"redirect_uris_array\", \"[]\");\r",
                   "}\r",
+                  "\r",
+                  "let userClaims = pm.environment.get(\"user-claims\");\r",
+                  "if (userClaims) {\r",
+                  "    userClaims = userClaims.split(',').map(c => c.trim()).filter(Boolean);\r",
+                  "    pm.environment.set(\"user_claims_array\", JSON.stringify(userClaims));\r",
+                  "} else {\r",
+                  "    console.error(\"Environment variable 'user-claims' is not defined.\");\r",
+                  "    pm.environment.set(\"user_claims_array\", \"[]\");\r",
+                  "}\r",
+                  "\r",
+                  "let authContextRefs = pm.environment.get(\"auth-context-refs\");\r",
+                  "if (authContextRefs) {\r",
+                  "    authContextRefs = authContextRefs.split(',').map(a => a.trim()).filter(Boolean);\r",
+                  "    pm.environment.set(\"auth_context_refs_array\", JSON.stringify(authContextRefs));\r",
+                  "} else {\r",
+                  "    console.error(\"Environment variable 'auth-context-refs' is not defined.\");\r",
+                  "    pm.environment.set(\"auth_context_refs_array\", \"[]\");\r",
+                  "}\r",
                   ""
                 ],
                 "type": "text/javascript",
@@ -2968,7 +2986,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"requestTime\": \"{{$isoTimestamp}}\",\r\n  \"request\": {\r\n    \"clientId\": \"{{oidc-clientid}}\",\r\n    \"clientName\": \"{{oidc-client-name}}\",\r\n    \"publicKey\":\r\n      {\r\n    \"kty\": \"RSA\",\r\n    \"e\": \"AQAB\",\r\n    \"use\": \"sig\",\r\n    \"kid\": \"{{keyid}}\",\r\n    \"alg\": \"RS256\",\r\n    \"n\": \"{{key}}\"\r\n},\r\n    \"relyingPartyId\": \"{{oidc-client-name}}\",\r\n    \"userClaims\":  [\r\n            \r\n        ],\r\n    \"authContextRefs\":  [\r\n            \"mosip:idp:acr:id-token\"\r\n        ],\r\n    \"logoUri\": \"{{logo-uri}}\",\r\n    \"redirectUris\":{{redirect_uris_array}},\r\n    \"grantTypes\": [\r\n      \"authorization_code\"\r\n    ],\r\n    \"clientAuthMethods\": [\r\n      \"private_key_jwt\"\r\n    ],\r\n    \"clientNameLangMap\": null,\r\n    \"additionalConfig\": null\r\n  }\r\n}",
+              "raw": "{\r\n  \"requestTime\": \"{{$isoTimestamp}}\",\r\n  \"request\": {\r\n    \"clientId\": \"{{oidc-clientid}}\",\r\n    \"clientName\": \"{{oidc-client-name}}\",\r\n    \"publicKey\":\r\n      {\r\n    \"kty\": \"RSA\",\r\n    \"e\": \"AQAB\",\r\n    \"use\": \"sig\",\r\n    \"kid\": \"{{keyid}}\",\r\n    \"alg\": \"RS256\",\r\n    \"n\": \"{{key}}\"\r\n},\r\n    \"relyingPartyId\": \"{{oidc-client-name}}\",\r\n    \"userClaims\": {{user_claims_array}},\r\n    \"authContextRefs\": {{auth_context_refs_array}},\r\n    \"logoUri\": \"{{logo-uri}}\",\r\n    \"redirectUris\":{{redirect_uris_array}},\r\n    \"grantTypes\": [\r\n      \"authorization_code\"\r\n    ],\r\n    \"clientAuthMethods\": [\r\n      \"private_key_jwt\"\r\n    ],\r\n    \"clientNameLangMap\": {{client-name-lang-map-json}},\r\n    \"additionalConfig\": {{additional-config-json}}\r\n  }\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -3011,6 +3029,24 @@
                   "} else {\r",
                   "    console.error(\"Environment variable 'redirect-uris' is not defined.\");\r",
                   "    pm.environment.set(\"redirect_uris_array\", \"[]\");\r",
+                  "}\r",
+                  "\r",
+                  "let userClaims = pm.environment.get(\"user-claims\");\r",
+                  "if (userClaims) {\r",
+                  "    userClaims = userClaims.split(',').map(c => c.trim()).filter(Boolean);\r",
+                  "    pm.environment.set(\"user_claims_array\", JSON.stringify(userClaims));\r",
+                  "} else {\r",
+                  "    console.error(\"Environment variable 'user-claims' is not defined.\");\r",
+                  "    pm.environment.set(\"user_claims_array\", \"[]\");\r",
+                  "}\r",
+                  "\r",
+                  "let authContextRefs = pm.environment.get(\"auth-context-refs\");\r",
+                  "if (authContextRefs) {\r",
+                  "    authContextRefs = authContextRefs.split(',').map(a => a.trim()).filter(Boolean);\r",
+                  "    pm.environment.set(\"auth_context_refs_array\", JSON.stringify(authContextRefs));\r",
+                  "} else {\r",
+                  "    console.error(\"Environment variable 'auth-context-refs' is not defined.\");\r",
+                  "    pm.environment.set(\"auth_context_refs_array\", \"[]\");\r",
                   "}\r",
                   ""
                 ],
@@ -3061,7 +3097,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"requestTime\": \"{{$isoTimestamp}}\",\r\n  \"request\": {\r\n    \"clientId\": \"{{oidc-clientid}}\",\r\n    \"clientName\": \"{{oidc-client-name}}\",\r\n    \"publicKey\":\r\n      {\r\n    \"kty\": \"RSA\",\r\n    \"e\": \"AQAB\",\r\n    \"use\": \"sig\",\r\n    \"kid\": \"{{keyid}}\",\r\n    \"alg\": \"RS256\",\r\n    \"n\": \"{{key}}\"\r\n},\r\n    \"relyingPartyId\": \"{{oidc-clientid}}\",\r\n   \"userClaims\":  [\r\n            \"birthdate\",\r\n            \"address\",\r\n            \"gender\",\r\n            \"name\",\r\n            \"phone_number\",\r\n            \"picture\",\r\n            \"email\",\r\n            \"individual_id\"\r\n        ],\r\n    \"authContextRefs\":  [\r\n           \"mosip:idp:acr:linked-wallet\",\r\n            \"mosip:idp:acr:biometrics\",\r\n            \"mosip:idp:acr:generated-code\",\r\n            \"mosip:idp:acr:password\"\r\n        ],\r\n    \"logoUri\": \"{{logo-uri}}\",\r\n    \"redirectUris\":{{redirect_uris_array}},\r\n    \"grantTypes\": [\r\n      \"authorization_code\"\r\n    ],\r\n    \"clientAuthMethods\": [\r\n      \"private_key_jwt\"\r\n    ],\r\n    \"clientNameLangMap\": null,\r\n    \"additionalConfig\": null\r\n  }\r\n}",
+              "raw": "{\r\n  \"requestTime\": \"{{$isoTimestamp}}\",\r\n  \"request\": {\r\n    \"clientId\": \"{{oidc-clientid}}\",\r\n    \"clientName\": \"{{oidc-client-name}}\",\r\n    \"publicKey\":\r\n      {\r\n    \"kty\": \"RSA\",\r\n    \"e\": \"AQAB\",\r\n    \"use\": \"sig\",\r\n    \"kid\": \"{{keyid}}\",\r\n    \"alg\": \"RS256\",\r\n    \"n\": \"{{key}}\"\r\n},\r\n    \"relyingPartyId\": \"{{oidc-clientid}}\",\r\n   \"userClaims\": {{user_claims_array}},\r\n    \"authContextRefs\": {{auth_context_refs_array}},\r\n    \"logoUri\": \"{{logo-uri}}\",\r\n    \"redirectUris\":{{redirect_uris_array}},\r\n    \"grantTypes\": [\r\n      \"authorization_code\"\r\n    ],\r\n    \"clientAuthMethods\": [\r\n      \"private_key_jwt\"\r\n    ],\r\n    \"clientNameLangMap\": {{client-name-lang-map-json}},\r\n    \"additionalConfig\": {{additional-config-json}}\r\n  }\r\n}",
               "options": {
                 "raw": {
                   "language": "json"

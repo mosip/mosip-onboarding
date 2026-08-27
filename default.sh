@@ -374,6 +374,8 @@ onboard_mock_relying_party_with_mock_rp_oidc_client(){
 	--env-var oidc-client-name="$OIDC_CLIENT_NAME" \
 	--env-var client-name-lang-map-json="$CLIENT_NAME_LANG_MAP_JSON" \
 	--env-var additional-config-json="$ADDITIONAL_CONFIG_JSON" \
+	--env-var user-claims="$OIDC_USER_CLAIMS" \
+	--env-var auth-context-refs="$OIDC_AUTH_CONTEXT_REFS" \
 	--env-var oidc-clientid="$OIDC_CLIENTID" \
 	--folder 'create_keycloak_user' \
 	--folder 'create/publish_policy_group_and_policy' \
@@ -607,6 +609,10 @@ onboard_esignet_signup_oidc_partner(){
 	--env-var keycloak-admin-username=$KEYCLOAK_ADMIN_USERNAME \
 	--env-var oidc-client-name="$OIDC_CLIENT_NAME" \
 	--env-var oidc-clientid="$OIDC_CLIENTID" \
+	--env-var client-name-lang-map-json="$CLIENT_NAME_LANG_MAP_JSON" \
+	--env-var additional-config-json="$ADDITIONAL_CONFIG_JSON" \
+	--env-var user-claims="$OIDC_USER_CLAIMS" \
+	--env-var auth-context-refs="$OIDC_AUTH_CONTEXT_REFS" \
 	--folder 'create_keycloak_user' \
 	--folder authenticate-to-upload-certs \
 	--folder keycloak-authentication-for-mock-plugin \
