@@ -419,6 +419,18 @@ onboarding:
       ns_mimoto: mimoto
       ns_esignet: esignet
       ns_signup: signup
+  # Per-module overrides for properties/<module>.properties (see that directory in the
+  # onboarding repo for the full set of keys each module supports, and default.sh for how
+  # they're loaded). Only listed keys are overridden - the rest of that module's baked-in
+  # properties file still applies. Used to fix a duplicate/network/cert error without
+  # rebuilding the image: set the value here and re-run `helm upgrade`. Rendered into a
+  # ConfigMap and mounted at /home/mosip/properties/overrides/<module>.properties.
+  # Example:
+  #   propertiesOverride:
+  #     esignet:
+  #       PARTNER_KC_USERNAME: mpartner-default-esignet-v2
+  #       POLICY_NAME: mpolicy-default-esignet-v2
+  propertiesOverride: {}
   secrets:
     s3:
       s3-user-secret: ''

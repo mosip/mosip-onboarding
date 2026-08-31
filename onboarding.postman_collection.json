@@ -97,6 +97,17 @@
                 ],
                 "type": "text/javascript"
               }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('user created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
             }
           ],
           "request": {
@@ -317,7 +328,7 @@
             "exec": [
               "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
               "\r",
-              "    pm.execution.skipRequest()\r",
+              "\u00a0 \u00a0 pm.execution.skipRequest()\r",
               "}"
             ]
           }
@@ -378,9 +389,9 @@
               "raw": "{\n  \"id\": \"\",\n  \"version\": \"LTS\",\n  \"requesttime\":\"{{$isoTimestamp}}\",\n  \"metadata\": {},\n  \"request\": {\n    \"userName\":\"{{partner-manager-username}}\",\n    \"password\":\"{{partner-manager-password}}\",\n    \"appId\":\"{{application-id}}\",\n    \"clientId\": \"{{module-clientid}}\",\n    \"clientSecret\": \"{{module-secretkey}}\"\n  }\n}"
             },
             "url": {
-              "raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+              "raw": "{{authmanager-url}}/v1/authmanager/authenticate/internal/useridPwd",
               "host": [
-                "{{url}}"
+                "{{authmanager-url}}"
               ],
               "path": [
                 "v1",
@@ -400,11 +411,18 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('set policy id',function(){\r",
-                  "    const {response} =pm.response.json();\r",
-                  "    pm.environment.set('policy-group-id',response.id);\r",
-                  "})\r",
-                  ""
+                  "const jsonData = pm.response.json();",
+                  "const err = jsonData.errors && jsonData.errors[0];",
+                  "if (err) {",
+                  "    pm.test('create-policy-group failed: ' + err.errorCode, function () {",
+                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
+                  "    });",
+                  "} else {",
+                  "    pm.test('set policy id', function () {",
+                  "        const { response } = pm.response.json();",
+                  "        pm.environment.set('policy-group-id', response.id);",
+                  "    });",
+                  "}"
                 ],
                 "type": "text/javascript",
                 "packages": {}
@@ -454,9 +472,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/policymanager/policies/group/new",
+              "raw": "{{pms-url}}/v1/policymanager/policies/group/new",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -488,14 +506,22 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('set policy id',function(){\r",
-                  "    const {response} =pm.response.json();\r",
-                  "    pm.environment.set('policy-id',response.id);\r",
-                  "})\r",
-                  "pm.test('set policy name',function(){\r",
-                  "    const {response} =pm.response.json();\r",
-                  "    pm.environment.set('policy-name',response.name);\r",
-                  "})"
+                  "const jsonData = pm.response.json();",
+                  "const err = jsonData.errors && jsonData.errors[0];",
+                  "if (err) {",
+                  "    pm.test('create-policy failed: ' + err.errorCode, function () {",
+                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
+                  "    });",
+                  "} else {",
+                  "    pm.test('set policy id', function () {",
+                  "        const { response } = pm.response.json();",
+                  "        pm.environment.set('policy-id', response.id);",
+                  "    });",
+                  "    pm.test('set policy name', function () {",
+                  "        const { response } = pm.response.json();",
+                  "        pm.environment.set('policy-name', response.name);",
+                  "    });",
+                  "}"
                 ],
                 "type": "text/javascript",
                 "packages": {}
@@ -535,9 +561,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/policymanager/policies",
+              "raw": "{{pms-url}}/v1/policymanager/policies",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -586,9 +612,9 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{url}}/v1/policymanager/policies/{{policy-id}}/group/{{policy-group-id}}/publish",
+              "raw": "{{pms-url}}/v1/policymanager/policies/{{policy-id}}/group/{{policy-group-id}}/publish",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -613,7 +639,7 @@
             "exec": [
               "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
               "\r",
-              "    pm.execution.skipRequest()\r",
+              "\u00a0 \u00a0 pm.execution.skipRequest()\r",
               "}"
             ]
           }
@@ -642,7 +668,7 @@
                 "exec": [
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -677,9 +703,9 @@
               "raw": "{\n  \"id\": \"\",\n  \"version\": \"LTS\",\n  \"requesttime\":\"{{$isoTimestamp}}\",\n  \"metadata\": {},\n  \"request\": {\n    \"userName\":\"{{partner-manager-username}}\",\n    \"password\":\"{{partner-manager-password}}\",\n    \"appId\":\"{{application-id}}\",\n    \"clientId\": \"{{module-clientid}}\",\n    \"clientSecret\": \"{{module-secretkey}}\"\n  }\n}"
             },
             "url": {
-              "raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+              "raw": "{{authmanager-url}}/v1/authmanager/authenticate/internal/useridPwd",
               "host": [
-                "{{url}}"
+                "{{authmanager-url}}"
               ],
               "path": [
                 "v1",
@@ -701,7 +727,7 @@
                 "exec": [
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -712,7 +738,13 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  ""
+                  "const jsonData = pm.response.json();",
+                  "const err = jsonData.errors && jsonData.errors[0];",
+                  "if (err) {",
+                  "    pm.test('partner-self-registration failed: ' + err.errorCode, function () {",
+                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
+                  "    });",
+                  "}"
                 ],
                 "type": "text/javascript",
                 "packages": {}
@@ -752,9 +784,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners",
+              "raw": "{{pms-url}}/v1/partnermanager/partners",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -829,9 +861,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/authmanager/authenticate/clientidsecretkey",
+              "raw": "{{authmanager-url}}/v1/authmanager/authenticate/clientidsecretkey",
               "host": [
-                "{{url}}"
+                "{{authmanager-url}}"
               ],
               "path": [
                 "v1",
@@ -882,9 +914,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/authmanager/authenticate/clientidsecretkey",
+              "raw": "{{authmanager-url}}/v1/authmanager/authenticate/clientidsecretkey",
               "host": [
-                "{{url}}"
+                "{{authmanager-url}}"
               ],
               "path": [
                 "v1",
@@ -1338,7 +1370,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{external-url}}/v1/esignet/system-info/certificate?applicationId=OIDC_PARTNER",
+              "raw": "{{external-url}}/v1/esignet/system-info/certificate?applicationId=OIDC_PARTNER&referenceId=RSA_2048",
               "host": [
                 "{{external-url}}"
               ],
@@ -1352,6 +1384,10 @@
                 {
                   "key": "applicationId",
                   "value": "OIDC_PARTNER"
+                },
+                {
+                  "key": "referenceId",
+                  "value": "RSA_2048"
                 }
               ]
             }
@@ -1385,7 +1421,7 @@
                 "exec": [
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -1406,9 +1442,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+              "raw": "{{authmanager-url}}/v1/authmanager/authenticate/internal/useridPwd",
               "host": [
-                "{{url}}"
+                "{{authmanager-url}}"
               ],
               "path": [
                 "v1",
@@ -1497,7 +1533,7 @@
                 "exec": [
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -1553,9 +1589,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners/certificate/ca/upload",
+              "raw": "{{pms-url}}/v1/partnermanager/partners/certificate/ca/upload",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -1630,9 +1666,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners/certificate/ca/upload",
+              "raw": "{{pms-url}}/v1/partnermanager/partners/certificate/ca/upload",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -1673,7 +1709,7 @@
                 "exec": [
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -1714,9 +1750,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners/certificate/upload",
+              "raw": "{{pms-url}}/v1/partnermanager/partners/certificate/upload",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -1987,7 +2023,7 @@
                 "exec": [
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -2028,9 +2064,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}",
+              "raw": "{{pms-url}}/v1/partnermanager/partners/{{partner-kc-username}}",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -2051,7 +2087,7 @@
                 "exec": [
                   "pm.test(\"Certificate Upload Successfull\", function ()  {\r",
                   "    responseText = pm.response.text();\r",
-                  "     pm.expect(responseText).to.include.oneOf([\"Certificate already exists in store\", \"Upload Success\"])\r",
+                  "     pm.expect(responseText).to.include.oneOf([\"Certificate already exists in store\", \"Upload Success\", \"success\"])\r",
                   " });"
                 ],
                 "type": "text/javascript"
@@ -2073,7 +2109,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"request\": {\r\n    \"certificateData\": \"{{signed-leaf-certificate}}\",\r\n    \"applicationId\": \"OIDC_PARTNER\",\r\n    \"referenceId\" : \"\"\r\n  },\r\n  \"requestTime\": \"{{$isoTimestamp}}\"\r\n}",
+              "raw": "{\r\n  \"request\": {\r\n    \"certificateData\": \"{{signed-leaf-certificate}}\",\r\n    \"applicationId\": \"OIDC_PARTNER\",\r\n    \"referenceId\" : \"RSA_2048\"\r\n  },\r\n  \"requestTime\": \"{{$isoTimestamp}}\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2159,9 +2195,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+              "raw": "{{authmanager-url}}/v1/authmanager/authenticate/internal/useridPwd",
               "host": [
-                "{{url}}"
+                "{{authmanager-url}}"
               ],
               "path": [
                 "v1",
@@ -2181,11 +2217,18 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('adding apikeyrequestID',function(){\r",
-                  "    const {response} =pm.response.json();\r",
-                  "    pm.environment.set('partner-mapping-key',response.mappingkey);\r",
-                  "})\r",
-                  ""
+                  "const jsonData = pm.response.json();",
+                  "const err = jsonData.errors && jsonData.errors[0];",
+                  "if (err) {",
+                  "    pm.test('partner_request_mapping_to_policyname failed: ' + err.errorCode, function () {",
+                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
+                  "    });",
+                  "} else {",
+                  "    pm.test('adding apikeyrequestID', function () {",
+                  "        const { response } = pm.response.json();",
+                  "        pm.environment.set('partner-mapping-key', response.mappingkey);",
+                  "    });",
+                  "}"
                 ],
                 "type": "text/javascript",
                 "packages": {}
@@ -2197,7 +2240,7 @@
                 "exec": [
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -2238,9 +2281,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}/policy/map",
+              "raw": "{{pms-url}}/v1/partnermanager/partners/{{partner-kc-username}}/policy/map",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -2298,9 +2341,9 @@
               "raw": "{\n  \"id\": \"\",\n  \"version\": \"LTS\",\n  \"requesttime\":\"{{$isoTimestamp}}\",\n  \"metadata\": {},\n  \"request\": {\n    \"userName\":\"{{partner-manager-username}}\",\n    \"password\":\"{{partner-manager-password}}\",\n    \"appId\":\"{{application-id}}\",\n    \"clientId\": \"{{module-clientid}}\",\n    \"clientSecret\": \"{{module-secretkey}}\"\n  }\n}"
             },
             "url": {
-              "raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+              "raw": "{{authmanager-url}}/v1/authmanager/authenticate/internal/useridPwd",
               "host": [
-                "{{url}}"
+                "{{authmanager-url}}"
               ],
               "path": [
                 "v1",
@@ -2359,9 +2402,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}/bioextractors/{{policy-id}}",
+              "raw": "{{pms-url}}/v1/partnermanager/partners/{{partner-kc-username}}/bioextractors/{{policy-id}}",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -2384,7 +2427,7 @@
                 "exec": [
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -2435,9 +2478,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners/policy/{{partner-mapping-key}}",
+              "raw": "{{pms-url}}/v1/partnermanager/partners/policy/{{partner-mapping-key}}",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -2501,9 +2544,9 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}/credentialtype/{{credential-type}}/policies/{{policy-name}}",
+              "raw": "{{pms-url}}/v1/partnermanager/partners/{{partner-kc-username}}/credentialtype/{{credential-type}}/policies/{{policy-name}}",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -2577,9 +2620,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/misps",
+              "raw": "{{pms-url}}/v1/partnermanager/misps",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -2781,7 +2824,7 @@
                   "}\r",
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}\r",
                   ""
                 ],
@@ -2793,24 +2836,22 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"validating clientid\", function () {",
-                  "    pm.expect(pm.response.text()).to.include(\"clientId\");",
-                  "});",
-                  "pm.test(\"validating client status\", function () {",
-                  "    pm.expect(pm.response.text()).to.include(\"ACTIVE\");",
-                  "});",
                   "var responseJson = pm.response.json();",
-                  "var partnerKcUsername = pm.variables.get(\"partner-kc-username\");",
+                  "var err = responseJson.errors && responseJson.errors[0];",
                   "",
-                  "if (partnerKcUsername === \"mpartner-default-mock-rp-oidc\") {",
-                  "    pm.environment.set(\"mpartner-default-demo-oidc-clientID\", responseJson.response.clientId);",
-                  "} else if (partnerKcUsername === \"mpartner-default-resident-oidc\") {",
-                  "    pm.environment.set(\"mpartner-default-resident-oidc-clientID\", responseJson.response.clientId);",
-                  "} else if (partnerKcUsername === \"mpartner-default-mimotooidc\") {",
-                  "    pm.environment.set(\"mpartner-default-mimotooidc-clientID\", responseJson.response.clientId);",
-                  "} else if (partnerKcUsername === \"esignet-sunbird-partner\") {",
-                  "    pm.environment.set(\"mpartner-default-sunbirdoidc-clientID\", responseJson.response.clientId);",
-                  "} "
+                  "if (err) {",
+                  "    pm.test('create-oidc-client failed: ' + err.errorCode, function () {",
+                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
+                  "    });",
+                  "} else {",
+                  "    pm.test(\"validating clientid\", function () {",
+                  "        pm.expect(pm.response.text()).to.include(\"clientId\");",
+                  "    });",
+                  "    pm.test(\"validating client status\", function () {",
+                  "        pm.expect(pm.response.text()).to.include(\"ACTIVE\");",
+                  "    });",
+                  "    pm.environment.set(\"oidc-client-id\", responseJson.response.clientId);",
+                  "}"
                 ],
                 "type": "text/javascript",
                 "packages": {}
@@ -2843,7 +2884,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"requestTime\": \"{{$isoTimestamp}}\",\n    \"request\": {\n        \"name\": \"{{oidc-client-name}}\",\n        \"publicKey\": {\n    \"kty\": \"RSA\",\n    \"e\": \"AQAB\",\n    \"use\": \"sig\",\n    \"kid\": \"{{keyid}}\",\n    \"alg\": \"RS256\",\n    \"n\": \"{{key}}\"\n},\n        \"policyId\" : \"{{policy-id}}\",\n        \"authPartnerId\": \"{{partner-kc-username}}\",\n        \"logoUri\": \"{{logo-uri}}\",\n        \"redirectUris\": \n           {{redirect_uris_array}}\n        ,\n        \"grantTypes\": [\n            \"authorization_code\"\n        ],\n        \"clientAuthMethods\": [\n            \"private_key_jwt\"\n        ]\n    }\n}",
+              "raw": "{\n    \"id\": \"mosip.pms.create.oidc.client.post\",\n    \"version\": \"1.0\",\n    \"requestTime\": \"{{$isoTimestamp}}\",\n    \"request\": {\n        \"name\": \"{{oidc-client-name}}\",\n        \"publicKey\": {\n    \"kty\": \"RSA\",\n    \"e\": \"AQAB\",\n    \"use\": \"sig\",\n    \"kid\": \"{{keyid}}\",\n    \"alg\": \"RS256\",\n    \"n\": \"{{key}}\"\n},\n        \"policyId\" : \"{{policy-id}}\",\n        \"authPartnerId\": \"{{partner-kc-username}}\",\n        \"logoUri\": \"{{logo-uri}}\",\n        \"redirectUris\": \n           {{redirect_uris_array}}\n        ,\n        \"grantTypes\": [\n            \"authorization_code\"\n        ],\n        \"clientAuthMethods\": [\n            \"private_key_jwt\"\n        ],\n        \"clientNameLangMap\": {{client-name-lang-map-json}},\n        \"additionalConfig\": {{additional-config-json}}\n    }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2851,15 +2892,14 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/oidc/client",
+              "raw": "{{pms-url}}/v1/partnermanager/oidc-clients",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
                 "partnermanager",
-                "oidc",
-                "client"
+                "oidc-clients"
               ]
             }
           },
@@ -2882,6 +2922,24 @@
                   "    console.error(\"Environment variable 'redirect-uris' is not defined.\");\r",
                   "    pm.environment.set(\"redirect_uris_array\", \"[]\");\r",
                   "}\r",
+                  "\r",
+                  "let userClaims = pm.environment.get(\"user-claims\");\r",
+                  "if (userClaims) {\r",
+                  "    userClaims = userClaims.split(',').map(c => c.trim()).filter(Boolean);\r",
+                  "    pm.environment.set(\"user_claims_array\", JSON.stringify(userClaims));\r",
+                  "} else {\r",
+                  "    console.error(\"Environment variable 'user-claims' is not defined.\");\r",
+                  "    pm.environment.set(\"user_claims_array\", \"[]\");\r",
+                  "}\r",
+                  "\r",
+                  "let authContextRefs = pm.environment.get(\"auth-context-refs\");\r",
+                  "if (authContextRefs) {\r",
+                  "    authContextRefs = authContextRefs.split(',').map(a => a.trim()).filter(Boolean);\r",
+                  "    pm.environment.set(\"auth_context_refs_array\", JSON.stringify(authContextRefs));\r",
+                  "} else {\r",
+                  "    console.error(\"Environment variable 'auth-context-refs' is not defined.\");\r",
+                  "    pm.environment.set(\"auth_context_refs_array\", \"[]\");\r",
+                  "}\r",
                   ""
                 ],
                 "type": "text/javascript",
@@ -2892,13 +2950,21 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"validating clientid\", function () {\r",
-                  "    pm.expect(pm.response.text()).to.include(\"clientId\");\r",
-                  "});\r",
-                  "pm.test(\"validating client status\", function () {\r",
-                  "    pm.expect(pm.response.text()).to.include(\"ACTIVE\");\r",
-                  "});\r",
-                  ""
+                  "var responseJson = pm.response.json();",
+                  "var err = responseJson.errors && responseJson.errors[0];",
+                  "",
+                  "if (err) {",
+                  "    pm.test('create-oidc-client-through-esignet-signup failed: ' + err.errorCode, function () {",
+                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
+                  "    });",
+                  "} else {",
+                  "    pm.test(\"validating clientid\", function () {",
+                  "        pm.expect(pm.response.text()).to.include(\"clientId\");",
+                  "    });",
+                  "    pm.test(\"validating client status\", function () {",
+                  "        pm.expect(pm.response.text()).to.include(\"ACTIVE\");",
+                  "    });",
+                  "}"
                 ],
                 "type": "text/javascript",
                 "packages": {}
@@ -2920,7 +2986,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"requestTime\": \"{{$isoTimestamp}}\",\r\n  \"request\": {\r\n    \"clientId\": \"{{oidc-clientid}}\",\r\n    \"clientName\": \"{{oidc-client-name}}\",\r\n    \"publicKey\":\r\n      {\r\n    \"kty\": \"RSA\",\r\n    \"e\": \"AQAB\",\r\n    \"use\": \"sig\",\r\n    \"kid\": \"{{keyid}}\",\r\n    \"alg\": \"RS256\",\r\n    \"n\": \"{{key}}\"\r\n},\r\n    \"relyingPartyId\": \"{{oidc-client-name}}\",\r\n    \"userClaims\":  [\r\n            \r\n        ],\r\n    \"authContextRefs\":  [\r\n            \"mosip:idp:acr:id-token\"\r\n        ],\r\n    \"logoUri\": \"{{logo-uri}}\",\r\n    \"redirectUris\":{{redirect_uris_array}},\r\n    \"grantTypes\": [\r\n      \"authorization_code\"\r\n    ],\r\n    \"clientAuthMethods\": [\r\n      \"private_key_jwt\"\r\n    ]\r\n  }\r\n}",
+              "raw": "{\r\n  \"requestTime\": \"{{$isoTimestamp}}\",\r\n  \"request\": {\r\n    \"clientId\": \"{{oidc-clientid}}\",\r\n    \"clientName\": \"{{oidc-client-name}}\",\r\n    \"publicKey\":\r\n      {\r\n    \"kty\": \"RSA\",\r\n    \"e\": \"AQAB\",\r\n    \"use\": \"sig\",\r\n    \"kid\": \"{{keyid}}\",\r\n    \"alg\": \"RS256\",\r\n    \"n\": \"{{key}}\"\r\n},\r\n    \"relyingPartyId\": \"{{oidc-client-name}}\",\r\n    \"userClaims\": {{user_claims_array}},\r\n    \"authContextRefs\": {{auth_context_refs_array}},\r\n    \"logoUri\": \"{{logo-uri}}\",\r\n    \"redirectUris\":{{redirect_uris_array}},\r\n    \"grantTypes\": [\r\n      \"authorization_code\"\r\n    ],\r\n    \"clientAuthMethods\": [\r\n      \"private_key_jwt\"\r\n    ],\r\n    \"clientNameLangMap\": {{client-name-lang-map-json}},\r\n    \"additionalConfig\": {{additional-config-json}}\r\n  }\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2928,7 +2994,7 @@
               }
             },
             "url": {
-              "raw": "{{external-url}}/v1/esignet/client-mgmt/oidc-client",
+              "raw": "{{external-url}}/v1/esignet/client-mgmt/client",
               "host": [
                 "{{external-url}}"
               ],
@@ -2936,7 +3002,7 @@
                 "v1",
                 "esignet",
                 "client-mgmt",
-                "oidc-client"
+                "client"
               ]
             }
           },
@@ -2949,6 +3015,11 @@
               "listen": "prerequest",
               "script": {
                 "exec": [
+                  "if (pm.environment.get(\"mosip-id\") == 'true') {",
+                  "    console.log(\"This request is skipped as eSignet is deployed against MosipID\");",
+                  "    pm.execution.skipRequest();",
+                  "}",
+                  "",
                   "// Pre-request script in Postman\r",
                   "let redirectUris = pm.environment.get(\"redirect-uris\");\r",
                   "\r",
@@ -2958,6 +3029,24 @@
                   "} else {\r",
                   "    console.error(\"Environment variable 'redirect-uris' is not defined.\");\r",
                   "    pm.environment.set(\"redirect_uris_array\", \"[]\");\r",
+                  "}\r",
+                  "\r",
+                  "let userClaims = pm.environment.get(\"user-claims\");\r",
+                  "if (userClaims) {\r",
+                  "    userClaims = userClaims.split(',').map(c => c.trim()).filter(Boolean);\r",
+                  "    pm.environment.set(\"user_claims_array\", JSON.stringify(userClaims));\r",
+                  "} else {\r",
+                  "    console.error(\"Environment variable 'user-claims' is not defined.\");\r",
+                  "    pm.environment.set(\"user_claims_array\", \"[]\");\r",
+                  "}\r",
+                  "\r",
+                  "let authContextRefs = pm.environment.get(\"auth-context-refs\");\r",
+                  "if (authContextRefs) {\r",
+                  "    authContextRefs = authContextRefs.split(',').map(a => a.trim()).filter(Boolean);\r",
+                  "    pm.environment.set(\"auth_context_refs_array\", JSON.stringify(authContextRefs));\r",
+                  "} else {\r",
+                  "    console.error(\"Environment variable 'auth-context-refs' is not defined.\");\r",
+                  "    pm.environment.set(\"auth_context_refs_array\", \"[]\");\r",
                   "}\r",
                   ""
                 ],
@@ -2970,22 +3059,21 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"validating clientid\", function () {\r",
-                  "    pm.expect(pm.response.text()).to.include(\"clientId\");\r",
-                  "});\r",
-                  "pm.test(\"validating client status\", function () {\r",
-                  "    pm.expect(pm.response.text()).to.include(\"ACTIVE\");\r",
-                  "});\r",
-                  "var responseJson = pm.response.json();\r",
-                  "var partnerKcUsername = pm.variables.get(\"partner-kc-username\");\r",
-                  "\r",
-                  "if (partnerKcUsername === \"mpartner-default-mock-rp-oidc\") {\r",
-                  "    pm.environment.set(\"mpartner-default-demo-oidc-clientID\", responseJson.response.clientId);\r",
-                  "}\r",
-                  "if (pm.environment.get(\"mosip-id\") == 'true') {\r",
-                  "    console.log(\"This request is skipped as eSignet is deployed against MosipID\");\r",
-                  "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "var responseJson = pm.response.json();",
+                  "var err = responseJson.errors && responseJson.errors[0];",
+                  "",
+                  "if (err) {",
+                  "    pm.test('create-oidc-client-through-esignet failed: ' + err.errorCode, function () {",
+                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
+                  "    });",
+                  "} else {",
+                  "    pm.test(\"validating clientid\", function () {",
+                  "        pm.expect(pm.response.text()).to.include(\"clientId\");",
+                  "    });",
+                  "    pm.test(\"validating client status\", function () {",
+                  "        pm.expect(pm.response.text()).to.include(\"ACTIVE\");",
+                  "    });",
+                  "    pm.environment.set(\"oidc-client-id\", responseJson.response.clientId);",
                   "}"
                 ],
                 "type": "text/javascript",
@@ -3009,7 +3097,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"requestTime\": \"{{$isoTimestamp}}\",\r\n  \"request\": {\r\n    \"clientId\": \"{{oidc-clientid}}\",\r\n    \"clientName\": \"{{oidc-client-name}}\",\r\n    \"publicKey\":\r\n      {\r\n    \"kty\": \"RSA\",\r\n    \"e\": \"AQAB\",\r\n    \"use\": \"sig\",\r\n    \"kid\": \"{{keyid}}\",\r\n    \"alg\": \"RS256\",\r\n    \"n\": \"{{key}}\"\r\n},\r\n    \"relyingPartyId\": \"{{oidc-clientid}}\",\r\n   \"userClaims\":  [\r\n            \"birthdate\",\r\n            \"address\",\r\n            \"gender\",\r\n            \"name\",\r\n            \"phone_number\",\r\n            \"picture\",\r\n            \"email\",\r\n            \"individual_id\"\r\n        ],\r\n    \"authContextRefs\":  [\r\n           \"mosip:idp:acr:linked-wallet\",\r\n            \"mosip:idp:acr:biometrics\",\r\n            \"mosip:idp:acr:generated-code\",\r\n            \"mosip:idp:acr:password\"\r\n        ],\r\n    \"logoUri\": \"{{logo-uri}}\",\r\n    \"redirectUris\":{{redirect_uris_array}},\r\n    \"grantTypes\": [\r\n      \"authorization_code\"\r\n    ],\r\n    \"clientAuthMethods\": [\r\n      \"private_key_jwt\"\r\n    ]\r\n  }\r\n}",
+              "raw": "{\r\n  \"requestTime\": \"{{$isoTimestamp}}\",\r\n  \"request\": {\r\n    \"clientId\": \"{{oidc-clientid}}\",\r\n    \"clientName\": \"{{oidc-client-name}}\",\r\n    \"publicKey\":\r\n      {\r\n    \"kty\": \"RSA\",\r\n    \"e\": \"AQAB\",\r\n    \"use\": \"sig\",\r\n    \"kid\": \"{{keyid}}\",\r\n    \"alg\": \"RS256\",\r\n    \"n\": \"{{key}}\"\r\n},\r\n    \"relyingPartyId\": \"{{oidc-clientid}}\",\r\n   \"userClaims\": {{user_claims_array}},\r\n    \"authContextRefs\": {{auth_context_refs_array}},\r\n    \"logoUri\": \"{{logo-uri}}\",\r\n    \"redirectUris\":{{redirect_uris_array}},\r\n    \"grantTypes\": [\r\n      \"authorization_code\"\r\n    ],\r\n    \"clientAuthMethods\": [\r\n      \"private_key_jwt\"\r\n    ],\r\n    \"clientNameLangMap\": {{client-name-lang-map-json}},\r\n    \"additionalConfig\": {{additional-config-json}}\r\n  }\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -3017,7 +3105,7 @@
               }
             },
             "url": {
-              "raw": "{{external-url}}/v1/esignet/client-mgmt/oidc-client",
+              "raw": "{{external-url}}/v1/esignet/client-mgmt/client",
               "host": [
                 "{{external-url}}"
               ],
@@ -3025,88 +3113,7 @@
                 "v1",
                 "esignet",
                 "client-mgmt",
-                "oidc-client"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "create-oidc-client-through-esignet-sunbird",
-          "event": [
-            {
-              "listen": "prerequest",
-              "script": {
-                "exec": [
-                  "// Pre-request script in Postman\r",
-                  "let redirectUris = pm.environment.get(\"redirect-uris\");\r",
-                  "\r",
-                  "if (redirectUris) {\r",
-                  "    redirectUris = redirectUris.split(',').map(uri => uri.trim());\r",
-                  "    pm.environment.set(\"redirect_uris_array\", JSON.stringify(redirectUris));\r",
-                  "} else {\r",
-                  "    console.error(\"Environment variable 'redirect-uris' is not defined.\");\r",
-                  "    pm.environment.set(\"redirect_uris_array\", \"[]\");\r",
-                  "}\r",
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {}
-              }
-            },
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"validating clientid\", function () {\r",
-                  "    pm.expect(pm.response.text()).to.include(\"clientId\");\r",
-                  "});\r",
-                  "pm.test(\"validating client status\", function () {\r",
-                  "    pm.expect(pm.response.text()).to.include(\"ACTIVE\");\r",
-                  "});\r",
-                  "var responseJson = pm.response.json();\r",
-                  "var partnerKcUsername = pm.variables.get(\"partner-kc-username\");\r",
-                  " if (partnerKcUsername === \"esignet-sunbird-partner\") {\r",
-                  "    pm.environment.set(\"mpartner-default-sunbirdoidc-clientID\", responseJson.response.clientId);\r",
-                  "} "
-                ],
-                "type": "text/javascript",
-                "packages": {}
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{authtoken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"requestTime\": \"{{$isoTimestamp}}\",\r\n  \"request\": {\r\n    \"clientId\": \"{{oidc-clientid}}\",\r\n    \"clientName\": \"{{oidc-client-name}}\",\r\n    \"publicKey\":\r\n      {\r\n    \"kty\": \"RSA\",\r\n    \"e\": \"AQAB\",\r\n    \"use\": \"sig\",\r\n    \"kid\": \"{{keyid}}\",\r\n    \"alg\": \"RS256\",\r\n    \"n\": \"{{key}}\"\r\n},\r\n    \"relyingPartyId\": \"{{oidc-client-name}}\",\r\n    \"userClaims\":  [\r\n            \r\n        ],\r\n    \"authContextRefs\":  [\r\n            \"mosip:idp:acr:knowledge\"\r\n        ],\r\n    \"logoUri\": \"{{logo-uri}}\",\r\n    \"redirectUris\":{{redirect_uris_array}},\r\n    \"grantTypes\": [\r\n      \"authorization_code\"\r\n    ],\r\n    \"clientAuthMethods\": [\r\n      \"private_key_jwt\"\r\n    ]\r\n  }\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{sunbird-url}}/v1/esignet/client-mgmt/oidc-client",
-              "host": [
-                "{{sunbird-url}}"
-              ],
-              "path": [
-                "v1",
-                "esignet",
-                "client-mgmt",
-                "oidc-client"
+                "client"
               ]
             }
           },
@@ -3155,9 +3162,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+              "raw": "{{authmanager-url}}/v1/authmanager/authenticate/internal/useridPwd",
               "host": [
-                "{{url}}"
+                "{{authmanager-url}}"
               ],
               "path": [
                 "v1",
@@ -3177,11 +3184,18 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('getting apikey',function(){\r",
-                  "    const {response} =pm.response.json();\r",
-                  "    pm.environment.set('mpartner-default-mimotokeybinding-apikey',response.apiKey);\r",
-                  "})\r",
-                  ""
+                  "const jsonData = pm.response.json();",
+                  "const err = jsonData.errors && jsonData.errors[0];",
+                  "if (err) {",
+                  "    pm.test('request-for-partner-apikey failed: ' + err.errorCode, function () {",
+                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
+                  "    });",
+                  "} else {",
+                  "    pm.test('getting apikey', function () {",
+                  "        const { response } = pm.response.json();",
+                  "        pm.environment.set('mpartner-default-mimotokeybinding-apikey', response.apiKey);",
+                  "    });",
+                  "}"
                 ],
                 "type": "text/javascript"
               }
@@ -3229,9 +3243,9 @@
               }
             },
             "url": {
-              "raw": "{{url}}/v1/partnermanager/partners/{{partner-kc-username}}/generate/apikey",
+              "raw": "{{pms-url}}/v1/partnermanager/partners/{{partner-kc-username}}/generate/apikey",
               "host": [
-                "{{url}}"
+                "{{pms-url}}"
               ],
               "path": [
                 "v1",
@@ -3331,7 +3345,7 @@
                 "exec": [
                   "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
                   "\r",
-                  "    pm.execution.skipRequest()\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}"
                 ],
                 "type": "text/javascript",

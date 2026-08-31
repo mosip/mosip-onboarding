@@ -83,11 +83,20 @@ spec:
             - name: {{ $.Values.onboarding.volumes.reports.name }}
               mountPath: /home/mosip/reports/
           {{- end }}
+          {{- if index $.Values.onboarding.propertiesOverride $module.name }}
+            - name: onboarder-properties-override
+              mountPath: /home/mosip/properties/overrides
+          {{- end }}
       volumes:
       {{- if eq $.Values.onboarding.variables.push_reports_to_s3 false }}
       - name: {{ $.Values.onboarding.volumes.reports.name }}
         persistentVolumeClaim:
           claimName: {{ $.Values.onboarding.volumes.reports.name }}-{{ $.Release.Namespace }}-{{ $module.name }}-pvc
+      {{- end }}
+      {{- if index $.Values.onboarding.propertiesOverride $module.name }}
+      - name: onboarder-properties-override
+        configMap:
+          name: {{ template "common.names.fullname" $ }}-{{ $module.name }}-properties-{{ $.Release.Name }}
       {{- end }}
 {{- end }}
 {{- end }}

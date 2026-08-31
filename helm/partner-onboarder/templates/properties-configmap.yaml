@@ -1,0 +1,22 @@
+{{- range $module_name, $overrides := .Values.onboarding.propertiesOverride }}
+{{- if $overrides }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "common.names.fullname" $ }}-{{ $module_name }}-properties-{{ $.Release.Name }}
+  namespace: {{ $.Release.Namespace }}
+  labels: {{- include "common.labels.standard" $ | nindent 4 }}
+    {{- if $.Values.commonLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" $.Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+  {{- if $.Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $.Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+data:
+  {{ $module_name }}.properties: |
+    {{- range $key, $value := $overrides }}
+    {{ $key }}='{{ $value | toString | replace "'" "'\\''" }}'
+    {{- end }}
+{{- end }}
+{{- end }}
