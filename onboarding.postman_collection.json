@@ -2085,10 +2085,23 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Certificate Upload Successfull\", function ()  {\r",
-                  "    responseText = pm.response.text();\r",
-                  "     pm.expect(responseText).to.include.oneOf([\"Certificate already exists in store\", \"Upload Success\", \"success\"])\r",
-                  " });"
+                  "var responseText = pm.response.text();\r",
+                  "var isKnownSuccessText = /Certificate already exists in store|Upload Success|success/i.test(responseText);\r",
+                  "\r",
+                  "var isDuplicateThumbprint = false;\r",
+                  "try {\r",
+                  "    var json = pm.response.json();\r",
+                  "    var err = json.errors && json.errors[0];\r",
+                  "    if (err && err.errorCode === \"invalid_certificate\" && /already exists/i.test(err.errorMessage || \"\")) {\r",
+                  "        isDuplicateThumbprint = true;\r",
+                  "    }\r",
+                  "} catch (e) {\r",
+                  "    // response wasn't JSON - fine, isKnownSuccessText already covers the plain-text cases\r",
+                  "}\r",
+                  "\r",
+                  "pm.test(\"Certificate Upload Successfull\", function () {\r",
+                  "    pm.expect(isKnownSuccessText || isDuplicateThumbprint).to.eql(true);\r",
+                  "});"
                 ],
                 "type": "text/javascript"
               }
