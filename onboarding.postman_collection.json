@@ -2839,6 +2839,15 @@
                   "\r",
                   "\u00a0 \u00a0 pm.execution.skipRequest()\r",
                   "}\r",
+                  "\r",
+                  "// PMS_OIDC_CLIENT_API_VERSION (default.sh) picks exactly one of PMS's two\r",
+                  "// create-oidc-client requests - this one (current, non-deprecated\r",
+                  "// /v1/partnermanager/oidc-clients) runs unless it's explicitly set to \"old\",\r",
+                  "// in which case create-oidc-client-old runs instead. Default is this one (\"new\").\r",
+                  "if (pm.environment.get(\"pms-oidc-client-api-version\") == 'old') {\r",
+                  "    console.log(\"This request is skipped - PMS_OIDC_CLIENT_API_VERSION=old, using create-oidc-client-old instead\");\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
+                  "}\r",
                   ""
                 ],
                 "type": "text/javascript",
@@ -2913,6 +2922,116 @@
                 "v1",
                 "partnermanager",
                 "oidc-clients"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create-oidc-client-old",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Pre-request script in Postman\r",
+                  "let redirectUris = pm.environment.get(\"redirect-uris\");\r",
+                  "\r",
+                  "if (redirectUris) {\r",
+                  "    redirectUris = redirectUris.split(',').map(uri => uri.trim());\r",
+                  "    pm.environment.set(\"redirect_uris_array\", JSON.stringify(redirectUris));\r",
+                  "} else {\r",
+                  "    console.error(\"Environment variable 'redirect-uris' is not defined.\");\r",
+                  "    pm.environment.set(\"redirect_uris_array\", \"[]\");\r",
+                  "}\r",
+                  "if (pm.environment.get(\"mosip-id\") == 'false' ){console.log(\"This request is skipped as eSignet is not deployed against MosipID\");\r",
+                  "\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
+                  "}\r",
+                  "\r",
+                  "// PMS_OIDC_CLIENT_API_VERSION (default.sh) picks exactly one of PMS's two\r",
+                  "// create-oidc-client requests - this one (the deprecated\r",
+                  "// /v1/partnermanager/oidc/client, plain pre-V3 request body) only runs when\r",
+                  "// it's explicitly set to \"old\"; otherwise create-oidc-client (current) runs instead.\r",
+                  "if (pm.environment.get(\"pms-oidc-client-api-version\") != 'old') {\r",
+                  "    console.log(\"This request is skipped - PMS_OIDC_CLIENT_API_VERSION is not 'old', using create-oidc-client instead\");\r",
+                  "\u00a0 \u00a0 pm.execution.skipRequest()\r",
+                  "}\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var responseJson = pm.response.json();",
+                  "var err = responseJson.errors && responseJson.errors[0];",
+                  "",
+                  "if (err) {",
+                  "    pm.test('create-oidc-client-old failed: ' + err.errorCode, function () {",
+                  "        throw new Error(err.errorCode + ': ' + (err.errorMessage || err.message));",
+                  "    });",
+                  "} else {",
+                  "    pm.test(\"validating clientid\", function () {",
+                  "        pm.expect(pm.response.text()).to.include(\"clientId\");",
+                  "    });",
+                  "    pm.test(\"validating client status\", function () {",
+                  "        pm.expect(pm.response.text()).to.include(\"ACTIVE\");",
+                  "    });",
+                  "    pm.environment.set(\"oidc-client-id\", responseJson.response.clientId);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authtoken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "Authorization={{authtoken}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{authorizationToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"requestTime\": \"{{$isoTimestamp}}\",\n    \"request\": {\n        \"name\": \"{{oidc-client-name}}\",\n        \"publicKey\": {\n    \"kty\": \"RSA\",\n    \"e\": \"AQAB\",\n    \"use\": \"sig\",\n    \"kid\": \"{{keyid}}\",\n    \"alg\": \"RS256\",\n    \"n\": \"{{key}}\"\n},\n        \"policyId\" : \"{{policy-id}}\",\n        \"authPartnerId\": \"{{partner-kc-username}}\",\n        \"logoUri\": \"{{logo-uri}}\",\n        \"redirectUris\": \n           {{redirect_uris_array}}\n        ,\n        \"grantTypes\": [\n            \"authorization_code\"\n        ],\n        \"clientAuthMethods\": [\n            \"private_key_jwt\"\n        ]\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{pms-url}}/v1/partnermanager/oidc/client",
+              "host": [
+                "{{pms-url}}"
+              ],
+              "path": [
+                "v1",
+                "partnermanager",
+                "oidc",
+                "client"
               ]
             }
           },

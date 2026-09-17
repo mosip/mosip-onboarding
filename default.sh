@@ -71,6 +71,7 @@ upload_ida_root_cert() {
     --env-var url="$URL" \
     --env-var authmanager-url=$AUTHMANAGER_URL \
     --env-var pms-url=$PMS_URL \
+    --env-var pms-oidc-client-api-version=$PMS_OIDC_CLIENT_API_VERSION \
     --env-var cert-application-id=ROOT \
     --env-var cert-reference-id=  \
     --env-var request-time="$DATE" \
@@ -93,6 +94,7 @@ upload_ida_cert() {
     --env-var url="$URL" \
     --env-var authmanager-url=$AUTHMANAGER_URL \
     --env-var pms-url=$PMS_URL \
+    --env-var pms-oidc-client-api-version=$PMS_OIDC_CLIENT_API_VERSION \
     --env-var cert-application-id=IDA \
     --env-var cert-reference-id=  \
     --env-var request-time="$DATE" \
@@ -114,6 +116,7 @@ upload_ida_partner_cert () {
     --env-var url="$URL" \
     --env-var authmanager-url=$AUTHMANAGER_URL \
     --env-var pms-url=$PMS_URL \
+    --env-var pms-oidc-client-api-version=$PMS_OIDC_CLIENT_API_VERSION \
     --env-var request-time="$DATE" \
     --env-var cert-application-id=IDA \
     --env-var cert-reference-id=mpartner-default-auth \
@@ -160,6 +163,7 @@ upload_resident_cert() {
     --env-var url="$URL" \
     --env-var authmanager-url=$AUTHMANAGER_URL \
     --env-var pms-url=$PMS_URL \
+    --env-var pms-oidc-client-api-version=$PMS_OIDC_CLIENT_API_VERSION \
     --env-var request-time="$DATE" \
     --env-var cert-application-id=RESIDENT \
     --env-var cert-reference-id=mpartner-default-resident \
@@ -190,6 +194,7 @@ upload_print_cert() {
     --env-var url="$URL" \
     --env-var authmanager-url=$AUTHMANAGER_URL \
     --env-var pms-url=$PMS_URL \
+    --env-var pms-oidc-client-api-version=$PMS_OIDC_CLIENT_API_VERSION \
     --env-var request-time="$DATE" \
     --env-var cert-manager-username="$KEYCLOAK_CLIENT" \
     --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
@@ -217,6 +222,7 @@ upload_abis_cert () {
     --env-var url="$URL" \
     --env-var authmanager-url=$AUTHMANAGER_URL \
     --env-var pms-url=$PMS_URL \
+    --env-var pms-oidc-client-api-version=$PMS_OIDC_CLIENT_API_VERSION \
     --env-var request-time="$DATE" \
     --env-var cert-manager-username="$KEYCLOAK_CLIENT" \
     --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
@@ -243,6 +249,7 @@ upload_mpartner_default_mobile_cert() {
     --env-var url="$URL" \
     --env-var authmanager-url=$AUTHMANAGER_URL \
     --env-var pms-url=$PMS_URL \
+    --env-var pms-oidc-client-api-version=$PMS_OIDC_CLIENT_API_VERSION \
     --env-var request-time="$DATE" \
     --env-var cert-manager-username="$KEYCLOAK_CLIENT" \
     --env-var cert-manager-password="$KEYCLOAK_CLIENT_SECRET" \
@@ -268,6 +275,7 @@ upload_mpartner_default_digitalcard_cert() {
     --env-var url="$URL" \
     --env-var authmanager-url=$AUTHMANAGER_URL \
     --env-var pms-url=$PMS_URL \
+    --env-var pms-oidc-client-api-version=$PMS_OIDC_CLIENT_API_VERSION \
     --env-var request-time="$DATE" \
     --env-var cert-application-id=DIGITAL_CARD \
     --env-var cert-reference-id=mpartner-default-digitalcard \
@@ -295,6 +303,7 @@ onboard_esignet_partner() {
     --env-var url="$URL" \
     --env-var authmanager-url=$AUTHMANAGER_URL \
     --env-var pms-url=$PMS_URL \
+    --env-var pms-oidc-client-api-version=$PMS_OIDC_CLIENT_API_VERSION \
     --env-var request-time="$DATE" \
 	--env-var partner-manager-username=$PARTNER_MANAGER_USERNAME \
 	--env-var partner-manager-password=$PARTNER_MANAGER_PASSWORD \
@@ -348,6 +357,7 @@ onboard_mock_relying_party_with_mock_rp_oidc_client(){
     --env-var url="$URL" \
     --env-var authmanager-url=$AUTHMANAGER_URL \
     --env-var pms-url=$PMS_URL \
+    --env-var pms-oidc-client-api-version=$PMS_OIDC_CLIENT_API_VERSION \
     --env-var request-time="$DATE" \
 	--env-var partner-manager-username=$PARTNER_MANAGER_USERNAME \
 	--env-var partner-manager-password=$PARTNER_MANAGER_PASSWORD \
@@ -389,6 +399,7 @@ onboard_mock_relying_party_with_mock_rp_oidc_client(){
 	--folder approve-partner-mapping-to-policy \
 	--folder get-jwks \
 	--folder create-oidc-client \
+	--folder create-oidc-client-old \
 	--folder create-oidc-client-through-esignet \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
@@ -412,6 +423,7 @@ reports_dir="./reports/RESIDENT_OIDC/$current_datetime"
     --env-var url=$URL \
     --env-var authmanager-url=$AUTHMANAGER_URL \
     --env-var pms-url=$PMS_URL \
+    --env-var pms-oidc-client-api-version=$PMS_OIDC_CLIENT_API_VERSION \
     --env-var request-time=$DATE \
 	--env-var partner-manager-username=$PARTNER_MANAGER_USERNAME \
 	--env-var partner-manager-password=$PARTNER_MANAGER_PASSWORD \
@@ -454,6 +466,7 @@ reports_dir="./reports/RESIDENT_OIDC/$current_datetime"
 	--folder login-to-keycloak-as-admin \
 	--folder get-keyid-from-keymanager \
 	--folder create-oidc-client \
+	--folder create-oidc-client-old \
 	--folder delete-user \
 	$ADD_SSL_NEWMAN \
     --export-environment ./config-secrets.json -d "$POLICY_DATA_FILE" -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/resident-oidc.html" --reporter-htmlextra-showEnvironmentData
@@ -472,6 +485,7 @@ onboard_mimoto_keybinding_partner(){
   --env-var url="$URL" \
   --env-var authmanager-url=$AUTHMANAGER_URL \
   --env-var pms-url=$PMS_URL \
+  --env-var pms-oidc-client-api-version=$PMS_OIDC_CLIENT_API_VERSION \
   --env-var request-time="$DATE" \
 	--env-var partner-manager-username=$PARTNER_KC_USERNAME \
 	--env-var partner-manager-password=$PARTNER_KC_USERPASSWORD \
@@ -530,6 +544,7 @@ onboard_mimoto_oidc_partner(){
   --env-var url="$URL" \
   --env-var authmanager-url=$AUTHMANAGER_URL \
   --env-var pms-url=$PMS_URL \
+  --env-var pms-oidc-client-api-version=$PMS_OIDC_CLIENT_API_VERSION \
   --env-var request-time="$DATE" \
 	--env-var partner-manager-username=$PARTNER_KC_USERNAME \
 	--env-var partner-manager-password=$PARTNER_KC_USERPASSWORD \
@@ -566,6 +581,7 @@ onboard_mimoto_oidc_partner(){
 	--folder partner_request_mapping_to_policyname \
 	--folder approve-partner-mapping-to-policy \
 	--folder create-oidc-client \
+	--folder create-oidc-client-old \
 	--folder delete-user \
     $ADD_SSL_NEWMAN \
   --export-environment ./config-secrets.json -d "$POLICY_DATA_FILE" -r cli,htmlextra --reporter-htmlextra-export "$reports_dir/mimoto-oidc.html" --reporter-htmlextra-showEnvironmentData
@@ -660,7 +676,20 @@ AUTHMANAGER_URL="${AUTHMANAGER_URL:-$URL}"
 PMS_URL="${PMS_URL:-$URL}"
 EXTERNAL_URL="${EXTERNAL_URL:-https://$(printenv mosip-esignet-host)}"
 
-echo "URL : $URL | AUTHMANAGER_URL : $AUTHMANAGER_URL | PMS_URL : $PMS_URL | EXTERNAL_URL : $EXTERNAL_URL"
+# create-oidc-client's target endpoint/request-body shape on PMS (partner-management-services).
+# "new" (default) = /v1/partnermanager/oidc-clients with the standard MOSIP id/version envelope
+# and the V3 clientNameLangMap/additionalConfig fields (current setup, available since PMS
+# release 1.3.0-beta.4). "old" = the deprecated /v1/partnermanager/oidc/client, with the plain
+# request body PMS accepted before those V3 fields existed - use this only against a PMS
+# instance old enough not to support the new endpoint yet. Exactly one is used per run, never
+# both. Override via env var (real deployment) or properties/local-test.properties (local run).
+PMS_OIDC_CLIENT_API_VERSION="${PMS_OIDC_CLIENT_API_VERSION:-new}"
+if [ "$PMS_OIDC_CLIENT_API_VERSION" != "new" ] && [ "$PMS_OIDC_CLIENT_API_VERSION" != "old" ]; then
+  echo "PMS_OIDC_CLIENT_API_VERSION must be 'new' or 'old', got '$PMS_OIDC_CLIENT_API_VERSION'; EXITING;"
+  exit 1
+fi
+
+echo "URL : $URL | AUTHMANAGER_URL : $AUTHMANAGER_URL | PMS_URL : $PMS_URL | EXTERNAL_URL : $EXTERNAL_URL | PMS_OIDC_CLIENT_API_VERSION : $PMS_OIDC_CLIENT_API_VERSION"
 
 if [ "$ENABLE_INSECURE" = "true" ]; then
   export HOST=$(printenv mosip-api-internal-host)
