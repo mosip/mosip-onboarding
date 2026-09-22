@@ -91,6 +91,13 @@ Two things the current esignet-service (Go rewrite) enforces that are easy to ge
   `birthdate`, `email`, `phone_number`, `picture`, `address`). There's no direct equivalent
   claim for `individual_id` in the new model.
 
+## Known issue in 1.4.0 (fixed by PMS_OIDC_CLIENT_API_VERSION below)
+
+| PMS Version | Last Released | 1.4.0 (Current) |
+|---|---|---|
+| `< 1.3.0-beta.4` | Supported | Not supported (known issue) |
+| `>= 1.3.0-beta.4` | Not supported | Supported |
+
 ## PMS create-oidc-client endpoint version (PMS_OIDC_CLIENT_API_VERSION)
 
 The collection has two `create-oidc-client*` requests (used by mock-rp-oidc, resident-oidc,
