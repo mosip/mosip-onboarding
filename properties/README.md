@@ -9,6 +9,13 @@ from these files instead.
 
 Modules before esignet (`ida`, `print`, `resident`, `abis`, `mobileid`, `digitalcard`) are
 unchanged and have no properties file — `default.sh` still configures those inline.
+### Compatibility matrix
+
+| Your PMS version | Endpoint used |Supporting onboarder version  | 
+|---|---|---|
+| `>= 1.3.0-beta.4` | `POST /v1/partnermanager/oidc-clients` | `v1.4.0`(current) |
+| `< 1.3.0-beta.4` | `POST /v1/partnermanager/oidc/client` (deprecated) | `v1.3.1` |
+
 
 ## How to use this on a failed run
 
