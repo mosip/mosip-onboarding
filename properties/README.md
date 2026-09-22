@@ -91,6 +91,43 @@ Two things the current esignet-service (Go rewrite) enforces that are easy to ge
   `birthdate`, `email`, `phone_number`, `picture`, `address`). There's no direct equivalent
   claim for `individual_id` in the new model.
 
+## Known issue in 1.4.0 (fixed by PMS_OIDC_CLIENT_API_VERSION below)
+
+| PMS Version | Last Released | 1.4.0 (Current) |
+|---|---|---|
+| `< 1.3.0-beta.4` | Supported | Not supported (known issue) |
+| `>= 1.3.0-beta.4` | Not supported | Supported |
+
+## PMS create-oidc-client endpoint version (PMS_OIDC_CLIENT_API_VERSION)
+
+The collection has two `create-oidc-client*` requests (used by mock-rp-oidc, resident-oidc,
+mimoto-keybinding, mimoto-oidc) that talk to PMS's (partner-management-services) OIDC-client
+creation endpoint. Both are present in the collection at all times; a prerequest skip check on
+each one (same technique as the existing `mosip-id` skip) ensures exactly one of them actually
+runs per onboarding, based on `PMS_OIDC_CLIENT_API_VERSION`.
+
+### Compatibility matrix
+
+| Your PMS version | Endpoint used | Set `PMS_OIDC_CLIENT_API_VERSION` to | Request that runs |
+|---|---|---|---|
+| `>= 1.3.0-beta.4` (includes current `develop`/`release-1.3.x`) | `POST /v1/partnermanager/oidc-clients` | *(leave unset/blank)* - this is the default | `create-oidc-client` |
+| `< 1.3.0-beta.4` | `POST /v1/partnermanager/oidc/client` (deprecated) | `old` | `create-oidc-client-old` |
+
+Don't know your PMS version? Try the default first (unset) - if PMS returns 404/"Not Found" on
+the OIDC-client-creation step, that PMS instance predates 1.3.0-beta.4; set `old` and rerun.
+
+### What differs between the two requests
+
+- **`create-oidc-client`** (current, default): standard MOSIP `id`/`version` request envelope,
+  plus PMS's V3 `clientNameLangMap`/`additionalConfig` fields.
+- **`create-oidc-client-old`** (`PMS_OIDC_CLIENT_API_VERSION=old`): plain request body - no
+  `id`/`version` envelope, no `clientNameLangMap`/`additionalConfig` - matching what this
+  collection sent before the endpoint migration.
+
+Set `PMS_OIDC_CLIENT_API_VERSION=old` (env var for a real deployment, or
+`properties/local-test.properties` for a local run) to use the old endpoint. Leave
+unset/blank for the current `new` behavior.
+
 ## Values intentionally NOT in these files
 
 URLs (`url`, `keycloak-url`, `external-url`), Keycloak admin credentials, and
