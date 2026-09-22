@@ -10,10 +10,15 @@ LABEL commit_id=${COMMIT_ID}
 LABEL build_time=${BUILD_TIME}
 RUN npm install -g npm@10.2.3 && \
     npm install -g newman newman-reporter-htmlextra pem-jwk
+# dl.min.io/client no longer serves community mc binaries (MinIO moved pre-compiled
+# downloads behind the proprietary AIStor product). mc's last open-source (AGPLv3)
+# release before the minio/mc repo was archived - pinned and checksum-verified since
+# this release will never be updated again.
 RUN apk add curl && \
     apk add openssl && \
     apk add jq && \
-    curl -fsSL https://dl.min.io/client/mc/release/linux-amd64/mc -o /bin/mc && \
+    curl -fsSL https://github.com/minio/mc/releases/download/RELEASE.2025-08-13T08-35-41Z/mc.linux-amd64.RELEASE.2025-08-13T08-35-41Z -o /bin/mc && \
+    echo "01f866e9c5f9b87c2b09116fa5d7c06695b106242d829a8bb32990c00312e891  /bin/mc" | sha256sum -c - && \
     chmod +x /bin/mc
 
 ARG container_user=mosip
