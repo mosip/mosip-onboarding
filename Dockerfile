@@ -15,19 +15,10 @@ RUN apk add curl && \
     apk add jq
 
 # MinIO client - pinned and checksum-verified.
-ARG TARGETARCH
 ARG MC_VERSION=RELEASE.2025-08-13T08-35-41Z
-ARG MC_SHA256_AMD64=01f866e9c5f9b87c2b09116fa5d7c06695b106242d829a8bb32990c00312e891
-ARG MC_SHA256_ARM64=14c8c9616cfce4636add161304353244e8de383b2e2752c0e9dad01d4c27c12c
-RUN set -eu; \
-    arch="${TARGETARCH:-amd64}"; \
-    case "$arch" in \
-      amd64) sha="$MC_SHA256_AMD64" ;; \
-      arm64) sha="$MC_SHA256_ARM64" ;; \
-      *) echo "unsupported TARGETARCH: $arch" >&2; exit 1 ;; \
-    esac; \
-    curl -fsSL "https://github.com/minio/mc/releases/download/${MC_VERSION}/mc.linux-${arch}.${MC_VERSION}" -o /bin/mc; \
-    echo "${sha}  /bin/mc" | sha256sum -c -; \
+ARG MC_SHA256=01f866e9c5f9b87c2b09116fa5d7c06695b106242d829a8bb32990c00312e891
+RUN curl -fsSL "https://github.com/minio/mc/releases/download/${MC_VERSION}/mc.linux-amd64.${MC_VERSION}" -o /bin/mc && \
+    echo "${MC_SHA256}  /bin/mc" | sha256sum -c - && \
     chmod +x /bin/mc
 
 ARG container_user=mosip
