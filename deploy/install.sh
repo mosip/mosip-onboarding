@@ -21,7 +21,7 @@ if [ "$flag" = "n" ]; then
 fi
 
 NS=onboarder
-CHART_VERSION=0.0.1-develop
+CHART_VERSION=1.4.0
 
 
 echo "Do you have public domain & valid SSL? (Y/n) "

@@ -47,8 +47,8 @@ service:
   externalTrafficPolicy: Cluster
 image:
   registry: docker.io
-  repository: mosipqa/partner-onboarder
-  tag: develop
+  repository: mosipid/partner-onboarder
+  tag: 1.4.0
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
   ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -214,7 +214,6 @@ backoffLimit: 0
 ##
 updateStrategy:
   type: RollingUpdate
-
 ## Domain-specific environment variables injected into the Job container.
 ## Values are passed as individual env vars (merged map, not a list — safe to override partially).
 ## Example:
@@ -222,7 +221,6 @@ updateStrategy:
 ##     MOSIP_API_INTERNAL_HOST: api-internal.sandbox.xyz.net
 ##     MOSIP_ESIGNET_HOST: esignet.sandbox.xyz.net
 domainConfig: {}
-
 ## Additional environment variables to set
 ## Example:
 ## extraEnvVars:
